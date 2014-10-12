@@ -6,3 +6,4 @@ ipython
 ipdb
 python-dateutil
 PyMySQL
+beautifulsoup4
