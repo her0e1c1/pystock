@@ -1,4 +1,8 @@
 flask
 sqlalchemy
 jinja2
-
+requests
+ipython
+ipdb
+python-dateutil
+PyMySQL
