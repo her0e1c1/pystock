@@ -7,3 +7,4 @@ ipdb
 python-dateutil
 PyMySQL
 beautifulsoup4
+xlrd
