@@ -107,12 +107,17 @@ class Company(Base):
     code = sql.Column(sql.Integer)
     category17 = sql.Column(sql.Integer)
     category33 = sql.Column(sql.Integer)
-    scale = sql.Column(sql.Integer)
+    scale = sql.Column(sql.Integer, nullable=False)
     stock_exchange_id = sql.Column(
         sql.Integer,
         sql.ForeignKey('stock_exchange.id', onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False
+        nullable=True,
     )
+
+    @sql.orm.validates('scale')
+    def validate_scale(self, key, scale):
+        if isinstance(scale, int):
+            return scale
 
     def fix_data_frame(self):
         data_records = []
