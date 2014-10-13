@@ -3,15 +3,17 @@ import datetime
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 import config as C
+import util
 
 
 def initial_session():
+    global session
     Base.metadata.create_all()
-    session = sql.orm.sessionmaker(bind=engine)()
     return session
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
 Base = declarative_base(bind=engine)
+session = sql.orm.sessionmaker(bind=engine)()
 
 
 class StockExchange(Base):
@@ -119,6 +121,18 @@ class Company(Base):
     def validate_scale(self, key, scale):
         if isinstance(scale, int):
             return scale
+
+    def range(self, start, end=None):
+        if end is None:
+            end = datetime.date.today()
+        q = session.query(DayInfo).filter_by(company_id=self.id)
+        q = q.order_by("-date")
+
+        q = q.filter(
+            start <= DayInfo.date,
+            DayInfo.date <= end
+        )
+        return q
 
     def fix_data_frame(self):
         data_records = []
