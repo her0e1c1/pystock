@@ -87,10 +87,6 @@ def store_day_info(company_id, day_info_list):
         except sql.exc.IntegrityError:
             session.rollback()
 
-def fetch_company_list():
-    for company in session.query(models.Company).all():
-        get_company_info(company.id)
-
 
 def go_down_rolling_mean():
     """長期移動平均線を下回っている株を表示する
