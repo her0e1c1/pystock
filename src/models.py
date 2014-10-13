@@ -7,7 +7,8 @@ import config as C
 
 def initial_session():
     Base.metadata.create_all()
-    return sql.orm.sessionmaker(bind=engine)()
+    session = sql.orm.sessionmaker(bind=engine)()
+    return session
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
 Base = declarative_base(bind=engine)

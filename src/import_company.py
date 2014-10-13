@@ -8,7 +8,10 @@ import models
 
 def main():
     p = argparse.ArgumentParser()
-    p.add_argument("filepath")
+    p.add_argument("filepath", help="""\
+$ ./import_company fiename.xls
+:note: you can download xls at http://www.tse.or.jp/market/data/listed_companies/
+""")
     args = p.parse_args()
     Reader(
         filepath=args.filepath

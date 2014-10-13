@@ -8,3 +8,4 @@ python-dateutil
 PyMySQL
 beautifulsoup4
 xlrd
+pandas
