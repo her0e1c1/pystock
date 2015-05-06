@@ -7,6 +7,7 @@ import config as C
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
 Base = declarative_base(bind=engine)
+Session = sql.orm.sessionmaker(bind=engine)
 
 
 class StockExchange(Base):
@@ -150,4 +151,3 @@ class CurrentValue(Base):
 
 if __name__ == "__main__":
     Base.metadata.create_all()
-    # session = sql.orm.sessionmaker(bind=engine)()
