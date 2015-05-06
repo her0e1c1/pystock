@@ -4,9 +4,10 @@ HERE = os.path.dirname(__file__)
 
 DEBUG = True
 
-# URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"
-URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
+URL = "mysql+pymysql://root@localhost/stock"
 # URL = "sqlite:///:memory:"
+# URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"
+
 CREATE_ENGINE = {
     "encoding": 'utf-8',
     "echo": True,
