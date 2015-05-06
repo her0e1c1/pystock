@@ -1,3 +1,0 @@
-
-CATEGORY17 = {}
-CATEGORY33 = {}
