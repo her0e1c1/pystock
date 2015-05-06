@@ -6,7 +6,7 @@ import models
 import graph as G
 
 app = Flask(__name__)
-session = models.initial_session()
+session = models.Session()
 
 
 @app.route("/", methods=["GET"])
