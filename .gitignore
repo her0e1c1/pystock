@@ -1,4 +1,6 @@
 __pycache__/
 *.pyc
-
+s.egg-info/
+dist/
+build/
 venv34
