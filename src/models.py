@@ -3,17 +3,10 @@ import datetime
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 import config as C
-import util
 
-
-def initial_session():
-    global session
-    Base.metadata.create_all()
-    return session
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
 Base = declarative_base(bind=engine)
-session = sql.orm.sessionmaker(bind=engine)()
 
 
 class StockExchange(Base):
@@ -153,3 +146,8 @@ class CurrentValue(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     value = sql.Column(sql.Integer)
     datetime = sql.Column(sql.DateTime, nullable=False)
+
+
+if __name__ == "__main__":
+    Base.metadata.create_all()
+    # session = sql.orm.sessionmaker(bind=engine)()
