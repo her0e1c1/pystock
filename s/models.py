@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import datetime
 
 import sqlalchemy as sql
@@ -115,6 +117,10 @@ class Company(Base):
     def validate_scale(self, key, scale):
         if isinstance(scale, int):
             return scale
+        elif isinstance(scale, float):
+            return int(scale)
+        else:
+            raise ValueError("%s is not allowed for scale." % scale)
 
     def range(self, start, end=None):
         if end is None:
