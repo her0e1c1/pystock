@@ -13,6 +13,17 @@ Install
 	pip isntall -r requirements.txt
 
 
+ipython note book
+-----------------
+::
+
+   ipython notebook --ip=0.0.0.0 --no-browser
+
+To launch the repl
+    `Files -> New -> Python2`
+
+you use Shift + Enter instead of Enter, which inputs a new line break
+
 freetype is not installed
 -------------------------
 This error ``The C/C++ header for freetype2 (ft2build.h)`` may happen.
