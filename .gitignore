@@ -3,4 +3,5 @@ __pycache__/
 s.egg-info/
 dist/
 build/
+venv27
 venv34
