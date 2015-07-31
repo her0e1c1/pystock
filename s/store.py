@@ -11,7 +11,7 @@ import sqlalchemy as sql
 
 # 今日から株価を取得する期間
 DAYS_PERIOD = 3 * 30
-session = models.initial_session()
+session = models.Session()
 
 
 def get_info(code, start=None, end=None):
@@ -80,6 +80,7 @@ def store_day_info(company_id, day_info_list):
         try:
             session.add(models.DayInfo(**d))
         except:
+            # 型が混ざってる
             session.add(models.SplitStockDate(**d))
 
         try:
@@ -127,10 +128,7 @@ def main():
 
 def set_info(code, start, end):
     company = get_company(code=code)
-    try:
-        day_info_list = get_info(code, start, end)
-    except:
-        return
+    day_info_list = get_info(code, start, end)
     store_day_info(company.id, day_info_list)
 
  
