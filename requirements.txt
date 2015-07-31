@@ -1,5 +1,6 @@
 # Maybe install pip manually
 numpy
+xlrd
 flask
 sqlalchemy
 jinja2
