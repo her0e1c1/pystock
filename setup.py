@@ -11,6 +11,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        import_company=s.commands:import_company
+        scli=s.lib:cli
     ''',
     )
