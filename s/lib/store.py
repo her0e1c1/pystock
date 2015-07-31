@@ -2,12 +2,13 @@
 
 import time
 import argparse
-from lib import scrape_stocks
 import datetime
 import calendar
 from dateutil import relativedelta
-import models
 import sqlalchemy as sql
+
+from s.lib import scrape_stocks
+from s import models
 
 # 今日から株価を取得する期間
 DAYS_PERIOD = 3 * 30
