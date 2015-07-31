@@ -5,3 +5,8 @@ dist/
 build/
 venv27
 venv34
+
+# for ipython notebook
+.ipynb_checkpoints/
+Untitled.ipynb
+
