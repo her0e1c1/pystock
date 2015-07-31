@@ -153,7 +153,3 @@ class CurrentValue(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     value = sql.Column(sql.Integer)
     datetime = sql.Column(sql.DateTime, nullable=False)
-
-
-if __name__ == "__main__":
-    Base.metadata.create_all()
