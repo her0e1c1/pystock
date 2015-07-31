@@ -31,7 +31,7 @@ class Finance(object):
 
     def _get_soup(self, response):
         html = response.content.decode(self.decode).encode("utf-8")
-        soup = bs4.BeautifulSoup(html)
+        soup = bs4.BeautifulSoup(html, "html.parser")
         return soup
 
     def get_url(self, **kw):
@@ -52,7 +52,8 @@ class Finance(object):
     def clean_history(self, history):
         cleaned = []
         for day_info in history:
-            cleaned.append(self.clean_day_info(day_info))
+            if day_info:
+                cleaned.append(self.clean_day_info(day_info))
         return cleaned
 
     ## API
@@ -97,9 +98,10 @@ class YahooJapanFinance(Finance):
         return value
 
 
-REG_SPLIT_STOCK_DATE = re.compile(r"分割\W+(?P<from_number>\d+)株.*?(?P<to_number>\d+)株")
-REG_DATE = re.compile(r"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
+REG_SPLIT_STOCK_DATE = re.compile(ur"分割\W+(?P<from_number>\d+)株.*?(?P<to_number>\d+)株")
+REG_DATE = re.compile(ur"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
 def _get_day_info(tr):
+
     td = [t.text for t in tr.findAll("td")]
 
     ## 分割の行の場合
@@ -159,7 +161,7 @@ class TokyoStockFinance(Finance):
 
 
 if __name__ == "__main__":
-    # t = TokyoStockFinance()
+    t = TokyoStockFinance()
     t = YahooJapanFinance()
     print(t.current_value(9984))
     # t1 = DayYahooJapanFinance()
