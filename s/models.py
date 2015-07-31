@@ -99,6 +99,7 @@ class SplitStockDate(Base):
 
 class Company(Base):
     __tablename__ = "company"
+    __table_args__ = (sql.UniqueConstraint("code"), )
 
     id = sql.Column(sql.Integer, primary_key=True)
     name = sql.Column(sql.Text, nullable=False)
