@@ -5,6 +5,7 @@ import click
 
 from .import_company import Reader
 from .store import set_info
+from s import models
 
 
 @click.group()
@@ -42,3 +43,13 @@ or directly {url}
 @click.argument('xls', type=click.Path(exists=True))
 def company(xls):
     Reader(filepath=xls).store()
+
+
+@cli.group()
+def db():
+    pass
+
+
+@db.command(help="Create new all tables")
+def create():
+    models.Base.metadata.create_all()
