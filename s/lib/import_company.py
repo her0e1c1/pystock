@@ -1,23 +1,13 @@
 #!/usr/bin/env python
 # coding: utf-8
 import pandas as pd
-import models
 import click
-import config as C
 from logging import getLogger
+
+import s.models
+import s.config as C
+
 logger = getLogger(__name__)
-
-
-URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/first-d-j.xls"
-
-@click.command(
-    help="""\
-    You can download the xls at http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
-    or directly {url}
-    """.format(url=URL))
-@click.argument('xls', type=click.Path(exists=True))
-def import_company(xls):
-    Reader(filepath=xls).store()
 
 
 def inverse(dct):
