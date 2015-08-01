@@ -4,7 +4,7 @@ import pandas as pd
 import click
 from logging import getLogger
 
-import s.models
+from s import models
 import s.config as C
 
 logger = getLogger(__name__)
@@ -39,6 +39,7 @@ class Reader(object):
             yield {k: v for k, v in d.items() if k in models.Company.__dict__}
 
     def store(self):
+        # TODO: exlucde duplicated code
         for data in self.iter():
             try:
                 ins = models.Company(**data)
