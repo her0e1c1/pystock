@@ -105,26 +105,13 @@ def go_down_rolling_mean():
 
 
 def main():
-    def mkdate(datestr):
-        t = time.strptime(datestr, "%Y-%m-%d")
-        d = datetime.date.fromtimestamp(time.mktime(t))
-        return d
-    parser = argparse.ArgumentParser()
-    parser.add_argument("--id")
-    parser.add_argument("--code")
-    parser.add_argument("--start", type=mkdate)
-    parser.add_argument("--end", type=mkdate)
-    args = parser.parse_args()
-
-    if not args.code and args.start and args.end:
-        for c in session.query(models.Company).all():
-            set_info(c.code, args.start, args.end)
-
     if args.id:
         get_company_info(args.id)
 
-    if args.code and args.start and args.end:
-        set_info(args.code, args.start, args.end)
+
+def set_infos(start, end):
+    for c in session.query(models.Company).all():
+        set_info(c.code, start, end)
 
 
 def set_info(code, start, end):
