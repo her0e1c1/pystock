@@ -39,6 +39,7 @@ def list_company_which_go_down_rolling_mean(period=90, type="closing"):
             continue
 
         mean = pd.rolling_mean(df.closing, period)
+
         if (mean.tail(1) > df.closing.tail(1)).bool():
             yield company
 
@@ -48,18 +49,38 @@ def str2date(s):
         return datetime.datetime.strptime(s, "%Y-%m-%d").date()
 
 
-def show(code, start, end=None, type="closing"):
-    """指定された会社の株価を返す"""
-    # TODO: 分割も考慮
+def convert_daterange(start, end):
     if end is None:
         end = datetime.date.today()
 
     start = str2date(start)
     end =  str2date(end)
+    return start, end
 
-    company = first_by(code=code, raise_error=True)
 
-    day_infos = _get_day_info(company.id, start, end)
-
+def to_series(day_infos, type="closing"):
     # plt.plot(*result)
-    return zip(*[(di.date, di.closing) for di in day_infos])
+    return pd.DataFrame([{"date": di.date, "closing": di.closing} for di in day_infos])
+    # return pd.DataFrame(zip(*[(di.date, di.closing) for di in day_infos]))
+
+
+def show(code, start, end=None):
+    """指定された会社の株価を返す"""
+    # TODO: 分割も考慮
+    start, end = convert_daterange(start, end)
+    company = first_by(code=code, raise_error=True)
+    day_infos = _get_day_info(company.id, start, end)
+    return day_infos
+    # return to_series(day_infos)
+
+
+def show1(code, start, end=None):
+    day_infos = show(code, start, end)
+    df = to_series(day_infos)
+    return df
+
+
+def show_rolling_mean(code, start, end=None, type="closing", period=30):
+    df = show1(code, start, end)
+    mean = pd.rolling_mean(df.closing, period)
+    return pd.DataFrame({"date": df.date, "rolling_mean": mean})
