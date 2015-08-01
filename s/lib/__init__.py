@@ -4,7 +4,7 @@ import datetime
 import click
 
 from .import_company import Reader
-from .store import set_info
+from .store import set_info, set_infos
 from s import models
 
 
@@ -32,6 +32,8 @@ def mkdate(ctx, param, datestr):
 def stock(code, start, end):
     if code and start and end:
         set_info(code, start, end)
+    elif start and end:
+        set_infos(start, end)
 
 
 URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/first-d-j.xls"
