@@ -2,8 +2,9 @@ import os
 import datetime
 from flask import Flask, render_template, request, jsonify, abort
 import config as C
-import models
-import graph as G
+
+from s import models
+from s import graph as G
 
 app = Flask(__name__)
 session = models.Session()
