@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 import pandas as pd
-import click
 from logging import getLogger
 
 from s import models
@@ -10,8 +9,9 @@ import s.config as C
 logger = getLogger(__name__)
 
 
-def inverse(dct):
+def _inverse(dct):
     return {v: k for k, v in dct.items()}
+
 
 class Reader(object):
 
@@ -27,12 +27,12 @@ class Reader(object):
             raise ValueError("invalid header")
 
         # convert japanese keys to model keys
-        self.sheet = sheet.rename(columns=inverse(self.header))
+        self.sheet = sheet.rename(columns=_inverse(self.header))
         self.filepath = filepath
         self.session = models.Session()
 
     def _check_header(self, row):
-        return all(row == list(self.header.values()))
+        return list(row) == list(self.header.values())
 
     def iter(self):
         for d in self.sheet.T.to_dict().values():
@@ -44,10 +44,7 @@ class Reader(object):
             try:
                 ins = models.Company(**data)
             except ValueError as e:
-                logger.warn("The company whose code is %s is not imported." % data.get("code"))
+                logger.warn("The company whose code is %s is not imported: %s" % (data.get("code"), e))
             else:
                 self.session.add(ins)
         self.session.commit()
-
-if __name__ == '__main__':
-    import_company()
