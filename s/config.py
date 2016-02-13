@@ -1,7 +1,9 @@
 # coding: utf-8
 import os
+import path
 from collections import OrderedDict
 
+ROOTDIR = path.Path(__file__).parent.parent
 HERE = os.path.dirname(__file__)
 
 DEBUG = False
@@ -30,6 +32,7 @@ EXCEL_COMPANY_HEADER = OrderedDict([
     ("date", u'日付'),
     ("code", u'コード'),
     ("name", u'銘柄名'),
+    ("_item", u'市場・商品区分'),
     ("category33", u'33業種コード'),
     ("label33", u'33業種区分'),
     ("category17", u'17業種コード'),
