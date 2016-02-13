@@ -13,6 +13,7 @@ beautifulsoup4
 pandas
 matplotlib
 click
+gunicorn
 
 # ipython notebook
 # also need sqlite3
