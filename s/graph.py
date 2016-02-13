@@ -1,6 +1,6 @@
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-import util
+from s import util
 
 
 class Graph(object):

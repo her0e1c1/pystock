@@ -1,7 +1,7 @@
 import os
 import datetime
 from flask import Flask, render_template, request, jsonify, abort
-import config as C
+import s.config as C
 
 from s import models
 from s import graph as G
@@ -12,7 +12,8 @@ session = models.Session()
 
 @app.route("/", methods=["GET"])
 def index():
-    company_list = session.query(models.Company).all()
+    # company_list = session.query(models.Company).all()
+    company_list = []
     return render_template('index.html', **{"company_list": company_list})
 
 

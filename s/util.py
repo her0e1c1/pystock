@@ -1,7 +1,7 @@
 import os
 import datetime
 from dateutil.relativedelta import relativedelta
-import config as C
+import s.config as C
 
 
 class Date(object):
