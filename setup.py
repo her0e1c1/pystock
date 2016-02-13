@@ -11,6 +11,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        scli=s.lib:cli
+        stock=s.lib:cli
     ''',
     )
