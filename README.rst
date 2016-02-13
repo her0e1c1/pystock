@@ -12,6 +12,9 @@ Install
 	source venv34/bin/activate
 	pip install -r requirements.txt
 
+serve ::
+
+    gunicorn s.main:app
 
 ipython note book
 -----------------
