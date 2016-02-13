@@ -98,8 +98,8 @@ class YahooJapanFinance(Finance):
         return value
 
 
-REG_SPLIT_STOCK_DATE = re.compile(ur"分割\W+(?P<from_number>\d+)株.*?(?P<to_number>\d+)株")
-REG_DATE = re.compile(ur"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
+REG_SPLIT_STOCK_DATE = re.compile(r"分割\W+(?P<from_number>\d+)株.*?(?P<to_number>\d+)株")
+REG_DATE = re.compile(r"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
 def _get_day_info(tr):
 
     td = [t.text for t in tr.findAll("td")]
