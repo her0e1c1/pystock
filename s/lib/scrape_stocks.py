@@ -58,10 +58,8 @@ class Finance(object):
 
     ## API
     def current_value(self, code):
-         """
-         :return: Int
-         """
-         return self._request("current_value", code=code)
+        """ :return: int """
+        return self._request("current_value", code=code)
 
     def day_info(self, code):
         """
