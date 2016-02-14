@@ -4,6 +4,7 @@ import datetime
 
 import click
 import requests
+from dateutil import relativedelta
 
 from .import_company import Reader
 from .store import set_info, set_infos
@@ -33,7 +34,13 @@ def mkdate(ctx, param, datestr):
 @click.option("--code")
 @store.command()
 def stock(code, start, end):
-    if code and start and end:
+    today = datetime.date.today()
+    if start is None:
+        start = today - relativedelta.relativedelta(years=1)
+    if end is None:
+        end = today
+
+    if code:
         set_info(code, start, end)
     elif start and end:
         set_infos(start, end)
