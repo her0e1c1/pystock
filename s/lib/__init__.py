@@ -4,7 +4,6 @@ import datetime
 
 import click
 import requests
-from dateutil import relativedelta
 
 from .import_company import Reader
 from .store import set_info, set_infos
@@ -12,9 +11,27 @@ from s import models
 import s.config as C
 
 
-@click.group()
+class AliasedGroup(click.Group):
+
+    def get_command(self, ctx, cmd_name):
+        rv = click.Group.get_command(self, ctx, cmd_name)
+        if rv is not None:
+            return rv
+        matches = [x for x in self.list_commands(ctx)
+                   if x.startswith(cmd_name)]
+        if not matches:
+            return None
+        elif len(matches) == 1:
+            return click.Group.get_command(self, ctx, matches[0])
+        ctx.fail('Too many matches: %s' % ', '.join(sorted(matches)))
+
+
+@click.group(cls=AliasedGroup, invoke_without_command=True)
 def cli():
-    pass
+    ctx = click.get_current_context()
+    if ctx.invoked_subcommand is None:
+        pass
+        # ctx.invoke(default)
 
 
 @cli.group()
@@ -34,12 +51,6 @@ def mkdate(ctx, param, datestr):
 @click.option("--code")
 @store.command()
 def stock(code, start, end):
-    today = datetime.date.today()
-    if start is None:
-        start = today - relativedelta.relativedelta(years=1)
-    if end is None:
-        end = today
-
     if code:
         set_info(code, start, end)
     elif start and end:
