@@ -1,7 +1,8 @@
 #!/usr/bin/env python
 # coding: utf-8
-import pandas as pd
 from logging import getLogger
+import sqlalchemy as sql
+import pandas as pd
 
 from s import models
 import s.config as C
@@ -47,4 +48,8 @@ class Reader(object):
                 logger.warn("The company whose code is %s is not imported: %s" % (data.get("code"), e))
             else:
                 self.session.add(ins)
-        self.session.commit()
+        try:
+            self.session.commit()
+        except sql.exc.IntegrityError as e:
+            logger.warn("Can't import company data")
+            logger.warn("%s" % e)

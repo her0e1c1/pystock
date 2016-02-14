@@ -9,9 +9,10 @@ HERE = os.path.dirname(__file__)
 DEBUG = False
 # DEBUG = True
 
-URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
 # URL = "sqlite:///:memory:"
 # URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"
+DEFAULT_URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
+URL = os.environ.get("DATABASE_URL", DEFAULT_URL)
 
 # sqlalchemy
 CREATE_ENGINE = {
@@ -41,3 +42,6 @@ EXCEL_COMPANY_HEADER = OrderedDict([
     ("label_scale", u'規模区分'),
 ])
 SHEET_NAME = "Sheet1"
+
+# frequently changed 
+COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"

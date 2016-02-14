@@ -1,4 +1,5 @@
 import os
+import io
 import path
 import time
 import datetime
@@ -9,6 +10,7 @@ import requests
 from .import_company import Reader
 from .store import set_info, set_infos
 from s import models
+import s.config as C
 
 ROOTDIR = path.Path(__file__).parent.parent.parent
 COMPANY_XLS = ROOTDIR.joinpath(ROOTDIR, "company.xls")
@@ -42,31 +44,18 @@ def stock(code, start, end):
         set_infos(start, end)
 
 
-URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 _help="""\
 You can download the xls at http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
 or directly {url}
-""".format(url=URL)
+""".format(url=C.COMPANY_XLS_URL)
 @store.command(help=_help)
-@click.argument('xls',
-                default=COMPANY_XLS,
-                type=click.Path(exists=True))
-def company(xls):
-    Reader(filepath=xls).store()
-
-
-@store.command()
-@click.argument('xls_path',
-                default=COMPANY_XLS,
-                type=click.Path(exists=False))
-def download(xls_path):
-    resp = requests.get(URL)
+def company():
+    resp = requests.get(C.COMPANY_XLS_URL)
     if resp.ok:
-        with open(xls_path, "wb") as f:
-            f.write(resp.content)
-        click.echo("get %s" % URL)
+        xls = resp.content
+        Reader(filepath=io.BytesIO(xls)).store()
     else:
-        click.echo("Can't get %s" % URL)
+        click.echo("Can't get %s" % C.COMPANY_XLS_URL)
 
 
 @cli.group()
