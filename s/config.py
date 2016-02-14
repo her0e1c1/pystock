@@ -43,5 +43,5 @@ EXCEL_COMPANY_HEADER = OrderedDict([
 ])
 SHEET_NAME = "Sheet1"
 
-# frequently changed 
+# frequently changed
 COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
