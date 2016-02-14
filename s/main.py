@@ -17,6 +17,12 @@ def index():
     return render_template('index.html', **{"company_list": company_list})
 
 
+@app.route("/company/", methods=["GET"])
+def show_company(id):
+    company_list = session.query(models.Company).all()
+    return render_template('index.html', **{"company_list": company_list})
+
+
 @app.route("/company/<int:id>", methods=["GET"])
 def company(id):
     company = session.query(models.Company).filter_by(id=id).first()
