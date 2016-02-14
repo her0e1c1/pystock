@@ -18,7 +18,7 @@ def index():
 
 
 @app.route("/company/", methods=["GET"])
-def show_company(id):
+def show_company():
     company_list = session.query(models.Company).all()
     return render_template('index.html', **{"company_list": company_list})
 
