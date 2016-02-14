@@ -1,6 +1,4 @@
-import os
 import io
-import path
 import time
 import datetime
 
@@ -11,9 +9,6 @@ from .import_company import Reader
 from .store import set_info, set_infos
 from s import models
 import s.config as C
-
-ROOTDIR = path.Path(__file__).parent.parent.parent
-COMPANY_XLS = ROOTDIR.joinpath(ROOTDIR, "company.xls")
 
 
 @click.group()
@@ -44,11 +39,12 @@ def stock(code, start, end):
         set_infos(start, end)
 
 
-_help="""\
-You can download the xls at http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
+@store.command(help="""\
+You can download the xls at \
+http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
 or directly {url}
 """.format(url=C.COMPANY_XLS_URL)
-@store.command(help=_help)
+)
 def company():
     resp = requests.get(C.COMPANY_XLS_URL)
     if resp.ok:
