@@ -5,21 +5,20 @@ import sqlalchemy as sql
 
 from s.lib import scrape_stocks
 from s import models
+from s import config as C
 
-# 今日から株価を取得する期間
-DAYS_PERIOD = 3 * 30
 session = models.Session()
 
 
 def get_info(code, start=None, end=None):
-    """期間を指定して企業の株を取得する。
-    """
-    yahoo = scrape_stocks.HistoryYahooJapanFinance()
+    """期間を指定して企業の株を取得する"""
     if end is None:
         end = datetime.date.today()
-    if start is None:
-        start = end - datetime.timedelta(days=DAYS_PERIOD)
 
+    if start is None:
+        start = end - datetime.timedelta(days=C.DEFAULT_DAYS_PERIOD)
+
+    yahoo = scrape_stocks.HistoryYahooJapanFinance()
     day_info_list = yahoo.history(code, start.year, start.month, start.day,
                                         end.year, end.month, end.day)
     return day_info_list

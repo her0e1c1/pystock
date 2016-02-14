@@ -45,3 +45,6 @@ SHEET_NAME = "Sheet1"
 
 # frequently changed
 COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
+
+# 今日から株価を取得する期間
+DEFAULT_DAYS_PERIOD = 3 * 30
