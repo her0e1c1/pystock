@@ -1,7 +1,31 @@
 import os
 import datetime
 from dateutil.relativedelta import relativedelta
+import sqlalchemy as sql
 import s.config as C
+
+
+class DateRange(object):
+
+    def __init__(self, start=None, end=None):
+        if end is None:
+            end = datetime.date.today()
+        if start is None:
+            start = end - relativedelta(days=C.DEFAULT_DAYS_PERIOD)
+        self.end = end
+        self.start = start
+
+    def query(self, date_col):
+        start, end = self.start, self.end
+        if start is None:
+            return date_col <= end
+        elif end is None:
+            return start <= date_col
+        else:
+            return sql.and_(start <= date_col, date_col <= end)
+
+    def to_dict(self):
+        return {"start": self.start, "end": self.end}
 
 
 class Date(object):

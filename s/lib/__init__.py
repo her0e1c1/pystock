@@ -8,6 +8,7 @@ import requests
 from .import_company import Reader
 from .store import set_info, set_infos
 from s import models
+from s import query
 import s.config as C
 
 
@@ -88,3 +89,10 @@ def setup():
     ctx = click.get_current_context()
     for cmd in [create, company]:
         ctx.invoke(cmd)
+
+
+@cli.command(help="show info")
+@click.argument('code', type=int)
+def show(code):
+    for info in query.get_company_info(code):
+        print(info)
