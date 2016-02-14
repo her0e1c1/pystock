@@ -1,6 +1,5 @@
-#!/usr/bin/env python
-# coding: utf-8
 from logging import getLogger
+
 import sqlalchemy as sql
 import pandas as pd
 
