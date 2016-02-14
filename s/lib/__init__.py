@@ -64,5 +64,6 @@ def create():
     models.Base.metadata.create_all()
 
 
+@cli.command(help="Setup all")
 def setup():
-    pass
+    click.echo("Start setup ...")
