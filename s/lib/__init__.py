@@ -67,3 +67,6 @@ def create():
 @cli.command(help="Setup all")
 def setup():
     click.echo("Start setup ...")
+    ctx = click.get_current_context()
+    for cmd in [create, company]:
+        ctx.invoke(cmd)
