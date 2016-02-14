@@ -1,7 +1,3 @@
-# -*- coding:utf-8 -*-
-
-import time
-import argparse
 import datetime
 import calendar
 from dateutil import relativedelta
@@ -104,26 +100,18 @@ def go_down_rolling_mean():
     return low_cost_company_list
 
 
-def main():
-    if args.id:
-        get_company_info(args.id)
-
-
 def set_infos(start, end):
     for c in session.query(models.Company).all():
         set_info(c.code, start, end)
 
 
-def set_info(code, start, end):
+def set_info(code, start=None, end=None):
     company = get_company(code=code)
     day_info_list = get_info(code, start, end)
     store_day_info(company.id, day_info_list)
 
- 
+
 def get_company(code=None):
     if code:
         return session.query(models.Company).filter_by(code=code).one()
     raise ValueError("There are no companies.")
-
-if __name__ == '__main__':
-    main()
