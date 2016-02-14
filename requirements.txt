@@ -14,6 +14,7 @@ pandas
 matplotlib
 click
 gunicorn
+psycopg2
 
 # ipython notebook
 # also need sqlite3
