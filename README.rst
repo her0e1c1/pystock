@@ -12,6 +12,10 @@ Install
 	source venv34/bin/activate
 	pip install -r requirements.txt
 
+setup heroku ::
+
+    heroku run --app APP_NAME python -m s.lib setup
+
 serve ::
 
     gunicorn s.main:app
