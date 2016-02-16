@@ -165,7 +165,7 @@ def current_value(code, scraper):
 
 @click.option("--max-id", type=int)
 @click.option("--min-id", type=int, default=1)
-@click.option("--each", is_flag=True, default=True)
+@click.option("--each", is_flag=True, default=False)
 @cli.command(help="update day info")
 def update(min_id, max_id, each):
     if max_id is None:
