@@ -1,4 +1,5 @@
 import os
+import time
 import calendar
 import datetime
 
@@ -11,6 +12,10 @@ from pystock import config as C
 class DateRange(object):
 
     def __init__(self, start=None, end=None):
+        if isinstance(end, str):
+            end = str2date(start)
+        if isinstance(start, str):
+            start = str2date(start)
         if end is None:
             end = datetime.date.today()
         if start is None:
@@ -105,3 +110,14 @@ def last_day():
 
 def dict_inverse(dct):
     return {v: k for k, v in dct.items()}
+
+
+def multiple_decorator(funcs):
+    def wrap(g):
+        for f in funcs:
+            g = f(g)
+    return wrap
+
+def str2date(datestr):
+    t = time.strptime(datestr, "%Y-%m-%d")
+    return datetime.date.fromtimestamp(time.mktime(t))

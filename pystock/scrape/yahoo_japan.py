@@ -6,30 +6,32 @@ REG_SPLIT_STOCK_DATE = re.compile(r"分割\W+(?P<from_number>\d+)株.*?(?P<to_nu
 REG_DATE = re.compile(r"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
 
 
-def parse_day_info(tr):
+def parse_day_info(tr, only_date=False):
     td = [t.text for t in tr.findAll("td")]
     match = REG_DATE.match(td[0])
     if match:
-        date = match.groupdict()
-        return {
-            "date": "{year}-{month}-{day}".format(**date),
+        d = {"date": "{year}-{month}-{day}".format(**match.groupdict())}
+        if only_date:
+            return d
+        d.update({
             "opening": td[1],
             "high": td[2],
             "low": td[3],
             "closing": td[4],
             "volume": td[5],
-        }
+        })
+        return d
 
 
 def parse_split_stock_date(tr):
     td = [t.text for t in tr.findAll("td")]
     match = REG_SPLIT_STOCK_DATE.match(td[1])
-    date = parse_day_info(tr)
-    if match and date:
+    day_info = parse_day_info(tr, only_date=True)
+    if match and day_info:
         return {
             "from_number": match.group("from_number"),
             "to_number": match.group("to_number"),
-            "date": "{year}-{month}-{day}".format(**date),
+            "date": day_info["date"]
         }
 
 

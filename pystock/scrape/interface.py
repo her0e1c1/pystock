@@ -17,9 +17,9 @@ def clean_value(value):
 class Scraper(object):
 
     def request(self, **kw):
+        url = self.get_url(**kw)
+        logger.info("GET: %s" % url)
         try:
-            url = self.get_url(**kw)
-            logger.info("GET: %s" % url)
             res = requests.get(url)
             soup = self._get_soup(res)
             values = self.parse(soup)
@@ -67,27 +67,29 @@ class Interface(object, metaclass=Meta):
         """
         return self.clean_day_info(self.DayInfo().request(code=code))
 
-    def split_stock_date(self, code, start=None, end=None):
+    def _each_page(self, code, start, end, page, scraper):
+        each = []
+        for p in range(1, page + 1):
+            r = list(scraper.request(
+                code=code, p=p, **DateRange(start, end).to_short_dict()))
+            if r:
+                each += r
+            else:
+                break
+        return self.clean_history(each)
+
+    def split_stock_date(self, code, start=None, end=None, page=100):
         """
         :return:
             {"from_number": 株式分割前,
              "to_number": 株式分割後,
              "date": 分割日}
         """
-        return self.SplitStockDate().request(code)
+        return self._each_page(code, start, end, page, self.SplitStockDate())
 
     def history(self, code, start=None, end=None, page=100):
         """:return: day_infoの戻り値と同じKEY-VALUEをもつ辞書のリスト"""
-        d = DateRange(start, end)
-        s = self.History()
-        history = []
-        for p in range(1, page + 1):
-            day_info_list = list(s.request(code=code, p=p, **d.to_short_dict()))
-            if day_info_list:
-                history += day_info_list
-            else:
-                break
-        return self.clean_history(history)
+        return self._each_page(code, start, end, page, self.History())
 
     def clean_current_value(self, current_value):
         return clean_value(current_value)
@@ -97,4 +99,4 @@ class Interface(object, metaclass=Meta):
             return {k: clean_value(v) if k != "date" else v for k, v in day_info.items()}
 
     def clean_history(self, history):
-        return [self.clean_day_info(d) for d in history]
+        return [self.clean_day_info(d) for d in history if d]

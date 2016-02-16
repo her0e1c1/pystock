@@ -12,6 +12,7 @@ from .store import set_info, set_infos
 from pystock import models
 from pystock import query
 from pystock import scrape
+from pystock import util
 from pystock import config as C
 
 logging.basicConfig(level=logging.INFO)
@@ -48,9 +49,7 @@ def store():
 
 def mkdate(ctx, param, datestr):
     if datestr:
-        t = time.strptime(datestr, "%Y-%m-%d")
-        d = datetime.date.fromtimestamp(time.mktime(t))
-        return d
+        return util.str2date(datestr)
 
 
 @click.option("--start", callback=mkdate)
@@ -122,14 +121,26 @@ def update():
 def scrape_():
     pass
 
+_decorator = util.multiple_decorator([
+    click.option("--scraper", default=scrape.YahooJapan),
+    click.option("--start"),
+    click.option("--end"),
+    click.argument('code', type=int)
+])
 
-@click.option("--scraper", default=scrape.YahooJapan)
-@click.option("--start")
-@click.option("--end")
-@click.argument('code', type=int)
+
+@_decorator
 @scrape_.command(name="history")
 def scrape_history(code, start, end, scraper):
     history = scraper.history(code, start, end)
+    for day_info in history:
+        click.echo(day_info)
+
+
+@_decorator
+@scrape_.command(name="split")
+def split_stock_date(code, start, end, scraper):
+    history = scraper.split_stock_date(code, start, end)
     for day_info in history:
         click.echo(day_info)
 
@@ -144,7 +155,7 @@ def day_info(code, scraper):
 
 @click.option("--scraper", default=scrape.YahooJapan)
 @click.argument('code', type=int)
-@scrape_.command(name="current_value")
+@scrape_.command(name="value")
 def current_value(code, scraper):
     value = scraper.current_value(code)
     click.echo(value)
