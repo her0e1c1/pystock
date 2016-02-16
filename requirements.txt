@@ -7,6 +7,8 @@ jinja2
 requests
 ipython
 ipdb
+pytest
+# pytest-ipdb
 python-dateutil
 PyMySQL
 beautifulsoup4

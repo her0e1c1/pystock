@@ -5,7 +5,7 @@ from flask import Flask, render_template, request, jsonify, abort
 
 from pystock import config as C
 from pystock import models
-from pystock import graph as G
+
 
 app = Flask(__name__)
 session = models.Session()
