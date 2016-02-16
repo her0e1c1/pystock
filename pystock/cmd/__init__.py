@@ -99,10 +99,13 @@ def show(code):
         print(info)
 
 
+@click.option("--port", default=C.PORT, type=int)
+@click.option("--debug", default=C.DEBUG, is_flag=True)
 @cli.command(help="Start server")
-def serve():
-    from pystock.server.main import main
-    main()
+def serve(port, debug):
+    from pystock.server import app
+    app.debug = debug
+    app.run(port=port)
 
 
 @cli.command(help="update day info")

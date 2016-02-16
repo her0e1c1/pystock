@@ -5,7 +5,10 @@ from collections import OrderedDict
 
 ROOTDIR = path.Path(__file__).parent.parent
 HERE = os.path.dirname(__file__)
+
 DEBUG = True
+
+PORT = int(os.environ.get('PORT', 5000))
 
 # URL = "sqlite:///:memory:"
 # URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"
@@ -18,7 +21,7 @@ CREATE_ENGINE = {
     "echo": DEBUG,
 }
 
-STATIC_DIR = os.path.join(HERE, "static")
+STATIC_DIR = os.path.join(ROOTDIR, "static")
 
 GRAPH_DIR = os.path.join(STATIC_DIR, "company")
 
@@ -27,6 +30,9 @@ FORMAT = {
     "month": "{code}/{year}_{month}",
 }
 
+
+# frequently changed
+COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 EXCEL_COMPANY_HEADER = OrderedDict([
     ("date", u'日付'),
     ("code", u'コード'),
@@ -40,9 +46,6 @@ EXCEL_COMPANY_HEADER = OrderedDict([
     ("label_scale", u'規模区分'),
 ])
 SHEET_NAME = "Sheet1"
-
-# frequently changed
-COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 
 # 今日から株価を取得する期間
 DEFAULT_DAYS_PERIOD = 3 * 30

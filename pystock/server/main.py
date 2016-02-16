@@ -3,12 +3,10 @@ import datetime
 
 from flask import Flask, render_template, request, jsonify, abort
 
-from pystock import config as C
-from pystock import models
+from pystock import query
 
 
 app = Flask(__name__)
-session = models.Session()
 
 
 @app.route("/", methods=["GET"])
@@ -53,11 +51,7 @@ def graph(id):
     })
 
 
-def main():
-    app.debug = C.DEBUG
-    port = int(os.environ.get('PORT', 5000))
-    app.run(port=port)
-
-
 if __name__ == "__main__":
-    main()
+    from pystock import config as C
+    app.debug = C.DEBUG
+    app.run(port=C.PORT)
