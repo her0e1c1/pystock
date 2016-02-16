@@ -27,6 +27,14 @@ To launch the repl
 
 you use Shift + Enter instead of Enter, which inputs a new line break
 
+## FreeBSD
+
+You need to install these by pkg
+
+    # for scrapy (python2)
+    pkg install libxml2
+    pkg install devel/py-lxml
+
 ### freetype is not installed
 This error ``The C/C++ header for freetype2 (ft2build.h)`` may happen.
 if your os is freebsd, then do this ::
