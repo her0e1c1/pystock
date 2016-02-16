@@ -3,9 +3,9 @@ import calendar
 import datetime
 
 from dateutil.relativedelta import relativedelta
-
 import sqlalchemy as sql
-import s.config as C
+
+from pystock import config as C
 
 
 class DateRange(object):

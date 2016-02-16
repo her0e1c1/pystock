@@ -1,10 +1,9 @@
-# coding: utf-8
-
 import datetime
 
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
-import s.config as C
+
+from pystock import config as C
 
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)

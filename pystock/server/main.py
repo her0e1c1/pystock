@@ -1,10 +1,11 @@
 import os
 import datetime
-from flask import Flask, render_template, request, jsonify, abort
-import s.config as C
 
-from s import models
-from s import graph as G
+from flask import Flask, render_template, request, jsonify, abort
+
+from pystock import config as C
+from pystock import models
+from pystock import graph as G
 
 app = Flask(__name__)
 session = models.Session()

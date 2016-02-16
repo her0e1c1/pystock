@@ -1,8 +1,8 @@
 
 import datetime
 
-from s import models
-from s import util
+from pystock import models
+from pystock import util
 
 
 class Query(object):
