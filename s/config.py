@@ -5,9 +5,7 @@ from collections import OrderedDict
 
 ROOTDIR = path.Path(__file__).parent.parent
 HERE = os.path.dirname(__file__)
-
-DEBUG = False
-# DEBUG = True
+DEBUG = True
 
 # URL = "sqlite:///:memory:"
 # URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"

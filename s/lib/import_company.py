@@ -1,3 +1,4 @@
+
 from logging import getLogger
 
 import sqlalchemy as sql
@@ -5,12 +6,9 @@ import pandas as pd
 
 from s import models
 import s.config as C
+from s import util
 
 logger = getLogger(__name__)
-
-
-def _inverse(dct):
-    return {v: k for k, v in dct.items()}
 
 
 class Reader(object):
@@ -27,7 +25,7 @@ class Reader(object):
             raise ValueError("invalid header")
 
         # convert japanese keys to model keys
-        self.sheet = sheet.rename(columns=_inverse(self.header))
+        self.sheet = sheet.rename(columns=util.dict_inverse(self.header))
         self.filepath = filepath
         self.session = models.Session()
 

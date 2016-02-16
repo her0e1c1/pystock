@@ -12,7 +12,6 @@ session = models.Session()
 
 @app.route("/", methods=["GET"])
 def index():
-    # company_list = session.query(models.Company).all()
     company_list = []
     return render_template('index.html', **{"company_list": company_list})
 
@@ -53,7 +52,11 @@ def graph(id):
     })
 
 
-if __name__ == "__main__":
+def main():
     app.debug = C.DEBUG
     port = int(os.environ.get('PORT', 5000))
     app.run(port=port)
+
+
+if __name__ == "__main__":
+    main()

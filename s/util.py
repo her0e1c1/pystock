@@ -1,6 +1,9 @@
 import os
+import calendar
 import datetime
+
 from dateutil.relativedelta import relativedelta
+
 import sqlalchemy as sql
 import s.config as C
 
@@ -77,3 +80,18 @@ def graph_month_dir(code, year, month, ext=".png"):
         os.makedirs(dir_)
     filepath = os.path.join(C.GRAPH_DIR, name + ext)
     return filepath
+
+
+def last_day():
+    """株の最後の日を返す"""
+    today = datetime.date.today()
+    weekday = today.weekday()
+    if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
+        day = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
+    else:
+        day = today - relativedelta(days=1)
+    return day
+
+
+def dict_inverse(dct):
+    return {v: k for k, v in dct.items()}

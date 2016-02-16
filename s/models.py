@@ -126,6 +126,7 @@ class Company(Base):
         else:
             raise ValueError("%s is not allowed for scale." % scale)
 
+
     def fix_data_frame(self):
         data_records = []
         for day_info in self.day_info_list:
@@ -139,6 +140,7 @@ class Company(Base):
         return pd.DataFrame.from_records(data_records)
 
 
+# TODO: rename current price
 class CurrentValue(Base):
     __tablename__ = "current_value"
 

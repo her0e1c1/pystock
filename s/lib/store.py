@@ -1,6 +1,4 @@
 import datetime
-import calendar
-from dateutil import relativedelta
 import sqlalchemy as sql
 
 from s.lib import scrape_stocks
@@ -22,18 +20,6 @@ def get_info(code, start=None, end=None):
     day_info_list = yahoo.history(code, start.year, start.month, start.day,
                                         end.year, end.month, end.day)
     return day_info_list
-
-
-def last_day():
-    """株の最後の日を返す
-    """
-    today = datetime.date.today()
-    weekday = today.weekday()
-    if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
-        day = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
-    else:
-        day = today - relativedelta(days=1)
-    return day
 
 
 def get_company_info(id):

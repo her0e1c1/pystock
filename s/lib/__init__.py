@@ -94,5 +94,16 @@ def setup():
 @cli.command(help="show info")
 @click.argument('code', type=int)
 def show(code):
-    for info in query.get_company_info(code):
+    for info in query.DayInfo.get(code):
         print(info)
+
+
+@cli.command(help="Start server")
+def serve():
+    from s.main import main
+    main()
+
+
+@cli.command(help="update day info")
+def update():
+    pass
