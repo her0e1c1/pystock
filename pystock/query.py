@@ -35,7 +35,7 @@ class DayInfo(Query):
         return q
 
     @classmethod
-    def set(cls, company_id, start=None, end=None, each=False):
+    def set(cls, company_id, start=None, end=None, each=False, ignore=False):
         from pystock.scrape import YahooJapan
         session = cls.session()
         scraper = YahooJapan()
@@ -51,11 +51,22 @@ class DayInfo(Query):
             except sql.exc.IntegrityError:
                 session.rollback()
         if not each:
-            session.commit()
+            try:
+                session.commit()
+            except sql.exc.IntegrityError as e:
+                if not ignore:
+                    raise e
 
 
 class Company(Query):
     model = models.Company
+
+    @classmethod
+    def max_id(cls):
+        q = cls.query()
+        q = q.order_by("-id")
+        c = q.first()
+        return c.id if c else 0
 
     @classmethod
     def is_updated(cls, id):

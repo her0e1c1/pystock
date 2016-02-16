@@ -49,12 +49,14 @@ def mkdate(ctx, param, datestr):
     if datestr:
         return util.str2date(datestr)
 
+
 @click.option("--start", callback=mkdate)
 @click.option("--end", callback=mkdate)
 @click.option("--code")
+@click.option("--each", is_flag=True, default=True)
 @store.command()
-def history(code, start, end):
-    query.DayInfo.set(code, start, end, each=True)
+def history(code, start, end, each):
+    query.DayInfo.set(code, start, end, each=each)
 
 
 @click.option("--start", callback=mkdate)
@@ -117,11 +119,6 @@ def serve(port, debug):
     app.run(port=port, debug=debug)
 
 
-@cli.command(help="update day info")
-def update():
-    pass
-
-
 @cli.group()
 def scrape_():
     pass
@@ -164,3 +161,14 @@ def day_info(code, scraper):
 def current_value(code, scraper):
     value = scraper.current_value(code)
     click.echo(value)
+
+
+@click.option("--max-id", type=int)
+@click.option("--min-id", type=int, default=1)
+@click.option("--each", is_flag=True, default=True)
+@cli.command(help="update day info")
+def update(min_id, max_id, each):
+    if max_id is None:
+        max_id = query.Company.max_id()
+    for id in range(min_id, max_id + 1):
+        query.DayInfo.set(id, each=each, ignore=True)
