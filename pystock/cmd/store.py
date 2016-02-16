@@ -1,7 +1,6 @@
 import datetime
 import sqlalchemy as sql
 
-from . import scrape_stocks
 from pystock import models
 from pystock import config as C
 
@@ -80,9 +79,3 @@ def set_info(code, start=None, end=None):
     company = get_company(code=code)
     day_info_list = get_info(code, start, end)
     store_day_info(company.id, day_info_list)
-
-
-def get_company(code=None):
-    if code:
-        return session.query(models.Company).filter_by(code=code).one()
-    raise ValueError("There are no companies.")

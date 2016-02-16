@@ -1,6 +1,4 @@
 import io
-import time
-import datetime
 import logging
 
 import click
