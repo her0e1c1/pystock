@@ -53,5 +53,4 @@ def graph(id):
 
 if __name__ == "__main__":
     from pystock import config as C
-    app.debug = C.DEBUG
-    app.run(port=C.PORT)
+    app.run(port=C.PORT, debug=C.DEBUG)

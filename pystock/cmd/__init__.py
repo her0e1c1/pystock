@@ -1,6 +1,7 @@
 import io
 import time
 import datetime
+import logging
 
 import click
 import requests
@@ -10,7 +11,11 @@ from .store import set_info, set_infos
 
 from pystock import models
 from pystock import query
+from pystock import scrape
 from pystock import config as C
+
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 class AliasedGroup(click.Group):
@@ -51,8 +56,10 @@ def mkdate(ctx, param, datestr):
 @click.option("--start", callback=mkdate)
 @click.option("--end", callback=mkdate)
 @click.option("--code")
+@click.option("--max", type=int)
+@click.option("--min", type=int)
 @store.command()
-def stock(code, start, end):
+def stock(code, start, end, max, min):
     if code:
         set_info(code, start, end)
     elif start and end:
@@ -63,8 +70,7 @@ def stock(code, start, end):
 You can download the xls at \
 http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
 or directly {url}
-""".format(url=C.COMPANY_XLS_URL)
-)
+""".format(url=C.COMPANY_XLS_URL))
 def company():
     resp = requests.get(C.COMPANY_XLS_URL)
     if resp.ok:
@@ -104,10 +110,41 @@ def show(code):
 @cli.command(help="Start server")
 def serve(port, debug):
     from pystock.server import app
-    app.debug = debug
-    app.run(port=port)
+    app.run(port=port, debug=debug)
 
 
 @cli.command(help="update day info")
 def update():
     pass
+
+
+@cli.group()
+def scrape_():
+    pass
+
+
+@click.option("--scraper", default=scrape.YahooJapan)
+@click.option("--start")
+@click.option("--end")
+@click.argument('code', type=int)
+@scrape_.command(name="history")
+def scrape_history(code, start, end, scraper):
+    history = scraper.history(code, start, end)
+    for day_info in history:
+        click.echo(day_info)
+
+
+@click.option("--scraper", default=scrape.YahooJapan)
+@click.argument('code', type=int)
+@scrape_.command(name="day_info")
+def day_info(code, scraper):
+    day_info = scraper.day_info(code)
+    click.echo(day_info)
+
+
+@click.option("--scraper", default=scrape.YahooJapan)
+@click.argument('code', type=int)
+@scrape_.command(name="current_value")
+def current_value(code, scraper):
+    value = scraper.current_value(code)
+    click.echo(value)

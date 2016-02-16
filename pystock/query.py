@@ -48,3 +48,18 @@ class Company(Query):
 def update_per_day(date=None):
     if date is None:
         date = datetime.date.today()
+
+
+def go_down_rolling_mean():
+    """長期移動平均線を下回っている株を表示する
+    """
+    low_cost_company_list = []
+    for c in session.query(models.Company).all():
+        df = c.fix_data_frame()
+        mean = pd.rolling_mean(df.closing, 90)
+
+        cmp = mean.tail(1) > df.closing.tail(1)
+        if cmp.bool():
+            low_cost_company_list.append(c)
+    return low_cost_company_list
+

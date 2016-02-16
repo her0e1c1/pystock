@@ -1,4 +1,3 @@
-
 from logging import getLogger
 
 import sqlalchemy as sql

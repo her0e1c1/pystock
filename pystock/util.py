@@ -28,7 +28,17 @@ class DateRange(object):
             return sql.and_(start <= date_col, date_col <= end)
 
     def to_dict(self):
-        return {"start": self.start, "end": self.end}
+        return {"start": str(self.start), "end": str(self.end)}
+
+    def to_short_dict(self):
+        return {
+            "sy": self.start.year,
+            "sm": self.start.month,
+            "sd": self.start.day,
+            "ey": self.end.year,
+            "em": self.end.month,
+            "ed": self.end.day,
+        }
 
 
 class Date(object):
