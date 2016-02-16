@@ -135,18 +135,6 @@ class Company(Base):
         else:
             raise ValueError("%s is not allowed for scale." % scale)
 
-    def range(self, start, end=None):
-        if end is None:
-            end = datetime.date.today()
-        q = session.query(DayInfo).filter_by(company_id=self.id)
-        q = q.order_by("-date")
-
-        q = q.filter(
-            start <= DayInfo.date,
-            DayInfo.date <= end
-        )
-        return q
-
     def fix_data_frame(self):
         data_records = []
         for day_info in self.day_info_list:
