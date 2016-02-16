@@ -1,5 +1,6 @@
-
 import datetime
+
+import sqlalchemy as sql
 
 from pystock import models
 from pystock import util
@@ -13,12 +14,14 @@ class Query(object):
         return models.Session()
 
     @classmethod
-    def query(cls):
-        return cls.session().query(cls.model)
+    def query(cls, session=None):
+        if session is None:
+            session = cls.session()
+        return session.query(cls.model)
 
     @classmethod
-    def one(cls, id):
-        return cls.query().filter_by(id=id).one()
+    def one(cls, id, session=None):
+        return cls.query(session).filter_by(id=id).one()
 
 
 class DayInfo(Query):
@@ -30,6 +33,25 @@ class DayInfo(Query):
         q = q.filter(util.DateRange(start, end).query(cls.model.date))
         q = q.order_by("date")
         return q
+
+    @classmethod
+    def set(cls, company_id, start=None, end=None, each=False):
+        from pystock.scrape import YahooJapan
+        session = cls.session()
+        scraper = YahooJapan()
+        c = Company.one(company_id, session)
+        history = scraper.history(c.code, start, end)
+        for d in history:
+            d["company_id"] = company_id
+            session.add(models.DayInfo(**d))
+            if not each:
+                continue
+            try:
+                session.commit()
+            except sql.exc.IntegrityError:
+                session.rollback()
+        if not each:
+            session.commit()
 
 
 class Company(Query):

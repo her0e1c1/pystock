@@ -49,6 +49,13 @@ def mkdate(ctx, param, datestr):
     if datestr:
         return util.str2date(datestr)
 
+@click.option("--start", callback=mkdate)
+@click.option("--end", callback=mkdate)
+@click.option("--code")
+@store.command()
+def history(code, start, end):
+    query.DayInfo.set(code, start, end, each=True)
+
 
 @click.option("--start", callback=mkdate)
 @click.option("--end", callback=mkdate)
