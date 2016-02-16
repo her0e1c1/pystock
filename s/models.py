@@ -50,15 +50,6 @@ class DayInfo(Base):
     def __str__(self):
         return "{company_id}: {date} {closing}".format(**self.__dict__)
 
-    @classmethod
-    def range(cls, start=None, end=None):
-        if start is None:
-            return cls.date <= end
-        elif end is None:
-            return start <= cls.date
-        else:
-            return start <= cls.date <= end
-
     @property
     def js_datetime(self):
         japan = self.date + datetime.timedelta(hours=9)
