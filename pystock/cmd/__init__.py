@@ -101,7 +101,7 @@ def show(code):
 
 @cli.command(help="Start server")
 def serve():
-    from s.main import main
+    from pystock.server.main import main
     main()
 
 
