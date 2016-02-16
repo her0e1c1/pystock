@@ -1,1 +1,1 @@
-web: gunicorn s.main:app --log-file -
+web: gunicorn pystock.server.main:app --log-file -
