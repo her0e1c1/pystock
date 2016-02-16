@@ -11,6 +11,6 @@ setup(
     ],
     entry_points='''
         [console_scripts]
-        pystock=pystock.lib:cli
+        pystock=pystock.cmd:cli
     ''',
     )

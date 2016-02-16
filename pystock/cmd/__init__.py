@@ -7,9 +7,10 @@ import requests
 
 from .import_company import Reader
 from .store import set_info, set_infos
-from s import models
-from s import query
-import s.config as C
+
+from pystock import models
+from pystock import query
+from pystock import config as C
 
 
 class AliasedGroup(click.Group):

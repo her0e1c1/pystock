@@ -1,9 +1,9 @@
 import datetime
 import sqlalchemy as sql
 
-from s.lib import scrape_stocks
-from s import models
-from s import config as C
+from . import scrape_stocks
+from pystock import models
+from pystock import config as C
 
 session = models.Session()
 
