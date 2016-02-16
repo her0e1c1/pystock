@@ -11,8 +11,7 @@ app = Flask(__name__)
 
 @app.route("/", methods=["GET"])
 def index():
-    company_list = []
-    return render_template('index.html', **{"company_list": company_list})
+    return render_template('index.html', **{"company_list": query.Company.query()})
 
 
 @app.route("/company/", methods=["GET"])
