@@ -12,7 +12,7 @@ A commad line tool for stock
 
 setup heroku
 
-    heroku run --app APP_NAME python -m pystock.cmd setup
+    heroku run --app APP_NAME python -m pystock setup
 
 serve
 
