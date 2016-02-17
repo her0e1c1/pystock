@@ -3,7 +3,8 @@ import datetime
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 
-from pystock import config as C
+from . import config as C
+from . import wrapper
 
 
 engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
@@ -46,32 +47,9 @@ class DayInfo(Base):
         backref='day_info_list'
     )
 
-    def __str__(self):
-        return "{company_id}: {date} {closing}".format(**self.__dict__)
-
     @property
-    def js_datetime(self):
-        japan = self.date + datetime.timedelta(hours=9)
-        return int(japan.strftime("%s")) * 1000
-
-    def _fix_value(self, value):
-        dates = self.company.split_stock_dates
-        for date in dates:
-            if self.date < date.date:
-                value *= date.from_number / float(date.to_number)
-        return value
-
-    def fix_high(self):
-        return self._fix_value(self.high)
-
-    def fix_low(self):
-        return self._fix_value(self.low)
-
-    def fix_opening(self):
-        return self._fix_value(self.opening)
-
-    def fix_closing(self):
-        return self._fix_value(self.closing)
+    def w(self):
+        return wrapper.DayInfo(self)
 
 
 class SplitStockDate(Base):
@@ -115,6 +93,10 @@ class Company(Base):
         sql.ForeignKey('stock_exchange.id', onupdate="CASCADE", ondelete="CASCADE"),
         nullable=True,
     )
+
+    @property
+    def w(self):
+        return wrapper.Company(self)
 
     @sql.orm.validates('scale')
     def validate_scale(self, key, scale):

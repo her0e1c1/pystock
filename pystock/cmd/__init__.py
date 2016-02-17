@@ -108,7 +108,7 @@ def setup():
 @click.argument('code', type=int)
 def show(code):
     for info in query.DayInfo.get(code):
-        print(info)
+        print(info.w)
 
 
 @click.option("--port", default=C.PORT, type=int)
