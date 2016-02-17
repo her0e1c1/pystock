@@ -160,4 +160,4 @@ def update(min_id, max_id, each, last_date):
     if max_id is None:
         max_id = query.Company.max_id()
     for id in range(min_id, max_id + 1):
-        query.DayInfo.set(id, each=each, ignore=True)
+        query.DayInfo.set(id, each=each, ignore=True, last_date=last_date)

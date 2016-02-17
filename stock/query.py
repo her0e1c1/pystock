@@ -1,10 +1,12 @@
-import datetime
+from logging import getLogger
 
 import sqlalchemy as sql
 
 from . import models
 from . import util
 from . import wrapper
+
+logger = getLogger(__name__)
 
 
 class Query(object):
@@ -42,11 +44,12 @@ class DayInfo(Query):
 
     @classmethod
     def set(cls, company_id, start=None, end=None, each=False, ignore=False, last_date=None):
-        from pystock.scrape import YahooJapan
+        from stock.scrape import YahooJapan
         session = cls.session()
         scraper = YahooJapan()
-        c = Company.first(company_id, last_date=last_date, session=session)
+        c = Company.first(id=company_id, last_date=last_date, session=session)
         if not c:
+            logger.info("SKIP: company(id=%s)" % company_id)
             return  # skip
         history = scraper.history(c.code, start, end)
         for d in history:
@@ -72,6 +75,8 @@ class Company(Query):
     @classmethod
     def first(cls, session=None, last_date=None, **kw):
         q = cls.query(session).filter_by(**kw)
+        if last_date:
+            q = q.filter(sql.not_(models.Company.day_info_list.any(date=last_date)))
         return q.first()
 
     @classmethod
