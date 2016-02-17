@@ -23,28 +23,6 @@ def company(id):
     return render_template('company.html', **{"company": company})
 
 
-@app.route("/company/<int:id>/graph", methods=["GET"])
-def graph(id):
-    company = session.query(models.Company).filter_by(id=id).first()
-    if not company:
-        abort(404)
-
-    today = datetime.date.today()
-    G.Graph.month(company, today.year, today.month)
-
-    image_dir = C.FORMAT["image_dir"].format(code=company.code)
-    image_paths = []
-    for f in os.listdir(image_dir):
-        p = os.path.join(image_dir, f)
-        p = p[p.find("/static/"):]
-        image_paths.append(p)
-
-    return render_template('graph.html', **{
-        "company": company,
-        "image_paths": image_paths,
-    })
-
-
 if __name__ == "__main__":
     from pystock import config as C
     app.run(port=C.PORT, debug=C.DEBUG)
