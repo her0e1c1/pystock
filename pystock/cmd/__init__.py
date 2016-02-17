@@ -4,14 +4,14 @@ import logging
 import click
 import requests
 
-from .import_company import Reader
-from .store import set_info, set_infos
-
 from pystock import models
 from pystock import query
 from pystock import scrape
 from pystock import util
 from pystock import config as C
+
+from .import_company import Reader
+
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
