@@ -32,6 +32,7 @@ class Scraper(object):
             values = self.parse(soup)
         except ParseError as e:
             logger.warning("CAN NOT PARSE: %s" % e)
+            return None
         return self.clean(values)
 
     def get_url(self, **kw):
@@ -77,8 +78,8 @@ class Interface(object, metaclass=Meta):
     def _each_page(self, code, start, end, page, scraper):
         each = []
         for p in range(1, page + 1):
-            r = list(scraper.request(
-                code=code, p=p, **DateRange(start, end).to_short_dict()))
+            r = scraper.request(
+                code=code, p=p, **DateRange(start, end).to_short_dict())
             if r:
                 each += r
             else:
