@@ -1,5 +1,5 @@
-from pystock.server import app
-from pystock import query
+from stock.server import app
+from stock import query
 
 
 def test_index():

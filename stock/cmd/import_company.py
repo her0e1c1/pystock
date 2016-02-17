@@ -3,9 +3,9 @@ from logging import getLogger
 import sqlalchemy as sql
 import pandas as pd
 
-from pystock import models
-from pystock import util
-from pystock import config as C
+from stock import models
+from stock import util
+from stock import config as C
 
 logger = getLogger(__name__)
 

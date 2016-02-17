@@ -3,7 +3,7 @@ from logging import getLogger
 import requests
 import bs4
 
-from pystock.util import DateRange
+from stock.util import DateRange
 
 logger = getLogger(__name__)
 

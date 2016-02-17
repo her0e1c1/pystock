@@ -6,7 +6,7 @@ import datetime
 from dateutil.relativedelta import relativedelta
 import sqlalchemy as sql
 
-from pystock import config as C
+from . import config as C
 
 
 class DateRange(object):

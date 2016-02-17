@@ -4,11 +4,11 @@ import logging
 import click
 import requests
 
-from pystock import models
-from pystock import query
-from pystock import scrape
-from pystock import util
-from pystock import config as C
+from stock import models
+from stock import query
+from stock import scrape
+from stock import util
+from stock import config as C
 
 from .import_company import Reader
 
@@ -103,7 +103,7 @@ def show(code):
 @click.option("--debug", default=C.DEBUG, is_flag=True)
 @cli.command(help="Start server")
 def serve(port, debug):
-    from pystock.server import app
+    from stock.server import app
     app.run(port=port, debug=debug)
 
 

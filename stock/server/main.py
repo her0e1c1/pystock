@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify, abort
 
-from pystock import query
+from stock import query
 
 
 app = Flask(__name__)
