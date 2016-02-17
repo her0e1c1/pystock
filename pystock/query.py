@@ -2,8 +2,9 @@ import datetime
 
 import sqlalchemy as sql
 
-from pystock import models
-from pystock import util
+from . import models
+from . import util
+from . import wrapper
 
 
 class Query(object):
@@ -34,6 +35,7 @@ class DayInfo(Query):
     @classmethod
     def get(cls, company_id, start=None, end=None):
         q = cls.query().filter_by(company_id=company_id)
+        q = wrapper.DayInfoQuery(q)
         q = q.filter(util.DateRange(start, end).query(cls.model.date))
         q = q.order_by("date")
         return q

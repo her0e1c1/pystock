@@ -1,5 +1,38 @@
 import datetime
 
+import sqlalchemy as sql
+import pandas as pd
+
+
+class Query(object):
+
+    def __init__(self, q):
+        self.q = q
+
+    def __iter__(self):
+        return iter(self.q)
+
+    def __getattr__(self, name):
+        attr = getattr(self.q, name)
+        if callable(attr):
+            def f(*args, **kw):
+                r = attr(*args, **kw)
+                if isinstance(r, sql.orm.query.Query):
+                    return self.__class__(r)
+                else:
+                    return r
+            return f
+        else:
+            return attr
+
+
+class DayInfoQuery(Query):
+
+    def to_series(self, type="closing"):
+        return [(info.w.js_datetime, info.w.closing) for info in self]
+        # df = pd.DataFrame([(info.w.js_datetime, info.w.closing) for info in self.q])
+        # return pd.DataFrame([{"date": di.date, "closing": di.closing} for di in day_info_list])
+
 
 class Wrapper(object):
 
@@ -35,7 +68,7 @@ class Company(Wrapper):
 
 class DayInfo(Wrapper):
 
-    dict_keys = ["high", "low", "opening", "closing", "company_id"]
+    dict_keys = ["high", "low", "opening", "closing", "company_id", "js_datetime"]
 
     def __str__(self):
         return """\
@@ -70,5 +103,5 @@ close: {closing}
 
     @property
     def js_datetime(self):
-        japan = self.date + datetime.timedelta(hours=9)
+        japan = self.ins.date + datetime.timedelta(hours=9)
         return int(japan.strftime("%s")) * 1000
