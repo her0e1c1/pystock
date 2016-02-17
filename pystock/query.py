@@ -23,6 +23,10 @@ class Query(object):
     def one(cls, id, session=None):
         return cls.query(session).filter_by(id=id).one()
 
+    @classmethod
+    def first(cls, session=None, **kw):
+        return cls.query(session).filter_by(**kw).first()
+
 
 class DayInfo(Query):
     model = models.DayInfo

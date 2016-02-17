@@ -5,7 +5,7 @@
   <h2>企業一覧</h2>
   <ul>
     {% for c in company_list %}
-     <li><a href="company/{{ c.id }}">{{ c.name }}</a></li>
+     <li><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}</a></li>
    {% endfor %}
   </ul>
 {% endblock %}

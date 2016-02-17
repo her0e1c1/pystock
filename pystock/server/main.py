@@ -10,19 +10,14 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
+@app.route("/company/", methods=["GET"])
 def index():
     return render_template('index.html', **{"company_list": query.Company.query()})
 
 
-@app.route("/company/", methods=["GET"])
-def show_company():
-    company_list = session.query(models.Company).all()
-    return render_template('index.html', **{"company_list": company_list})
-
-
 @app.route("/company/<int:id>", methods=["GET"])
 def company(id):
-    company = session.query(models.Company).filter_by(id=id).first()
+    company = query.Company.first(id=id)
     if not company:
         abort(404)
     return render_template('company.html', **{"company": company})
