@@ -63,8 +63,8 @@ class History(Scraper):
         span = soup.find(True, {"class": "stocksHistoryPageing"})
         if span is None:
             raise ParseError("Can't find css class stocksHistoryPageing")
-        for tr in span.next_sibling.findAll("tr")[1:]:  # skip header
-            yield self._parse(tr)
+        return [self._parse(tr) for tr
+                in span.next_sibling.findAll("tr")[1:]]  # skip header
 
 
 class SplitStockDate(History):
