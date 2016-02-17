@@ -1,7 +1,7 @@
 __pycache__/
 .cache/
 *.pyc
-pystock.egg-info/
+stock.egg-info/
 dist/
 build/
 venv27
