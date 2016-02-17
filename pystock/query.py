@@ -41,11 +41,13 @@ class DayInfo(Query):
         return q
 
     @classmethod
-    def set(cls, company_id, start=None, end=None, each=False, ignore=False):
+    def set(cls, company_id, start=None, end=None, each=False, ignore=False, last_date=None):
         from pystock.scrape import YahooJapan
         session = cls.session()
         scraper = YahooJapan()
-        c = Company.one(company_id, session)
+        c = Company.first(company_id, last_date=last_date, session=session)
+        if not c:
+            return  # skip
         history = scraper.history(c.code, start, end)
         for d in history:
             d["company_id"] = company_id
@@ -66,6 +68,11 @@ class DayInfo(Query):
 
 class Company(Query):
     model = models.Company
+
+    @classmethod
+    def first(cls, session=None, last_date=None, **kw):
+        q = cls.query(session).filter_by(**kw)
+        return q.first()
 
     @classmethod
     def max_id(cls):

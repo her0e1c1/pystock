@@ -59,19 +59,6 @@ def history(code, start, end, each):
     query.DayInfo.set(code, start, end, each=each)
 
 
-@click.option("--start", callback=mkdate)
-@click.option("--end", callback=mkdate)
-@click.option("--code")
-@click.option("--max", type=int)
-@click.option("--min", type=int)
-@store.command()
-def stock(code, start, end, max, min):
-    if code:
-        set_info(code, start, end)
-    elif start and end:
-        set_infos(start, end)
-
-
 @store.command(help="""\
 You can download the xls at \
 http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
@@ -96,8 +83,9 @@ def create():
     models.Base.metadata.create_all()
 
 
-@cli.command(help="Setup all")
-def setup():
+@cli.command(help="Setup")
+@click.option("--all", is_flag=True, default=False)
+def setup(all):
     click.echo("Start setup ...")
     ctx = click.get_current_context()
     for cmd in [create, company]:
@@ -166,8 +154,9 @@ def current_value(code, scraper):
 @click.option("--max-id", type=int)
 @click.option("--min-id", type=int, default=1)
 @click.option("--each", is_flag=True, default=False)
+@click.option("--last-date", callback=mkdate)
 @cli.command(help="update day info")
-def update(min_id, max_id, each):
+def update(min_id, max_id, each, last_date):
     if max_id is None:
         max_id = query.Company.max_id()
     for id in range(min_id, max_id + 1):
