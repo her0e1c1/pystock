@@ -5,14 +5,32 @@
   <h2>{{ company.name }}</h2>
   <table>
     <tr>
-      <th>Date</th>
-      <th>Closing</th>
+      <th>Code</th>
     </tr>
-    {% for info in company.day_info_list %}
     <tr>
-      <td>{{ info.date }}</td>
-      <td>{{ info.closing }}</td>
+      <td>{{ company.code }}</td>
     </tr>
-    {% endfor %}
   </table>
+  <div id="container"></div>
+  <script type="text/javascript">
+    $(function(){
+        $.getJSON('/api/{{ company.id }}', function (data) {
+        $('#container').highcharts('StockChart', {
+            rangeSelector : {
+            selected : 1
+        },
+            title : {
+            text : 'TITLE TEXT'
+        },
+            series : [{
+                name : 'NAME',
+                data : data.day_info_list,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            }]
+        });
+    });
+    });
+  </script>
 {% endblock %}
