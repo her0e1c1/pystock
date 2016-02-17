@@ -1,5 +1,3 @@
-import datetime
-
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 
@@ -53,9 +51,6 @@ class DayInfo(Base):
 
 
 class SplitStockDate(Base):
-    """
-    株分割した日
-    """
 
     __tablename__ = "split_stock_date"
     __table_args__ = (sql.UniqueConstraint("date", "company_id"), )
@@ -108,20 +103,6 @@ class Company(Base):
             raise ValueError("%s is not allowed for scale." % scale)
 
 
-    def fix_data_frame(self):
-        data_records = []
-        for day_info in self.day_info_list:
-            data = {
-                "high": day_info.fix_high(),
-                "low": day_info.fix_low(),
-                "opening": day_info.fix_opening(),
-                "closing": day_info.fix_closing(),
-                "date":day_info.js_datetime}
-            data_records.append(data)
-        return pd.DataFrame.from_records(data_records)
-
-
-# TODO: rename current price
 class CurrentValue(Base):
     __tablename__ = "current_value"
 

@@ -20,6 +20,18 @@ class Wrapper(object):
 class Company(Wrapper):
     dict_keys = ["id", "name", "code"]
 
+    def fix_data_frame(self):
+        data_records = []
+        for day_info in self.day_info_list:
+            data = {
+                "high": day_info.fix_high(),
+                "low": day_info.fix_low(),
+                "opening": day_info.fix_opening(),
+                "closing": day_info.fix_closing(),
+                "date":day_info.js_datetime}
+            data_records.append(data)
+        return pd.DataFrame.from_records(data_records)
+
 
 class DayInfo(Wrapper):
 
