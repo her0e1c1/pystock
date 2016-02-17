@@ -1,23 +1,17 @@
-# Maybe install pip manually
 numpy
-xlrd
 flask
 sqlalchemy
 jinja2
 requests
 ipython
-ipdb
-pytest
-# pytest-ipdb
 python-dateutil
 PyMySQL
 beautifulsoup4
 pandas
 matplotlib
-click
+Click
 gunicorn
 psycopg2
-# scrapy
 
 # ipython notebook
 # also need sqlite3
