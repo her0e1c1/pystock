@@ -81,12 +81,6 @@ class Company(Query):
         return q.count() > 0
 
 
-# TODO: 指定した日付の価格を取得
-def update_per_day(date=None):
-    if date is None:
-        date = datetime.date.today()
-
-
 def go_down_rolling_mean():
     """長期移動平均線を下回っている株を表示する
     """
