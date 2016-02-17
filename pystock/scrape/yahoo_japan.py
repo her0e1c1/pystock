@@ -1,38 +1,48 @@
 import re
 
-from .interface import Scraper, Interface
+from .interface import Scraper, Interface, ParseError
 
 REG_SPLIT_STOCK_DATE = re.compile(r"分割\W+(?P<from_number>\d+)株.*?(?P<to_number>\d+)株")
 REG_DATE = re.compile(r"(?P<year>\d{4})年(?P<month>\d{1,2})月(?P<day>\d{1,2})日")
 
 
-def parse_day_info(tr, only_date=False):
-    td = [t.text for t in tr.findAll("td")]
-    match = REG_DATE.match(td[0])
-    if match:
-        d = {"date": "{year}-{month}-{day}".format(**match.groupdict())}
-        if only_date:
-            return d
-        d.update({
-            "opening": td[1],
-            "high": td[2],
-            "low": td[3],
-            "closing": td[4],
-            "volume": td[5],
-        })
-        return d
+def _match_date(td):
+    match = REG_DATE.match(td)
+    if not match:
+        raise ParseError("Not match date. %s" % td)
+    return "{year}-{month}-{day}".format(**match.groupdict())
+
+
+def parse_day_info(tr):
+    tds = [t.text for t in tr.findAll("td")]
+    if len(tds) == 2:
+        return  # skip split stock date
+    elif len(tds) != 7:
+        raise ParseError("Can't parse day info. Need 7 columns. %s" % tr)
+    return {
+        "date": _match_date(tds[0]),
+        "opening": tds[1],
+        "high": tds[2],
+        "low": tds[3],
+        "closing": tds[4],
+        "volume": tds[5],
+    }
 
 
 def parse_split_stock_date(tr):
-    td = [t.text for t in tr.findAll("td")]
-    match = REG_SPLIT_STOCK_DATE.match(td[1])
-    day_info = parse_day_info(tr, only_date=True)
-    if match and day_info:
-        return {
-            "from_number": match.group("from_number"),
-            "to_number": match.group("to_number"),
-            "date": day_info["date"]
-        }
+    tds = [t.text for t in tr.findAll("td")]
+    if len(tds) == 7:
+        return  # skip day info
+    elif len(tds) != 2:
+        raise ParseError("Can't parse day info. Need 2 columns. %s" % tr)
+    match = REG_SPLIT_STOCK_DATE.match(tds[1])
+    if not match:
+        raise ParseError("Not match split stock date. %s" % tds[1])
+    return {
+        "date": _match_date(tds[0]),
+        "from_number": match.group("from_number"),
+        "to_number": match.group("to_number"),
+    }
 
 
 class CurrentValue(Scraper):

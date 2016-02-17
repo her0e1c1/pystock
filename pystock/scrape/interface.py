@@ -8,6 +8,10 @@ from pystock.util import DateRange
 logger = getLogger(__name__)
 
 
+class ParseError(Exception):
+    pass
+
+
 def clean_value(value):
     """文字列の数字を整数に変換する"""
     value = value.replace(",", "")
@@ -21,11 +25,14 @@ class Scraper(object):
         logger.info("GET: %s" % url)
         try:
             res = requests.get(url)
-            soup = self._get_soup(res)
-            values = self.parse(soup)
-            return self.clean(values)
         except OSError:
             return None
+        soup = self._get_soup(res)
+        try:
+            values = self.parse(soup)
+        except ParseError as e:
+            logger.warning("CAN NOT PARSE: %s" % e)
+        return self.clean(values)
 
     def get_url(self, **kw):
         return self.url.format(**kw)
