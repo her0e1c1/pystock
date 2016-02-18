@@ -30,6 +30,7 @@ def api(company_id):
         "company": company.w.to_dict(),
         "series": [
             {"name": "closing", "data": q.closing()},
-            {"name": "rolling_mean", "data": q.rolling_mean()},
+            {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
+            {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
         ]
     })
