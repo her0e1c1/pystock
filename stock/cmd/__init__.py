@@ -17,6 +17,10 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def mkdate(ctx, param, datestr):
+    return util.str2date(datestr)
+
+
 class AliasedGroup(click.Group):
 
     def get_command(self, ctx, cmd_name):
@@ -43,11 +47,6 @@ def cli():
 @cli.group()
 def store():
     pass
-
-
-def mkdate(ctx, param, datestr):
-    if datestr:
-        return util.str2date(datestr)
 
 
 @click.option("--start", callback=mkdate)

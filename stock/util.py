@@ -118,6 +118,8 @@ def multiple_decorator(funcs):
             g = f(g)
     return wrap
 
+
 def str2date(datestr):
-    t = time.strptime(datestr, "%Y-%m-%d")
-    return datetime.date.fromtimestamp(time.mktime(t))
+    if datestr:
+        t = time.strptime(datestr, "%Y-%m-%d")
+        return datetime.date.fromtimestamp(time.mktime(t))
