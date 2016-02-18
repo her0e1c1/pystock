@@ -1,15 +1,21 @@
 from flask import Flask, render_template, request, jsonify, abort
 
 from stock import query
+from stock import service
 
 
 app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
-@app.route("/company/", methods=["GET"])
+# @app.route("/company/", methods=["GET"])
 def index():
-    return render_template('index.html', **{"company_list": query.Company.query()})
+    try:
+        v = int(request.args.get("closing_minus_rolling_mean_25"))
+    except:
+        v = None
+    company_list = service.get_companies(closing_minus_rolling_mean_25=v)
+    return render_template('index.html', **{"company_list": company_list})
 
 
 @app.route("/company/<int:id>", methods=["GET"])

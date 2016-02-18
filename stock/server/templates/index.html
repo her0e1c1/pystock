@@ -3,6 +3,13 @@
 
 {% block content %}
   <h2>企業一覧</h2>
+  <form action="{{ url_for('index') }}" method="get">
+    25日移動平均線 100以上<input type="radio" name="closing_minus_rolling_mean_25" value="100">
+    25日移動平均線 1以上  <input type="radio" name="closing_minus_rolling_mean_25" value="1">
+    25日移動平均線 -1以下 <input type="radio" name="closing_minus_rolling_mean_25" value="-1">
+    25日移動平均線 100以下<input type="radio" name="closing_minus_rolling_mean_25" value="-100">
+    <input type="submit" value="更新">
+  </form>
   <ul>
     {% for c in company_list %}
      <li><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}</a></li>
