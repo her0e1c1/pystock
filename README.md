@@ -12,11 +12,11 @@ A commad line tool for stock
 
 setup heroku
 
-    heroku run --app APP_NAME python -m pystock setup
+    heroku run --app APP_NAME python -m stock setup
 
 serve
 
-    gunicorn pystock.server.main:app
+    gunicorn stock.server.main:app
 
 ## ipython note book
 
