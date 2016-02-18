@@ -37,7 +37,7 @@ def closing_minus_rolling_mean_25(period=25):
     for company in query.Company.query(session):
         df = make_data_frame(query.DayInfo.get(company_id=company.id, session=session))
         mean = pd.rolling_mean(df.closing, period)
-        diff = mean.tail(1) - df.closing.tail(1)
+        diff = df.closing.tail(1) - mean.tail(1)
         if not diff.empty and int(diff):
             if company.search_field is None:
                 sf = query.models.CompanySearchField()
