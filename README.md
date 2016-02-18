@@ -43,7 +43,6 @@ if your os is freebsd, then do this ::
      cd /usr/local/include
      sudo ln -s freetype2/ft2build.h .
 
-
 ## how to set japanese companies data
 1. access http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
 2. 市場第一部 （内国株） 's excel
