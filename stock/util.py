@@ -77,15 +77,15 @@ def graph_month_dir(code, year, month, ext=".png"):
     return filepath
 
 
-def last_day():
+def last_date():
     """株の最後の日を返す"""
     today = datetime.date.today()
     weekday = today.weekday()
     if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
-        day = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
+        date = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
     else:
-        day = today - relativedelta(days=1)
-    return day
+        date = today - relativedelta(days=1)
+    return date
 
 
 def dict_inverse(dct):
