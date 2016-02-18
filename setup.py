@@ -7,7 +7,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='stock',
-    version='0.2',
+    version='0.3',
     author='Hiroyuki Ishii',
     py_modules=['stock'],
     packages=find_packages(),
