@@ -28,10 +28,25 @@ class Query(object):
 
 class DayInfoQuery(Query):
 
+    def df(self):
+        return pd.DataFrame(
+            [(info.w.js_datetime, info.w.closing) for info in self],
+            columns=["date", "closing"]
+        )
+
+    def rolling_mean(self, period=30):
+        df = self.df()
+        mean = pd.rolling_mean(df.closing, period)
+        return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
+                    if not pd.isnull(b))
+
+    def closing(self):
+        df = self.df()
+        return list(zip(df.date.values.tolist(),
+                        df.closing.values.tolist()))
+
     def to_series(self, type="closing"):
         return [(info.w.js_datetime, info.w.closing) for info in self]
-        # df = pd.DataFrame([(info.w.js_datetime, info.w.closing) for info in self.q])
-        # return pd.DataFrame([{"date": di.date, "closing": di.closing} for di in day_info_list])
 
 
 class Wrapper(object):

@@ -22,13 +22,22 @@
             title : {
             text : 'TITLE TEXT'
         },
-            series : [{
-                name : 'NAME',
-                data : data.day_info_list,
+            series : [
+            {
+                name : 'closing',
+                data : data.closing,
                 tooltip: {
                     valueDecimals: 2
                 }
-            }]
+            },
+            {
+                name : 'rolling_mean',
+                data : data.rolling_mean,
+                tooltip: {
+                    valueDecimals: 2
+                }
+            },
+        ]
         });
     });
     });

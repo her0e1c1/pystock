@@ -68,26 +68,6 @@ class Date(object):
         return "from {first} to {last}".format(**self)
 
 
-class DayInfoManager(object):
-
-    def __init__(self, dayinfo_list):
-        self.dayinfo_list = dayinfo_list
-
-    def _sequence(self, key):
-        for d in self.dayinfo_list:
-            x = d.date
-            y = getattr(d, key)
-            yield (x, y)
-
-    @property
-    def sequence_high(self):
-        return self._sequence("high")
-
-    @property
-    def sequence_low(self):
-        return self._sequence("low")
-
-
 def graph_month_dir(code, year, month, ext=".png"):
     name = C.FORMAT["month"].format(**locals())
     dir_ = C.FORMAT["image_dir"].format(code=code)

@@ -1,6 +1,7 @@
 from logging import getLogger
 
 import sqlalchemy as sql
+import pandas as pd
 
 from . import models
 from . import util
@@ -100,15 +101,12 @@ class Company(Query):
 
 
 def go_down_rolling_mean():
-    """長期移動平均線を下回っている株を表示する
-    """
+    """長期移動平均線を下回っている株を表示"""
     low_cost_company_list = []
-    for c in session.query(models.Company).all():
+    for c in Company.query():
         df = c.fix_data_frame()
         mean = pd.rolling_mean(df.closing, 90)
-
         cmp = mean.tail(1) > df.closing.tail(1)
-        if cmp.bool():
+        if bool(cmp):
             low_cost_company_list.append(c)
     return low_cost_company_list
-

@@ -22,11 +22,12 @@ def company(id):
 
 @app.route("/api/<int:company_id>", methods=["GET"])
 def api(company_id):
-    print(request)
     company = query.Company.first(id=company_id)
     if not company:
         abort(404)
+    q = query.DayInfo.get(company_id)
     return jsonify({
         "company": company.w.to_dict(),
-        "day_info_list": query.DayInfo.get(company_id).to_series()
+        "closing": q.to_series(),
+        "rolling_mean": q.rolling_mean(),
     })
