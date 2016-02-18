@@ -21,6 +21,8 @@ serve
 ## ipython note book
 
    ipython notebook --ip=0.0.0.0 --no-browser
+   # or
+   jupyter-notebook --ip=0.0.0.0 --no-browser
 
 To launch the repl
     `Files -> New -> Python2`
