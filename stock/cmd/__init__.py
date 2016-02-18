@@ -156,7 +156,5 @@ def current_value(code, scraper):
 @click.option("--last-date", callback=mkdate)
 @cli.command(help="update day info")
 def update(min_id, max_id, each, last_date):
-    if max_id is None:
-        max_id = query.Company.max_id()
-    for id in range(min_id, max_id + 1):
-        query.DayInfo.set(id, each=each, ignore=True, last_date=last_date)
+    query.DayInfo.sets(min_id=min_id, max_id=max_id,
+                       each=each, ignore=True, last_date=last_date)

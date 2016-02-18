@@ -46,15 +46,15 @@ class DayInfo(Query):
     @classmethod
     def set(cls, company_id, start=None, end=None, each=False, ignore=False, last_date=None):
         # TODO: use with statement
-        from stock.scrape import YahooJapan
         session = cls.session()
-        scraper = YahooJapan()
         c = Company.first(id=company_id, last_date=last_date, session=session)
         if not c:
             logger.info("SKIP: company(id=%s)" % company_id)
             session.close()
             return
 
+        from stock.scrape import YahooJapan
+        scraper = YahooJapan()
         history = scraper.history(c.code, start, end)
         for d in history:
             d["company_id"] = company_id
@@ -72,6 +72,14 @@ class DayInfo(Query):
                 if not ignore:
                     raise e
         session.close()
+
+    @classmethod
+    def sets(cls, min_id=1, max_id=None, start=None, end=None,
+             each=False, ignore=False, last_date=None):
+        if max_id is None:
+            max_id = Company.max_id()
+        for id in range(min_id, max_id + 1):
+            cls.set(id, each=each, ignore=True, last_date=last_date)
 
 
 class Company(Query):
