@@ -67,6 +67,7 @@ class DayInfo(Query):
             except sql.exc.IntegrityError as e:
                 if not ignore:
                     raise e
+        session.close()
 
 
 class Company(Query):
