@@ -1,4 +1,3 @@
-import os
 import time
 import calendar
 import datetime
@@ -66,15 +65,6 @@ class Date(object):
 
     def __str__(self):
         return "from {first} to {last}".format(**self)
-
-
-def graph_month_dir(code, year, month, ext=".png"):
-    name = C.FORMAT["month"].format(**locals())
-    dir_ = C.FORMAT["image_dir"].format(code=code)
-    if not os.path.isdir(dir_):
-        os.makedirs(dir_)
-    filepath = os.path.join(C.GRAPH_DIR, name + ext)
-    return filepath
 
 
 def last_date():
