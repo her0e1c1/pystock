@@ -1,21 +1,17 @@
-apscheduler
-numpy
+# web
 flask
-sqlalchemy
+gunicorn
+apscheduler
 jinja2
+
+# util
+click
 requests
-ipython
 python-dateutil
-PyMySQL
 beautifulsoup4
 pandas
-matplotlib
-Click
-gunicorn
-psycopg2
 
-# ipython notebook
-# also need sqlite3
-pyzmq
-tornado
-jsonschema
+# sql
+sqlalchemy
+psycopg2
+PyMySQL
