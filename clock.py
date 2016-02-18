@@ -10,7 +10,7 @@ sched = BlockingScheduler()
 
 
 # @sched.scheduled_job('interval', minutes=1)
-@sched.scheduled_job('cron', day_of_week='mon-fri', hour=4, minute=40)
+@sched.scheduled_job('cron', day_of_week='mon-fri', hour=4, minute=50)
 def scheduled_scrape_japan():
     logger.info('CRON: Scrape and store stock')
     query.DayInfo.sets(each=True, ignore=True, last_date=util.last_date())
