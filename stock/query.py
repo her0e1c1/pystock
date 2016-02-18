@@ -44,13 +44,16 @@ class DayInfo(Query):
 
     @classmethod
     def set(cls, company_id, start=None, end=None, each=False, ignore=False, last_date=None):
+        # TODO: use with statement
         from stock.scrape import YahooJapan
         session = cls.session()
         scraper = YahooJapan()
         c = Company.first(id=company_id, last_date=last_date, session=session)
         if not c:
             logger.info("SKIP: company(id=%s)" % company_id)
-            return  # skip
+            session.close()
+            return
+
         history = scraper.history(c.code, start, end)
         for d in history:
             d["company_id"] = company_id
