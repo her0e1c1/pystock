@@ -88,6 +88,14 @@ class Company(Base):
         sql.ForeignKey('stock_exchange.id', onupdate="CASCADE", ondelete="CASCADE"),
         nullable=True,
     )
+    search_field = sql.orm.relation(
+        "CompanySearchField",
+        uselist=False,
+        back_populates="company"
+    )
+
+    def __str__(self):
+        return "({id}, {name}, {code})".format(**self.__dict__)
 
     @property
     def w(self):
@@ -109,3 +117,17 @@ class CurrentValue(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     value = sql.Column(sql.Integer)
     datetime = sql.Column(sql.DateTime, nullable=False)
+
+
+class CompanySearchField(Base):
+    __tablename__ = "company_search_field"
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    closing_minus_rolling_mean_25 = sql.Column(sql.Integer, nullable=True)
+    # ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Integer, nullable=True)
+    company_id = sql .Column(
+        sql.Integer,
+        sql.ForeignKey('company.id', onupdate="CASCADE", ondelete="CASCADE"),
+        nullable=True,
+    )
+    company = sql.orm.relation("Company", back_populates="search_field")

@@ -1,7 +1,6 @@
 from logging import getLogger
 
 import sqlalchemy as sql
-import pandas as pd
 
 from . import models
 from . import util
@@ -36,8 +35,8 @@ class DayInfo(Query):
     model = models.DayInfo
 
     @classmethod
-    def get(cls, company_id, start=None, end=None):
-        q = cls.query().filter_by(company_id=company_id)
+    def get(cls, company_id, start=None, end=None, session=None):
+        q = cls.query(session).filter_by(company_id=company_id)
         q = wrapper.DayInfoQuery(q)
         q = q.filter(util.DateRange(start, end).query(cls.model.date))
         q = q.order_by("date")
@@ -106,15 +105,3 @@ class Company(Query):
         q = cls.query()
         q = q.filter_by(id=id)
         return q.count() > 0
-
-
-def go_down_rolling_mean():
-    """長期移動平均線を下回っている株を表示"""
-    low_cost_company_list = []
-    for c in Company.query():
-        df = c.fix_data_frame()
-        mean = pd.rolling_mean(df.closing, 90)
-        cmp = mean.tail(1) > df.closing.tail(1)
-        if bool(cmp):
-            low_cost_company_list.append(c)
-    return low_cost_company_list

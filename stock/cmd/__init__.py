@@ -8,6 +8,7 @@ from stock import models
 from stock import query
 from stock import scrape
 from stock import util
+from stock import service
 from stock import config as C
 
 from .import_company import Reader
@@ -91,11 +92,14 @@ def setup(all):
         ctx.invoke(cmd)
 
 
-@cli.command(help="show info")
-@click.argument('code', type=int)
-def show(code):
-    for info in query.DayInfo.get(code):
-        print(info.w)
+@cli.command(help="show companies")
+@click.option("-c", "--closing-minus-rolling-mean-25", type=int)
+def show(closing_minus_rolling_mean_25):
+    iters = service.get_companies(closing_minus_rolling_mean_25=closing_minus_rolling_mean_25)
+    for company in iters:
+        click.echo(company)
+    click.echo("Summary")
+    click.echo("count: %s" % len(iters))
 
 
 @click.option("--port", default=C.PORT, type=int)
@@ -106,7 +110,7 @@ def serve(port, debug):
     app.run(port=port, debug=debug)
 
 
-@cli.group()
+@cli.group(name="scrape")
 def scrape_():
     pass
 
@@ -158,3 +162,8 @@ def current_value(code, scraper):
 def update(min_id, max_id, each, last_date):
     query.DayInfo.sets(min_id=min_id, max_id=max_id,
                        each=each, ignore=True, last_date=last_date)
+
+
+@cli.command(help="calculate everything", name="calc")
+def calculate():
+    service.closing_minus_rolling_mean_25()

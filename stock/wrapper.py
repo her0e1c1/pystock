@@ -76,7 +76,7 @@ class Company(Wrapper):
                 "low": day_info.fix_low(),
                 "opening": day_info.fix_opening(),
                 "closing": day_info.fix_closing(),
-                "date":day_info.js_datetime}
+                "date": day_info.js_datetime}
             data_records.append(data)
         return pd.DataFrame.from_records(data_records)
 
