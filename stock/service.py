@@ -18,16 +18,17 @@ def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
         set(id, each=each, ignore=True, last_date=last_date)
 
 
-def get_companies(closing_minus_rolling_mean_25=None):
+def get_companies(ratio_closing_minus_rolling_mean_25=None):
     session = query.models.Session()
     q = query.Company.query(session)
-    if closing_minus_rolling_mean_25 is not None:
+    if ratio_closing_minus_rolling_mean_25 is not None:
+        ratio = ratio_closing_minus_rolling_mean_25
         q = q.join(query.models.Company.search_field)
-        col = query.models.CompanySearchField.closing_minus_rolling_mean_25
-        if closing_minus_rolling_mean_25 >= 0:
-            q = q.filter(col >= closing_minus_rolling_mean_25)
+        col = query.models.CompanySearchField.ratio_closing_minus_rolling_mean_25
+        if ratio >= 0:
+            q = q.filter(col >= ratio)
         else:
-            q = q.filter(col < closing_minus_rolling_mean_25)
+            q = q.filter(col < ratio)
     return q.all()
 
 
@@ -36,15 +37,17 @@ def closing_minus_rolling_mean_25(period=25):
     session = query.models.Session()
     for company in query.Company.query(session):
         df = make_data_frame(query.DayInfo.get(company_id=company.id, session=session))
-        mean = pd.rolling_mean(df.closing, period)
-        diff = df.closing.tail(1) - mean.tail(1)
-        if not diff.empty and int(diff):
-            if company.search_field is None:
-                sf = query.models.CompanySearchField()
-            else:
-                sf = company.search_field
-            sf.closing_minus_rolling_mean_25 = int(diff)
-            company.search_field = sf
-            session.add(company)
+        closing = df.closing.tail(1)
+        mean = pd.rolling_mean(df.closing, period).tail(1)
+        if closing.empty or mean.empty:
+            continue
+        ratio = float((closing - mean) / closing) * 100
+        if company.search_field is None:
+            sf = query.models.CompanySearchField()
+        else:
+            sf = company.search_field
+        sf.ratio_closing_minus_rolling_mean_25 = ratio
+        company.search_field = sf
+        session.add(company)
     session.commit()
     session.close()

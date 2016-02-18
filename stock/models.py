@@ -123,8 +123,7 @@ class CompanySearchField(Base):
     __tablename__ = "company_search_field"
 
     id = sql.Column(sql.Integer, primary_key=True)
-    closing_minus_rolling_mean_25 = sql.Column(sql.Integer, nullable=True)
-    # ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Integer, nullable=True)
+    ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
     company_id = sql .Column(
         sql.Integer,
         sql.ForeignKey('company.id', onupdate="CASCADE", ondelete="CASCADE"),
