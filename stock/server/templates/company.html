@@ -15,29 +15,15 @@
   <script type="text/javascript">
     $(function(){
         $.getJSON('/api/{{ company.id }}', function (data) {
+        var series = data.series.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });
         $('#container').highcharts('StockChart', {
             rangeSelector : {
             selected : 1
         },
             title : {
-            text : 'TITLE TEXT'
+            text : 'STOCK'
         },
-            series : [
-            {
-                name : 'closing',
-                data : data.closing,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            },
-            {
-                name : 'rolling_mean',
-                data : data.rolling_mean,
-                tooltip: {
-                    valueDecimals: 2
-                }
-            },
-        ]
+            series : series
         });
     });
     });
