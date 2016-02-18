@@ -1,9 +1,14 @@
-<html>
+{% import 'common.html' as cm with context %}
+<!DOCTYPE html>
+<html lang="ja">
   <head>
+    <title>個人投資家向け株価予測</title>
+    <meta name="keywords" content="株,株価,予測,日本株,日本,個人投資家,個人,投資,機械学習,チャート,グラフ,python,stock"/>
+    <meta name="description" content="個人投資家向けに株価を予測します。"/>
     <script type="text/javascript" src="//code.jquery.com/jquery-2.2.0.min.js"></script>
     <script src="//code.highcharts.com/stock/highstock.js"></script>
     <script src="//code.highcharts.com/stock/modules/exporting.js"></script>
-
+    {{ cm.google_analytics() }}
     {% block head %}{% endblock %}
   </head>
   <body>
