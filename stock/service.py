@@ -41,6 +41,8 @@ def closing_minus_rolling_mean_25(period=25):
         if not diff.empty and int(diff):
             if company.search_field is None:
                 sf = query.models.CompanySearchField()
+            else:
+                sf = company.search_field
             sf.closing_minus_rolling_mean_25 = int(diff)
             company.search_field = sf
             session.add(company)
