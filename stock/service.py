@@ -1,6 +1,11 @@
 import pandas as pd
 
 from . import query
+from . import util
+
+
+def last_date():
+    return util.last_date()
 
 
 def make_data_frame(day_info_query):

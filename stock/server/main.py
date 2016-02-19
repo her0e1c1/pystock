@@ -15,7 +15,8 @@ def index():
     except:
         v = None
     company_list = service.get_companies(ratio_closing_minus_rolling_mean_25=v)
-    return render_template('index.html', **{"company_list": company_list})
+    return render_template('index.html', **{"company_list": company_list,
+                                            "last_date": service.last_date()})
 
 
 @app.route("/company/<int:id>", methods=["GET"])

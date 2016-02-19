@@ -8,6 +8,7 @@
     });
   </script>
   <h2>企業一覧</h2>
+  <h3>最終更新日 {{ last_date }}</h3>
   <form action="{{ url_for('index') }}" method="get">
     25日移動平均線 10%以上 <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="10">
     25日移動平均線 5%以上  <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="5">
