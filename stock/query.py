@@ -52,6 +52,7 @@ class DayInfo(Query):
             session.close()
             return
 
+        # 1日だけ更新する場合でも複数ページにアクセスしている(無駄)
         from stock.scrape import YahooJapan
         scraper = YahooJapan()
         history = scraper.history(c.code, start, end)

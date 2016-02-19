@@ -1,7 +1,7 @@
 import pandas as pd
 
-from . import query
-from . import util
+from stock import query
+from stock import util
 
 
 def last_date():
