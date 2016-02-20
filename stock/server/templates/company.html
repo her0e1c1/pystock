@@ -12,20 +12,24 @@
     </tr>
   </table>
   <div id="container"></div>
+  <div id="percentages"></div>
   <script type="text/javascript">
     $(function(){
         $.getJSON('/api/{{ company.id }}', function (data) {
-        var series = data.series.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });
-        $('#container').highcharts('StockChart', {
-            rangeSelector : {
-            selected : 1
-        },
-            title : {
-            text : 'STOCK'
-        },
-            series : series
+            var series = data.series.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });
+            $('#container').highcharts('StockChart', {
+                rangeSelector : {
+                selected : 1
+            },
+                title : {
+                text : 'STOCK'
+            },
+                series : series
+            });
+
+            var percentages = data.percentages.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });
+            $('#percentages').highcharts('StockChart', {series : percentages});
         });
-    });
     });
   </script>
 {% endblock %}

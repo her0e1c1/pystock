@@ -41,6 +41,12 @@ class DayInfoQuery(Query):
         return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
                     if not pd.isnull(b))
 
+    def RSI(self, period):
+        df = self.df()
+        rsi = RSI(df.closing, period)
+        return list([a, b] for a, b in zip(df.date.values.tolist(), rsi.values.tolist())
+                    if not pd.isnull(b))
+
     def closing(self):
         df = self.df()
         return list(zip(df.date.values.tolist(),
@@ -80,6 +86,19 @@ class Company(Wrapper):
                 "date": day_info.js_datetime}
             data_records.append(data)
         return pd.DataFrame.from_records(data_records)
+
+
+def RSI(prices, period=14):
+    # fill 0 at the first day
+    diff = (prices - prices.shift(1)).fillna(0)
+
+    def calc(p):
+        gain =  p[p > 0].sum() / period
+        loss = -p[p < 0].sum() / period
+        rs = gain / loss
+        return 100 - 100/(1+rs)
+
+    return pd.rolling_apply(diff, period, calc)
 
 
 class DayInfo(Wrapper):

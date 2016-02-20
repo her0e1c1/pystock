@@ -40,5 +40,8 @@ def api(company_id):
             {"name": "closing", "data": q.closing()},
             {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
             {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
-        ]
+        ],
+        "percentages": [
+            {"name": "RSI", "data": q.RSI(period=14)},
+        ],
     })
