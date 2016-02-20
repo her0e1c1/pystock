@@ -2,8 +2,8 @@ import time
 import calendar
 import datetime
 
-from dateutil.relativedelta import relativedelta
 import sqlalchemy as sql
+from dateutil import relativedelta
 
 from . import config as C
 
@@ -18,7 +18,7 @@ class DateRange(object):
         if end is None:
             end = datetime.date.today()
         if start is None:
-            start = end - relativedelta(days=C.DEFAULT_DAYS_PERIOD)
+            start = end - relativedelta.relativedelta(days=C.DEFAULT_DAYS_PERIOD)
         self.end = end
         self.start = start
 
@@ -49,7 +49,7 @@ class Date(object):
 
     def __init__(self, year, month):
         self.first = datetime.date(year, month, 1)
-        self.last = self.first + relativedelta(months=1, days=-1)
+        self.last = self.first + relativedelta.relativedelta(months=1, days=-1)
 
     def to_days(self):
         days = []
@@ -74,7 +74,7 @@ def last_date():
     if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
         date = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
     else:
-        date = today - relativedelta(days=1)
+        date = today - relativedelta.relativedelta(days=1)
     return date
 
 
