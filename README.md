@@ -24,6 +24,9 @@ serve
    # or
    jupyter-notebook --ip=0.0.0.0 --no-browser
 
+   # plot on the browser
+   %matplotlib inline 
+
 To launch the repl
     `Files -> New -> Python2`
 
