@@ -160,6 +160,8 @@ def current_value(code, scraper):
 @click.option("--last-date", callback=mkdate)
 @cli.command(help="update day info")
 def update(min_id, max_id, each, last_date):
+    # 1日だけ更新する場合でも複数ページにアクセスする無駄を除くため、
+    # last_dateを開始と終了日時に設定する
     query.DayInfo.sets(min_id=min_id, max_id=max_id,
                        each=each, ignore=True, last_date=last_date)
 
