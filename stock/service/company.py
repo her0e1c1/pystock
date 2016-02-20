@@ -1,3 +1,4 @@
+# coding: utf-8
 import sqlalchemy as sql
 
 from stock import query

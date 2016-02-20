@@ -1,3 +1,4 @@
+# coding: utf-8
 import re
 
 from .interface import Scraper, Interface, ParseError

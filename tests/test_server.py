@@ -1,3 +1,4 @@
+# coding: utf-8
 from stock.server import app
 from stock import query
 
