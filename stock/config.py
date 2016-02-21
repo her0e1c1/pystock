@@ -19,7 +19,8 @@ URL = os.environ.get("DATABASE_URL", DEFAULT_URL)
 # sqlalchemy
 CREATE_ENGINE = {
     "encoding": 'utf-8',
-    "echo": DEBUG,
+    "echo": False,
+    # "echo": DEBUG,
 }
 
 STATIC_DIR = os.path.join(ROOTDIR, "static")

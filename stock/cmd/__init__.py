@@ -168,5 +168,16 @@ def update(min_id, max_id, each, last_date):
 
 
 @cli.command(help="calculate everything", name="calc")
-def calculate():
-    service.closing_minus_rolling_mean_25()
+@click.option("--rm25", is_flag=True, default=False)
+@click.option("--rsi", is_flag=True, default=False)
+def calculate(**kw):
+    def do(key):
+        do_all = all([v is False for v in kw.values()])
+        return do_all or kw[key]
+
+    if do("rm25"):
+        logger.info("CALC: closing_minus_rolling_mean_25")
+        service.closing_minus_rolling_mean_25()
+    if do("rsi"):
+        logger.info("CALC: closing_RSI_14")
+        service.closing_RSI_14()

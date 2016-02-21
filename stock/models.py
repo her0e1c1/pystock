@@ -125,6 +125,7 @@ class CompanySearchField(Base):
 
     id = sql.Column(sql.Integer, primary_key=True)
     ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
+    closing_RSI_14 = sql.Column(sql.Float, nullable=True)
     company_id = sql .Column(
         sql.Integer,
         sql.ForeignKey('company.id', onupdate="CASCADE", ondelete="CASCADE"),

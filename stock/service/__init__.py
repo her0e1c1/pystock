@@ -2,6 +2,7 @@
 import pandas as pd
 
 from stock import query
+from stock import wrapper
 from stock import util
 
 
@@ -53,6 +54,26 @@ def closing_minus_rolling_mean_25(period=25):
         else:
             sf = company.search_field
         sf.ratio_closing_minus_rolling_mean_25 = ratio
+        company.search_field = sf
+        session.add(company)
+    session.commit()
+    session.close()
+
+
+def closing_RSI_14(period=14):
+    """営業最終日のRSIを求める"""
+    session = query.models.Session()
+    for company in query.Company.query(session):
+        df = make_data_frame(query.DayInfo.get(company_id=company.id, session=session))
+        rsi = wrapper.RSI(df.closing, period)
+        if rsi.empty:
+            continue
+        last_rsi = float(rsi[rsi.last_valid_index()])
+        if company.search_field is None:
+            sf = query.models.CompanySearchField()
+        else:
+            sf = company.search_field
+        sf.closing_RSI_14 = last_rsi
         company.search_field = sf
         session.add(company)
     session.commit()
