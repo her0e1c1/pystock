@@ -1,9 +1,5 @@
 # coding: utf-8
-import io
-import logging
-
 import click
-import requests
 
 from stock import models
 from stock import query
@@ -12,9 +8,7 @@ from stock import util
 from stock import service
 from stock import config as C
 
-from .import_company import Reader
-
-
+import logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 

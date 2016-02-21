@@ -1,6 +1,4 @@
 # coding: utf-8
-from logging import getLogger
-
 import sqlalchemy as sql
 import pandas as pd
 
@@ -8,6 +6,7 @@ from stock import models
 from stock import util
 from stock import config as C
 
+from logging import getLogger
 logger = getLogger(__name__)
 
 
