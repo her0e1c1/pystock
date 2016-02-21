@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 
+{% macro label_number(v) %}
+ {{ v }}%{% if v >= 0 %}以上{% else %}以下{% endif %}
+{% endmacro %}
 
 {% block content %}
   <script type="text/javascript">
@@ -10,13 +13,17 @@
   <h2>企業一覧</h2>
   <h3>最終更新日 {{ last_date }}</h3>
   <form action="{{ url_for('index') }}" method="get">
-    25日移動平均線 10%以上 <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="10">
-    25日移動平均線 5%以上  <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="5">
-    25日移動平均線 -5%以下 <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="-5">
-    25日移動平均線 -10%以下<input type="radio" name="ratio_closing_minus_rolling_mean_25" value="-10">
+    {% for v in [10, 5, -5, -10] %}
+    <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="{{ v }}"
+           {% if v|string == request.args.get("ratio_closing_minus_rolling_mean_25") %}checked{% endif %}>
+    25日移動平均線 {{ label_number(v) }}
+    {% endfor %}
     <br>
-    RSI 70%以上(売り)<input type="radio" name="closing_rsi_14" value="70">
-    RSI 30%以下(買い)<input type="radio" name="closing_rsi_14" value="-30">
+    {% for v in [70, -30] %}
+    <input type="radio" name="closing_rsi_14" value="{{ v }}"
+           {% if v|string == request.args.get("closing_rsi_14") %}checked{% endif %}>
+    RSI {{ label_number(v) }}
+    {% endfor %}
     <!-- <input type="submit" value="更新"> -->
   </form>
   <ul>
