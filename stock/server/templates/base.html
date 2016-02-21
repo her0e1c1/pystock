@@ -16,5 +16,8 @@
       <a href="/">TOP</a>
       {% block content %}{% endblock %}
     </div>
+    <footer>
+      {% block footer %}{{ cm.copy_right() }}{% endblock %}
+    </footer>
   </body>
 </html>
