@@ -16,15 +16,19 @@
   <script type="text/javascript">
     $(function(){
         $.getJSON('/api/{{ company.id }}', function (data) {
-            var series = data.series.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });
+            var rolling_means = data.rolling_means.map(function(d){ d.tooltip={valueDecimals: 2}; d.yAxis=0;return d; });
             $('#container').highcharts('StockChart', {
                 rangeSelector : {
-                selected : 1
-            },
-                title : {
-                text : 'STOCK'
-            },
-                series : series
+                    selected : 1
+                },
+                yAxis: [
+                    {title: 'OHLC', height: '60%'},
+                    {title: 'Volume', height: '30%', top: '65%'},
+                ],
+                series : [
+                    {data: data.ohlc, type: 'candlestick', yAxis: 0},
+                    {data: data.columns[0].data, type: 'column', yAxis: 1},
+                ].concat(rolling_means),
             });
 
             var percentages = data.percentages.map(function(d){ d.tooltip={valueDecimals: 2}; return d; });

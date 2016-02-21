@@ -43,10 +43,13 @@ def api(company_id):
     q = query.DayInfo.get(company_id)
     return jsonify({
         "company": company.w.to_dict(),
-        "series": [
-            {"name": "closing", "data": q.closing()},
+        "rolling_means": [
             {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
             {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
+        ],
+        "ohlc": q.ohlc(),
+        "columns": [
+            {"name": "volume", "data": q.volume()},
         ],
         "percentages": [
             {"name": "RSI", "data": q.RSI(period=14)},

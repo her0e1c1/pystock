@@ -31,8 +31,10 @@ class DayInfoQuery(Query):
 
     def df(self):
         return pd.DataFrame(
-            [(info.w.js_datetime, info.w.closing) for info in self],
-            columns=["date", "closing"]
+            [(info.w.js_datetime, info.w.closing, info.w.volume,
+              info.w.opening, info.w.high, info.w.low)
+             for info in self],
+            columns=["date", "closing", "volume", "opening", "high", "low"]
         )
 
     def rolling_mean(self, period=30):
@@ -46,6 +48,15 @@ class DayInfoQuery(Query):
         rsi = RSI(df.closing, period)
         return list([a, b] for a, b in zip(df.date.values.tolist(), rsi.values.tolist())
                     if not pd.isnull(b))
+
+    def ohlc(self):
+        return [(d["date"], d["opening"], d["high"], d["low"], d["closing"])
+                for d in self.df().to_dict(orient="records")]
+
+    def volume(self):
+        df = self.df()
+        return list(zip(df.date.values.tolist(),
+                        df.volume.values.tolist()))
 
     def closing(self):
         df = self.df()
