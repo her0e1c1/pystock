@@ -1,8 +1,10 @@
 # coding: utf-8
-import sqlalchemy as sql
+import io
+
+import requests
 
 from stock import query
-from stock import models
+from stock import config as C
 
 from logging import getLogger
 logger = getLogger(__name__)
@@ -16,3 +18,13 @@ def update_copmany_list():
         logger.info("SKIP: company(id=%s)" % company_id)
         return
     session.close()
+
+
+def download_and_store_company_list(url=C.COMPANY_XLS_URL):
+    from stock.cmd.import_company import Reader
+    resp = requests.get(url)
+    if resp.ok:
+        xls = resp.content
+        return Reader(filepath=io.BytesIO(xls)).store()
+    else:
+        return False

@@ -5,6 +5,8 @@ from stock import query
 from stock import wrapper
 from stock import util
 
+from . import company  # NOQA
+
 
 def last_date():
     return util.last_date()

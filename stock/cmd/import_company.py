@@ -50,3 +50,5 @@ class Reader(object):
         except sql.exc.IntegrityError as e:
             logger.warn("Can't import company data")
             logger.warn("%s" % e)
+            return False
+        return True

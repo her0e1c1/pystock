@@ -60,16 +60,15 @@ def history(code, start, end, each):
     query.DayInfo.set(code, start, end, each=each)
 
 
+@click.option("--url", default=C.COMPANY_XLS_URL)
 @store.command(help="""\
 You can download the xls at \
 http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
 or directly {url}
 """.format(url=C.COMPANY_XLS_URL))
-def company():
-    resp = requests.get(C.COMPANY_XLS_URL)
-    if resp.ok:
-        xls = resp.content
-        Reader(filepath=io.BytesIO(xls)).store()
+def company(url):
+    if service.company.download_and_store_company_list(url):
+        click.echo("Get %s" % C.COMPANY_XLS_URL)
     else:
         click.echo("Can't get %s" % C.COMPANY_XLS_URL)
 
@@ -88,6 +87,9 @@ def create():
 @click.option("--all", is_flag=True, default=False)
 def setup(all):
     click.echo("Start setup ...")
+
+    service.company.download_and_store_company_list()
+
     ctx = click.get_current_context()
     for cmd in [create, company]:
         ctx.invoke(cmd)
@@ -96,7 +98,9 @@ def setup(all):
 @cli.command(help="show companies")
 @click.option("-c", "--closing-minus-rolling-mean-25", type=int)
 def show(closing_minus_rolling_mean_25):
-    iters = service.get_companies(closing_minus_rolling_mean_25=closing_minus_rolling_mean_25)
+    iters = service.get_companies(
+        closing_minus_rolling_mean_25=closing_minus_rolling_mean_25
+    )
     for company in iters:
         click.echo(company)
     click.echo("Summary")
