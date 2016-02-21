@@ -46,6 +46,9 @@ class DayInfo(Base):
         backref='day_info_list'
     )
 
+    def __str__(self):
+        return "({company_id}, {opening}, {high}, {low}, {closing})".format(**self.to_dict())
+
     @property
     def w(self):
         return wrapper.DayInfo(self)

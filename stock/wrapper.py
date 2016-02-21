@@ -105,15 +105,6 @@ class DayInfo(Wrapper):
 
     dict_keys = ["high", "low", "opening", "closing", "company_id", "js_datetime"]
 
-    def __str__(self):
-        return """\
-cid  : {company_id}
-open : {opening}
-high : {high}
-low  : {low}
-close: {closing}
-""".format(**self.to_dict())
-
     def _fix_value(self, value):
         for date in self.ins.company.split_stock_dates:
             if self.date < date.date:
