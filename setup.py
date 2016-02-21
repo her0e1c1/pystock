@@ -10,6 +10,7 @@ setup(
     name='stock',
     version='0.3',
     author='Hiroyuki Ishii',
+    url="http://f1nance.herokuapp.com/",
     py_modules=['stock'],
     packages=find_packages(),
     description='A command line tool for stock markets',
