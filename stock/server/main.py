@@ -15,7 +15,14 @@ def index():
         v = int(request.args.get("ratio_closing_minus_rolling_mean_25"))
     except:
         v = None
-    company_list = service.get_companies(ratio_closing_minus_rolling_mean_25=v)
+    try:
+        v2 = int(request.args.get("closing_rsi_14"))
+    except:
+        v2 = None
+    company_list = service.get_companies(
+        ratio_closing_minus_rolling_mean_25=v,
+        closing_rsi_14=v2,
+    )
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})
 

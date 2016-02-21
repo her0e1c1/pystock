@@ -25,9 +25,11 @@ def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
         set(id, each=each, ignore=True, last_date=last_date)
 
 
-def get_companies(ratio_closing_minus_rolling_mean_25=None):
+def get_companies(ratio_closing_minus_rolling_mean_25=None,
+                  closing_rsi_14=None):
     session = query.models.Session()
     q = query.Company.query(session)
+
     if ratio_closing_minus_rolling_mean_25 is not None:
         ratio = ratio_closing_minus_rolling_mean_25
         q = q.join(query.models.Company.search_field)
@@ -36,6 +38,16 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None):
             q = q.filter(col >= ratio)
         else:
             q = q.filter(col < ratio)
+
+    if closing_rsi_14 is not None:
+        rsi = closing_rsi_14
+        q = q.join(query.models.Company.search_field)
+        col = query.models.CompanySearchField.closing_rsi_14
+        if rsi >= 0:
+            q = q.filter(col >= rsi)
+        else:
+            rsi *= -1
+            q = q.filter(col < rsi)
     return q.all()
 
 
