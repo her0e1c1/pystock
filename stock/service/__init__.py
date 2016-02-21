@@ -51,6 +51,11 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None,
     return q.all()
 
 
+def update_search_fields():
+    closing_minus_rolling_mean_25()
+    closing_rsi_14()
+
+
 def closing_minus_rolling_mean_25(period=25):
     """長期移動平均線と現在の株価の差を予め計算"""
     session = query.models.Session()

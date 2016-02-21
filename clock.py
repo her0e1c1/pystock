@@ -22,7 +22,7 @@ sched = BlockingScheduler()
 def scheduled_scrape_japan():
     logger.info('CRON: Scrape and store stock')
     query.DayInfo.sets(each=True, ignore=True, last_date=service.last_date())
-    service.closing_minus_rolling_mean_25()
+    service.update_search_fields()
 
 
 logger.info('CRON: Start ...')
