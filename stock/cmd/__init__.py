@@ -179,5 +179,5 @@ def calculate(**kw):
         logger.info("CALC: closing_minus_rolling_mean_25")
         service.closing_minus_rolling_mean_25()
     if do("rsi"):
-        logger.info("CALC: closing_RSI_14")
-        service.closing_RSI_14()
+        logger.info("CALC: closing_rsi_14")
+        service.closing_rsi_14()

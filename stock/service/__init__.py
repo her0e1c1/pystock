@@ -60,7 +60,7 @@ def closing_minus_rolling_mean_25(period=25):
     session.close()
 
 
-def closing_RSI_14(period=14):
+def closing_rsi_14(period=14):
     """営業最終日のRSIを求める"""
     session = query.models.Session()
     for company in query.Company.query(session):
@@ -73,7 +73,7 @@ def closing_RSI_14(period=14):
             sf = query.models.CompanySearchField()
         else:
             sf = company.search_field
-        sf.closing_RSI_14 = last_rsi
+        sf.closing_rsi_14 = last_rsi
         company.search_field = sf
         session.add(company)
     session.commit()
