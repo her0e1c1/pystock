@@ -12,6 +12,16 @@
   </script>
   <h2>企業一覧</h2>
   <h3>最終更新日 {{ last_date }}</h3>
+
+  <table>
+    <tr>
+      <th>企業数</th>
+    </tr>
+    <tr>
+      <td>{{ company_list|length }}</td>
+    </tr>
+  </table>
+
   <form action="{{ url_for('index') }}" method="get">
     {% for v in [10, 5, -5, -10] %}
     <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="{{ v }}"
