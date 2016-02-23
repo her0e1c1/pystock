@@ -166,16 +166,12 @@ def update(min_id, max_id, each, last_date):
 
 
 @cli.command(help="calculate everything", name="calc")
+@click.option("--all", is_flag=True, default=False)
 @click.option("--rm25", is_flag=True, default=False)
 @click.option("--rsi", is_flag=True, default=False)
+@click.option("--macd", "closing_macd_minus_signal", is_flag=True, default=False)
 def calculate(**kw):
-    def do(key):
-        do_all = all([v is False for v in kw.values()])
-        return do_all or kw[key]
-
-    if do("rm25"):
-        logger.info("CALC: closing_minus_rolling_mean_25")
-        service.closing_minus_rolling_mean_25()
-    if do("rsi"):
-        logger.info("CALC: closing_rsi_14")
-        service.closing_rsi_14()
+    for method_name, do in kw.items():
+        if kw["all"] or do:
+            logger.info("CALC: %s" % method_name)
+            getattr(service, method_name)()
