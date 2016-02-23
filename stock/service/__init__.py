@@ -60,40 +60,41 @@ def update_search_fields():
 
 def closing_minus_rolling_mean_25(period=25):
     """長期移動平均線と現在の株価の差を予め計算"""
-    session = query.models.Session()
-    for company in query.Company.query(session):
-        df = make_data_frame(query.DayInfo.get(company_id=company.id, session=session))
+    def f(df):
         closing = df.closing.tail(1)
         mean = pd.rolling_mean(df.closing, period).tail(1)
-        if closing.empty or mean.empty:
-            continue
-        ratio = float((closing - mean) / closing) * 100
-        if company.search_field is None:
-            sf = query.models.CompanySearchField()
-        else:
-            sf = company.search_field
-        sf.ratio_closing_minus_rolling_mean_25 = ratio
-        company.search_field = sf
-        session.add(company)
-    session.commit()
-    session.close()
+        if not (closing.empty or mean.empty):
+            return float((closing - mean) / closing) * 100
+
+    with_session(f, "ratio_closing_minus_rolling_mean_25")
 
 
 def closing_rsi_14(period=14):
     """営業最終日のRSIを求める"""
-    session = query.models.Session()
-    for company in query.Company.query(session):
-        df = make_data_frame(query.DayInfo.get(company_id=company.id, session=session))
+    def f(df):
         rsi = wrapper.RSI(df.closing, period)
-        if rsi.empty:
+        if not rsi.empty:
+            return float(rsi[rsi.last_valid_index()])
+    with_session(f, "closing_rsi_14")
+
+
+def with_session(f, col_name):
+    session = query.models.Session()
+    for c in query.Company.query(session):
+        df = make_data_frame(query.DayInfo.get(company_id=c.id, session=session))
+        value = f(df)
+        if value is None:
             continue
-        last_rsi = float(rsi[rsi.last_valid_index()])
-        if company.search_field is None:
+        if c.search_field is None:
             sf = query.models.CompanySearchField()
         else:
-            sf = company.search_field
-        sf.closing_rsi_14 = last_rsi
-        company.search_field = sf
-        session.add(company)
+            sf = c.search_field
+        setattr(sf, col_name, value)
+        c.search_field = sf
+        session.add(c)
     session.commit()
     session.close()
+
+
+def closing_macd_minus_signal():
+    pass
