@@ -28,7 +28,8 @@ def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
 
 
 def get_companies(ratio_closing_minus_rolling_mean_25=None,
-                  closing_rsi_14=None):
+                  closing_rsi_14=None,
+                  closing_macd_minus_signal=None):
     session = query.models.Session()
     q = query.Company.query(session)
 
@@ -50,6 +51,21 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None,
         else:
             rsi *= -1
             q = q.filter(col < rsi)
+
+    if closing_macd_minus_signal is not None:
+        col_name1 = "closing_macd_minus_signal1_26_12_9"
+        col_name2 = "closing_macd_minus_signal2_26_12_9"
+        v = closing_macd_minus_signal
+        q = q.join(query.models.Company.search_field)
+        col1 = getattr(query.models.CompanySearchField, col_name1)
+        col2 = getattr(query.models.CompanySearchField, col_name2)
+        if v > 0:
+            q = q.filter(col1 >= 0)
+            q = q.filter(col2 <= 0)
+        else:
+            q = q.filter(col1 <= 0)
+            q = q.filter(col2 >= 0)
+
     return q.all()
 
 
@@ -79,8 +95,8 @@ def closing_rsi_14(period=14):
     with_session(f, "closing_rsi_14")
 
 
-def with_session(f, col_name):
-    session = query.models.Session()
+def with_session(f, col_name, session=None):
+    session = session or query.models.Session()
     for c in query.Company.query(session):
         df = make_data_frame(query.DayInfo.get(company_id=c.id, session=session))
         value = f(df)

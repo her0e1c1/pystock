@@ -10,7 +10,6 @@ app = Flask(__name__)
 
 
 @app.route("/", methods=["GET"])
-# @app.route("/company/", methods=["GET"])
 def index():
     try:
         v = int(request.args.get("ratio_closing_minus_rolling_mean_25"))
@@ -20,9 +19,15 @@ def index():
         v2 = int(request.args.get("closing_rsi_14"))
     except:
         v2 = None
+    try:
+        v3 = int(request.args.get("closing_macd_minus_signal"))
+    except:
+        v3 = None
+
     company_list = service.get_companies(
         ratio_closing_minus_rolling_mean_25=v,
         closing_rsi_14=v2,
+        closing_macd_minus_signal=v3,
     )
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})

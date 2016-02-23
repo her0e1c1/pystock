@@ -29,12 +29,18 @@
     25日移動平均線 {{ label_number(v) }}
     {% endfor %}
     <br>
-    {% for v in [70, -30] %}
-    <input type="radio" name="closing_rsi_14" value="{{ v }}"
-           {% if v|string == request.args.get("closing_rsi_14") %}checked{% endif %}>
-    RSI {{ label_number(v) }}
-    {% endfor %}
-    <!-- <input type="submit" value="更新"> -->
+
+    <input type="radio" name="closing_rsi_14" value="70"  {% if request.args.get("closing_rsi_14") == "70" %}checked{% endif %}>
+    RSI 70%以上(売り)
+    <input type="radio" name="closing_rsi_14" value="-30" {% if request.args.get("closing_rsi_14") == "-30" %}checked{% endif %}>
+    RSI 30%以下(買い)
+    <br>
+
+    <input type="radio" name="closing_macd_minus_signal" value="1"  {% if request.args.get("closing_macd_minus_signal") == "1" %}checked{% endif %}>
+    MACD ゴールデンクロス(買い)
+    <input type="radio" name="closing_macd_minus_signal" value="-1" {% if request.args.get("closing_macd_minus_signal") == "-1" %}checked{% endif %}>
+    MACD デッドクロス(売り)
+
   </form>
   <ul>
     {% for c in company_list %}
