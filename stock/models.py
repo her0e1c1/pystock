@@ -126,10 +126,16 @@ class CurrentValue(Base):
 class CompanySearchField(Base):
     __tablename__ = "company_search_field"
 
+    # WARN: postgresでは、大文字小文字を区別しないのでrsiをRSIなどと記述しない
     id = sql.Column(sql.Integer, primary_key=True)
     ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
-    # WARN: postgresでは、大文字小文字を区別しないのでRSIを記述しない
     closing_rsi_14 = sql.Column(sql.Float, nullable=True)
+    closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True)
+    closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True)
+    # closing_min_25
+    # closing_min_75
+    # closing_min_200
+
     company_id = sql .Column(
         sql.Integer,
         sql.ForeignKey('company.id', onupdate="CASCADE", ondelete="CASCADE"),
