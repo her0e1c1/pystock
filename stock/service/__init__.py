@@ -56,6 +56,7 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None,
 def update_search_fields():
     closing_minus_rolling_mean_25()
     closing_rsi_14()
+    closing_macd_minus_signal()
 
 
 def closing_minus_rolling_mean_25(period=25):
@@ -97,4 +98,17 @@ def with_session(f, col_name):
 
 
 def closing_macd_minus_signal():
-    pass
+    def wrap(index):
+        def last(p):
+            lvi = p.last_valid_index()
+            if lvi and lvi > 0:
+                return p[lvi - (index - 1)]
+
+        def f(df):
+            macd = last(wrapper.macd_line(df.closing))
+            signal = last(wrapper.macd_signal(df.closing))
+            if macd is not None and signal is not None:
+                return float(macd - signal)
+        return f
+    with_session(wrap(1), "closing_macd_minus_signal1_26_12_9")
+    with_session(wrap(2), "closing_macd_minus_signal2_26_12_9")
