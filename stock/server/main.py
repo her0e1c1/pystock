@@ -54,4 +54,8 @@ def api(company_id):
         "percentages": [
             {"name": "RSI", "data": q.RSI(period=14)},
         ],
+        "macd": [
+            {"name": "macd_line", "data": q.macd_line(), "yAxis": 3},
+            {"name": "macd_signal", "data": q.macd_signal(), "yAxis": 3},
+        ],
     })
