@@ -27,6 +27,12 @@ class Query(object):
             return attr
 
 
+def to_seq(dates, series):
+    return list([a, b] for a, b
+                in zip(dates.values.tolist(), series.values.tolist())
+                if not pd.isnull(b))
+
+
 class DayInfoQuery(Query):
 
     def df(self):
@@ -42,6 +48,14 @@ class DayInfoQuery(Query):
         mean = pd.rolling_mean(df.closing, period)
         return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
                     if not pd.isnull(b))
+
+    def macd_line(self):
+        df = self.df()
+        return to_seq(df.date, macd_line(df.closing))
+
+    def macd_signal(self):
+        df = self.df()
+        return to_seq(df.date, macd_signal(df.closing))
 
     def RSI(self, period):
         df = self.df()
@@ -97,6 +111,15 @@ class Company(Wrapper):
                 "date": day_info.js_datetime}
             data_records.append(data)
         return pd.DataFrame.from_records(data_records)
+
+
+def macd_line(prices, fast=26, slow=12, signal=9):
+    # Chris Manning (fast, slow, signal) = (17, 9, 7)
+    return pd.ewma(prices, span=slow) - pd.ewma(prices, span=fast)
+
+
+def macd_signal(prices, fast=26, slow=12, signal=9):
+    return pd.ewma(macd_line(prices, fast=fast, slow=slow, signal=signal), span=signal)
 
 
 def RSI(prices, period=14):
