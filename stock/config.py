@@ -51,3 +51,10 @@ SHEET_NAME = "Sheet1"
 
 # 今日から株価を取得する期間
 DEFAULT_DAYS_PERIOD = 3 * 30
+
+# Stock links
+STOCK_LINKS = [
+    "http://www.rizumu.net",
+    "http://chartnavi.com/",
+    "http://kabusensor.com/",
+]

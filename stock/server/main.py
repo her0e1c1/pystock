@@ -3,6 +3,7 @@ from flask import Flask, render_template, request, jsonify, abort
 
 from stock import query
 from stock import service
+from stock import config as C
 
 
 app = Flask(__name__)
@@ -59,3 +60,8 @@ def api(company_id):
             {"name": "macd_signal", "data": q.macd_signal(), "yAxis": 3},
         ],
     })
+
+
+@app.route("/links", methods=["GET"])
+def links():
+    return render_template('links.html', **{"C": C})
