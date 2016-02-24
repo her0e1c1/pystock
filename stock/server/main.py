@@ -47,16 +47,17 @@ def api(company_id):
     if not company:
         abort(404)
     q = query.DayInfo.get(company_id)
+    bbands = [{"name": "%dsigma" % s,
+               "data": q.bollinger_band(sigma=s),
+               "color": "black",
+               "lineWidth": 0.5}
+              for s in [3, 2, 1, -1, -2, -3]]
     return jsonify({
         "company": company.w.to_dict(),
         "rolling_means": [
             {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
             {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
-            {"name": "+2sigma", "data": q.bollinger_band(sigma=2)},
-            {"name": "+1sigma", "data": q.bollinger_band(sigma=1)},
-            {"name": "-1sigma", "data": q.bollinger_band(sigma=-1)},
-            {"name": "-2sigma", "data": q.bollinger_band(sigma=-2)},
-        ],
+        ] + bbands,
         "ohlc": q.ohlc(),
         "columns": [
             {"name": "volume", "data": q.volume()},
