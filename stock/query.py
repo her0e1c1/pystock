@@ -99,11 +99,3 @@ class Company(Query):
         q = q.order_by("-id")
         c = q.first()
         return c.id if c else 0
-
-    @classmethod
-    def is_updated(cls, id):
-        """会社の最新情報に更新されていればTrue"""
-        last = util.last_day()
-        q = cls.query()
-        q = q.filter_by(id=id)
-        return q.count() > 0

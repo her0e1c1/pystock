@@ -46,28 +46,6 @@ class DateRange(object):
         }
 
 
-class Date(object):
-
-    def __init__(self, year, month):
-        self.first = datetime.date(year, month, 1)
-        self.last = self.first + relativedelta.relativedelta(months=1, days=-1)
-
-    def to_days(self):
-        days = []
-        if self.first < self.last:
-            i = self.first
-            while True:
-                days.append(i)
-                i += relativedelta(days=1)
-                if i == self.last:
-                    return days
-        else:
-            return []
-
-    def __str__(self):
-        return "from {first} to {last}".format(**self)
-
-
 def last_date():
     """株の最後の日を返す"""
     today = datetime.date.today()
