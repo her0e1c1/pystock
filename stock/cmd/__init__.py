@@ -169,6 +169,7 @@ def update(min_id, max_id, each, last_date):
 @click.option("--all", is_flag=True, default=False)
 @click.option("--rm25", is_flag=True, default=False)
 @click.option("--rsi", is_flag=True, default=False)
+@click.option("--min", "low_min", is_flag=True, default=False)
 @click.option("--macd", "closing_macd_minus_signal", is_flag=True, default=False)
 def calculate(**kw):
     for method_name, do in kw.items():

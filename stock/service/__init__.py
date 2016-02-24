@@ -75,6 +75,7 @@ def update_search_fields():
     closing_minus_rolling_mean_25()
     closing_rsi_14()
     closing_macd_minus_signal()
+    low_min()
 
 
 def closing_minus_rolling_mean_25(period=25):
@@ -130,3 +131,15 @@ def closing_macd_minus_signal():
         return f
     with_session(wrap(1), "closing_macd_minus_signal1_26_12_9")
     with_session(wrap(2), "closing_macd_minus_signal2_26_12_9")
+
+
+def low_min():
+    def wrap(index):
+        def f(df):
+            v = float(df.low.tail(index).min())
+            if not pd.isnull(v):
+                return v
+        return f
+    with_session(wrap(25), "low_min_25")
+    with_session(wrap(75), "low_min_75")
+    with_session(wrap(200), "low_min_200")
