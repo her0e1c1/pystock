@@ -56,5 +56,6 @@ STOCK_LINKS = [
     "http://www.rizumu.net",
     "http://chartnavi.com/",
     "http://kabusensor.com/",
+    "http://www.sevendata.co.jp/",
     "http://www.traders.co.jp/domestic_stocks/invest_tool/screening/screening_top.asp",
 ]
