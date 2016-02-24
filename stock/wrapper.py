@@ -36,12 +36,8 @@ def to_seq(dates, series):
 class DayInfoQuery(Query):
 
     def df(self):
-        return pd.DataFrame(
-            [(info.w.js_datetime, info.w.closing, info.w.volume,
-              info.w.opening, info.w.high, info.w.low)
-             for info in self],
-            columns=["date", "closing", "volume", "opening", "high", "low"]
-        )
+        from stock.service import make_data_frame
+        return make_data_frame(self)
 
     def rolling_mean(self, period=30):
         df = self.df()
