@@ -167,8 +167,8 @@ def closing_bollinger_band(period=20):
             return 0
         sign = 1 if p > mean else -1
         for sigma in [1, 2, 3]:
-            mi = mean + sign * std * (sigma - 1)
-            ma = mean + sign * std * sigma
-            if mi < p <= ma:
+            m1 = mean + sign * std * (sigma - 1)
+            m2 = mean + sign * std * sigma
+            if min(m1, m2) < p <= max(m1, m2):
                 return sign * sigma
     with_session(f, "interval_closing_bollinger_band_20")
