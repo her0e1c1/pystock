@@ -48,13 +48,14 @@ class DateRange(object):
 
 def last_date():
     """株の最後の日を返す"""
-    today = datetime.date.today()
-    weekday = today.weekday()
+    # for JST
+    now = datetime.datetime.today() + relativedelta.relativedelta(hours=9)
+    weekday = now.weekday()
     if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
-        date = today + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
+        dt = now + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
     else:
-        date = today - relativedelta.relativedelta(days=1)
-    return date
+        dt = now - relativedelta.relativedelta(days=1)
+    return dt.date()
 
 
 def dict_inverse(dct):
