@@ -45,6 +45,10 @@ class DayInfoQuery(Query):
         return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
                     if not pd.isnull(b))
 
+    def bollinger_band(self, period=25, sigma=2):
+        df = self.df()
+        return to_seq(df.date, bollinger_band(df.closing, period, sigma))
+
     def macd_line(self):
         df = self.df()
         return to_seq(df.date, macd_line(df.closing))
@@ -107,6 +111,12 @@ class Company(Wrapper):
                 "date": day_info.js_datetime}
             data_records.append(data)
         return pd.DataFrame.from_records(data_records)
+
+
+def bollinger_band(prices, period=25, sigma=2):
+    mean = pd.rolling_mean(prices, period)
+    std = pd.rolling_std(prices, period)
+    return mean + sigma * std
 
 
 def macd_line(prices, fast=26, slow=12, signal=9):

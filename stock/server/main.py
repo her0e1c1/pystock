@@ -52,6 +52,10 @@ def api(company_id):
         "rolling_means": [
             {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
             {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
+            {"name": "+2sigma", "data": q.bollinger_band(sigma=2)},
+            {"name": "+1sigma", "data": q.bollinger_band(sigma=1)},
+            {"name": "-1sigma", "data": q.bollinger_band(sigma=-1)},
+            {"name": "-2sigma", "data": q.bollinger_band(sigma=-2)},
         ],
         "ohlc": q.ohlc(),
         "columns": [
