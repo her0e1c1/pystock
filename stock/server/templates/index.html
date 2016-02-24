@@ -1,7 +1,9 @@
 {% extends "base.html" %}
 
-{% macro label_number(v) %}
- {{ v }}%{% if v >= 0 %}以上{% else %}以下{% endif %}
+{% macro radio(v, key, label) %}
+ <input type="radio" name="{{ key }}" value="{{ v }}"
+        {% if request.args.get(key) == v|string %}checked{% endif %}>
+ {{ label }}
 {% endmacro %}
 
 {% block content %}
@@ -24,22 +26,15 @@
 
   <form action="{{ url_for('index') }}" method="get">
     {% for v in [10, 5, -5, -10] %}
-    <input type="radio" name="ratio_closing_minus_rolling_mean_25" value="{{ v }}"
-           {% if v|string == request.args.get("ratio_closing_minus_rolling_mean_25") %}checked{% endif %}>
-    25日移動平均線 {{ label_number(v) }}
+      {% set label = "%s%%%s" % (v|abs, v >= 0 and "以上" or "以下") %}
+      {{ radio(v, "ratio_closing_minus_rolling_mean_25", "25日移動平均線 %s" % label) }}
     {% endfor %}
     <br>
-
-    <input type="radio" name="closing_rsi_14" value="70"  {% if request.args.get("closing_rsi_14") == "70" %}checked{% endif %}>
-    RSI 70%以上(売り)
-    <input type="radio" name="closing_rsi_14" value="-30" {% if request.args.get("closing_rsi_14") == "-30" %}checked{% endif %}>
-    RSI 30%以下(買い)
+    {{ radio("70", "closing_rsi_14", "RSI 70%以上(売り)") }}
+    {{ radio("30", "closing_rsi_14", "RSI 30%以下(買い)") }}
     <br>
-
-    <input type="radio" name="closing_macd_minus_signal" value="1"  {% if request.args.get("closing_macd_minus_signal") == "1" %}checked{% endif %}>
-    MACD ゴールデンクロス(買い)
-    <input type="radio" name="closing_macd_minus_signal" value="-1" {% if request.args.get("closing_macd_minus_signal") == "-1" %}checked{% endif %}>
-    MACD デッドクロス(売り)
+    {{ radio("1",  "closing_macd_minus_signal", "MACD ゴールデンクロス(買い)") }}
+    {{ radio("-1", "closing_macd_minus_signal", "MACD デッドクロス(売り)") }}
 
   </form>
   <ul>
