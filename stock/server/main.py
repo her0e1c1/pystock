@@ -23,11 +23,16 @@ def index():
         v3 = int(request.args.get("closing_macd_minus_signal"))
     except:
         v3 = None
+    try:
+        v4 = int(request.args.get("interval_closing_bollinger_band_20"))
+    except:
+        v4 = None
 
     company_list = service.get_companies(
         ratio_closing_minus_rolling_mean_25=v,
         closing_rsi_14=v2,
         closing_macd_minus_signal=v3,
+        interval_closing_bollinger_band_20=v4,
     )
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})

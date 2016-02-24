@@ -133,6 +133,9 @@ class CompanySearchField(Base):
     closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True)
     closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True)
 
+    # (0, 1 sigma) => 1, (1 sigma, 2 sigma) => 2 and so on
+    interval_closing_bollinger_band_20 = sql.Column(sql.Integer, nullable=True)
+
     low_min_25 = sql.Column(sql.Float, nullable=True)
     low_min_75 = sql.Column(sql.Float, nullable=True)
     low_min_200 = sql.Column(sql.Float, nullable=True)

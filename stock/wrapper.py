@@ -45,7 +45,7 @@ class DayInfoQuery(Query):
         return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
                     if not pd.isnull(b))
 
-    def bollinger_band(self, period=25, sigma=2):
+    def bollinger_band(self, period=20, sigma=2):
         df = self.df()
         return to_seq(df.date, bollinger_band(df.closing, period, sigma))
 
@@ -113,7 +113,7 @@ class Company(Wrapper):
         return pd.DataFrame.from_records(data_records)
 
 
-def bollinger_band(prices, period=25, sigma=2):
+def bollinger_band(prices, period, sigma):
     mean = pd.rolling_mean(prices, period)
     std = pd.rolling_std(prices, period)
     return mean + sigma * std

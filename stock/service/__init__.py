@@ -31,6 +31,7 @@ def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
 
 def get_companies(ratio_closing_minus_rolling_mean_25=None,
                   closing_rsi_14=None,
+                  interval_closing_bollinger_band_20=None,
                   closing_macd_minus_signal=None):
     session = query.models.Session()
     q = query.Company.query(session)
@@ -53,6 +54,13 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None,
         else:
             rsi *= -1
             q = q.filter(col < rsi)
+
+    if interval_closing_bollinger_band_20 is not None:
+        col_name = "interval_closing_bollinger_band_20"
+        v = interval_closing_bollinger_band_20
+        q = q.join(query.models.Company.search_field)
+        col = getattr(query.models.CompanySearchField, col_name)
+        q = q.filter(col == v)
 
     if closing_macd_minus_signal is not None:
         col_name1 = "closing_macd_minus_signal1_26_12_9"
@@ -143,3 +151,24 @@ def low_min():
     with_session(wrap(25), "low_min_25")
     with_session(wrap(75), "low_min_75")
     with_session(wrap(200), "low_min_200")
+
+
+def closing_bollinger_band(period=20):
+    def f(df):
+        prices = df.closing
+        if prices.empty:
+            return None
+        p = float(prices.tail(1))
+        mean = float(pd.rolling_mean(prices, period).tail(1))
+        std = float(pd.rolling_std(prices, period).tail(1))
+        if pd.isnull(mean) or pd.isnull(std):
+            return None
+        if p == mean:
+            return 0
+        sign = 1 if p > mean else -1
+        for sigma in [1, 2, 3]:
+            mi = mean + sign * std * (sigma - 1)
+            ma = mean + sign * std * sigma
+            if mi < p <= ma:
+                return sign * sigma
+    with_session(f, "interval_closing_bollinger_band_20")
