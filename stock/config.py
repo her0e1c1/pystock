@@ -1,5 +1,4 @@
 # coding: utf-8
-# coding: utf-8
 import os
 import path
 from collections import OrderedDict
@@ -57,4 +56,5 @@ STOCK_LINKS = [
     "http://www.rizumu.net",
     "http://chartnavi.com/",
     "http://kabusensor.com/",
+    "http://www.traders.co.jp/domestic_stocks/invest_tool/screening/screening_top.asp",
 ]
