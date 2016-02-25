@@ -26,7 +26,7 @@ def index():
         "closing_stochastic_d_minus_sd",
     ]
     d = {k: to_int(k) for k in field_keys}
-    company_list = service.get_companies(**d)
+    company_list = service.company.get(**d)
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})
 
