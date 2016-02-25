@@ -77,6 +77,17 @@ def create():
     models.Base.metadata.create_all()
 
 
+@db.command(help="Drop all tables")
+@click.option("-y", "yes", is_flag=True, default=False)
+def drop(yes):
+    # this doesn't work
+    # if click.confirm("Drop all tables. Are you sure?"):
+    if yes:
+        models.Base.metadata.drop_all()
+    else:
+        click.echo("Nothing")
+
+
 @cli.command(help="Setup")
 @click.option("--all", is_flag=True, default=False)
 def setup(all):
