@@ -177,4 +177,4 @@ def calculate(**kw):
     for method_name, do in kw.items():
         if kw["all"] or do:
             logger.info("CALC: %s" % method_name)
-            getattr(service, method_name)()
+            getattr(service.search_field, method_name)()
