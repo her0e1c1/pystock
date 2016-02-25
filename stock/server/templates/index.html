@@ -30,8 +30,10 @@
       {{ radio(v, "ratio_closing_minus_rolling_mean_25", "25日移動平均線 %s" % label) }}
     {% endfor %}
     <br>
-    {{ radio("70", "closing_rsi_14", "RSI 70%以上(売り)") }}
-    {{ radio("30", "closing_rsi_14", "RSI 30%以下(買い)") }}
+    {{ radio("80", "closing_rsi_14", "RSI 80%以上(売り)") }}
+    {{ radio("70", "closing_rsi_14", "RSI 70%以上(売りかも)") }}
+    {{ radio("-30", "closing_rsi_14", "RSI 30%以下(買いかも)") }}
+    {{ radio("-20", "closing_rsi_14", "RSI 20%以下(買い)") }}
     <br>
     {{ radio("1",  "closing_macd_minus_signal", "MACD ゴールデンクロス(買い)") }}
     {{ radio("-1", "closing_macd_minus_signal", "MACD デッドクロス(売り)") }}
