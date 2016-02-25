@@ -1,7 +1,6 @@
 # coding: utf-8
 import click
 
-from stock import models
 from stock import query
 from stock import scrape
 from stock import util
@@ -36,8 +35,7 @@ class AliasedGroup(click.Group):
 def cli():
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
-        pass
-        # ctx.invoke(default)
+        ctx.invoke(serve)
 
 
 @cli.group()
