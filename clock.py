@@ -1,20 +1,16 @@
 # coding: utf-8
-import logging
-from logging import getLogger
-
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from stock import query
 from stock import service
 
-
+import logging
 logging.basicConfig(level=logging.INFO)
-logger = getLogger(__name__)
+logger = logging.getLogger(__name__)
 sched = BlockingScheduler()
 
+
 # WARN: minus 9 if you want to use JST
-
-
 # @sched.scheduled_job('interval', minutes=1)
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=7, minute=0)
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=15, minute=10)  # 0:10 (JST)
