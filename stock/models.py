@@ -130,8 +130,14 @@ class CompanySearchField(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
     closing_rsi_14 = sql.Column(sql.Float, nullable=True)
+
+    # MACD
     closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True)
     closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True)
+
+    # stochastic
+    closing_stochastic_d_minus_sd1_14_3_3 = sql.Column(sql.Float, nullable=True)
+    closing_stochastic_d_minus_sd2_14_3_3 = sql.Column(sql.Float, nullable=True)
 
     # (0, 1 sigma) => 1, (1 sigma, 2 sigma) => 2 and so on
     interval_closing_bollinger_band_20 = sql.Column(sql.Integer, nullable=True)

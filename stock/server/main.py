@@ -9,6 +9,13 @@ from stock import config as C
 app = Flask(__name__)
 
 
+def to_int(key):
+    try:
+        return int(request.args.get(key))
+    except:
+        return None
+
+
 @app.route("/", methods=["GET"])
 def index():
     try:
@@ -33,6 +40,7 @@ def index():
         closing_rsi_14=v2,
         closing_macd_minus_signal=v3,
         interval_closing_bollinger_band_20=v4,
+        closing_stochastic_d_minus_sd=to_int("closing_stochastic_d_minus_sd"),
     )
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})

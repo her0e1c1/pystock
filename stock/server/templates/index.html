@@ -45,6 +45,11 @@
     {{ radio(2,  "interval_closing_bollinger_band_20", "1~2シグマ(売りかも)") }}
     {{ radio(3,  "interval_closing_bollinger_band_20", "2~3シグマ(売り)") }}
     (売買指標は、もみ合いの相場の場合)
+    <br>
+    {{ radio("1",  "closing_stochastic_d_minus_sd", "slow stochastic ゴールデンクロス(買い)") }}
+    {{ radio("-1", "closing_stochastic_d_minus_sd", "slow stochastic デッドクロス(売り)") }}
+    (slowは、中長期向け)
+    <br>
   </form>
   <ul>
     {% for c in company_list %}

@@ -32,6 +32,7 @@ def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
 def get_companies(ratio_closing_minus_rolling_mean_25=None,
                   closing_rsi_14=None,
                   interval_closing_bollinger_band_20=None,
+                  closing_stochastic_d_minus_sd=None,
                   closing_macd_minus_signal=None):
     session = query.models.Session()
     q = query.Company.query(session)
@@ -76,6 +77,20 @@ def get_companies(ratio_closing_minus_rolling_mean_25=None,
             q = q.filter(col1 <= 0)
             q = q.filter(col2 >= 0)
 
+    if closing_stochastic_d_minus_sd is not None:
+        col_name1 = "closing_stochastic_d_minus_sd1_14_3_3"
+        col_name2 = "closing_stochastic_d_minus_sd2_14_3_3"
+        v = closing_stochastic_d_minus_sd
+        q = q.join(query.models.Company.search_field)
+        col1 = getattr(query.models.CompanySearchField, col_name1)
+        col2 = getattr(query.models.CompanySearchField, col_name2)
+        if v > 0:
+            q = q.filter(col1 >= 0)
+            q = q.filter(col2 <= 0)
+        else:
+            q = q.filter(col1 <= 0)
+            q = q.filter(col2 >= 0)
+
     return q.all()
 
 
@@ -84,6 +99,7 @@ def update_search_fields():
     closing_rsi_14()
     closing_macd_minus_signal()
     low_min()
+    closing_stochastic_d_minus_sd()
 
 
 def closing_minus_rolling_mean_25(period=25):
@@ -172,3 +188,21 @@ def closing_bollinger_band(period=20):
             if min(m1, m2) < p <= max(m1, m2):
                 return sign * sigma
     with_session(f, "interval_closing_bollinger_band_20")
+
+
+def closing_stochastic_d_minus_sd():
+    def wrap(index):
+        def last(p):
+            lvi = p.last_valid_index()
+            if lvi and lvi > 0:
+                return p[lvi - (index - 1)]
+
+        def f(df):
+            k, d, sd = 14, 3, 3
+            fast = last(wrapper.stochastic_d(df.closing, k=k, d=d))
+            slow = last(wrapper.stochastic_sd(df.closing, k=k, d=d, sd=sd))
+            if fast is not None and slow is not None:
+                return float(fast - slow)
+        return f
+    with_session(wrap(1), "closing_stochastic_d_minus_sd1_14_3_3")
+    with_session(wrap(2), "closing_stochastic_d_minus_sd2_14_3_3")
