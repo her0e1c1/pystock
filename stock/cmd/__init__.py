@@ -185,5 +185,5 @@ def update(min_id, max_id, each, last_date):
 def calculate(**kw):
     for method_name, do in kw.items():
         if kw["all"] or do:
-            logger.info("CALC: %s" % method_name)
+            click.echo("CALC: %s" % method_name)
             getattr(service.search_field, method_name)()
