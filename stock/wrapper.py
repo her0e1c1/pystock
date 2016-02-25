@@ -57,6 +57,18 @@ class DayInfoQuery(Query):
         df = self.df()
         return to_seq(df.date, macd_signal(df.closing))
 
+    def stochastic_k(self):
+        df = self.df()
+        return to_seq(df.date, stochastic_k(df.closing, k=14))
+
+    def stochastic_d(self):
+        df = self.df()
+        return to_seq(df.date, stochastic_d(df.closing, k=14, d=3))
+
+    def stochastic_sd(self):
+        df = self.df()
+        return to_seq(df.date, stochastic_sd(df.closing, k=14, d=3, sd=3))
+
     def RSI(self, period):
         df = self.df()
         rsi = RSI(df.closing, period)
@@ -111,6 +123,21 @@ class Company(Wrapper):
                 "date": day_info.js_datetime}
             data_records.append(data)
         return pd.DataFrame.from_records(data_records)
+
+
+def stochastic_k(prices, k):
+    l = pd.rolling_min(prices, k)
+    h = pd.rolling_max(prices, k)
+    return 100 * (prices - l) / (h - l)
+
+
+def stochastic_d(prices, k, d):
+    return pd.rolling_mean(stochastic_k(prices, k), d)
+
+
+def stochastic_sd(prices, k, d, sd):
+    # (k, d, sd) = (14, 3, 3)
+    return pd.rolling_mean(stochastic_d(prices, k, d), sd)
 
 
 def bollinger_band(prices, period, sigma):

@@ -74,6 +74,11 @@ def api(company_id):
             {"name": "macd_line", "data": q.macd_line(), "yAxis": 3},
             {"name": "macd_signal", "data": q.macd_signal(), "yAxis": 3},
         ],
+        "stochastic": [
+            {"name": "fast %K", "data": q.stochastic_k(), "yAxis": 4},
+            {"name": "fast %D / slow %K", "data": q.stochastic_d(), "yAxis": 4},
+            {"name": "slow %D", "data": q.stochastic_sd(), "yAxis": 4},
+        ],
     })
 
 

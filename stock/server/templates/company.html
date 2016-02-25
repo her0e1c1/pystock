@@ -31,11 +31,13 @@
                     {title: {text: 'Volume'}, height: '10%', top: '60%'},
                     {title: {text: 'RSI'}, height: '10%', top: '80%'},
                     {title: {text: 'MACD'}, height: '10%', top: '90%'},
+                    {title: {text: 'stochastic'}, height: '10%', top: '70%'},
                 ],
                 series : [
                     {name: 'OHLC', data: data.ohlc, type: 'candlestick', yAxis: 0},
                     {data: data.columns[0].data, type: 'column', yAxis: 1},
-                ].concat(rolling_means).concat(percentages).concat(data.macd),
+                ].concat(rolling_means).concat(percentages).concat(data.macd)
+                 .concat(data.stochastic),
             });
         });
     });
