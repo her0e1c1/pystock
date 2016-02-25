@@ -18,30 +18,15 @@ def to_int(key):
 
 @app.route("/", methods=["GET"])
 def index():
-    try:
-        v = int(request.args.get("ratio_closing_minus_rolling_mean_25"))
-    except:
-        v = None
-    try:
-        v2 = int(request.args.get("closing_rsi_14"))
-    except:
-        v2 = None
-    try:
-        v3 = int(request.args.get("closing_macd_minus_signal"))
-    except:
-        v3 = None
-    try:
-        v4 = int(request.args.get("interval_closing_bollinger_band_20"))
-    except:
-        v4 = None
-
-    company_list = service.get_companies(
-        ratio_closing_minus_rolling_mean_25=v,
-        closing_rsi_14=v2,
-        closing_macd_minus_signal=v3,
-        interval_closing_bollinger_band_20=v4,
-        closing_stochastic_d_minus_sd=to_int("closing_stochastic_d_minus_sd"),
-    )
+    field_keys = [
+        "ratio_closing_minus_rolling_mean_25",
+        "closing_rsi_14",
+        "closing_macd_minus_signal",
+        "interval_closing_bollinger_band_20",
+        "closing_stochastic_d_minus_sd",
+    ]
+    d = {k: to_int(k) for k in field_keys}
+    company_list = service.get_companies(**d)
     return render_template('index.html', **{"company_list": company_list,
                                             "last_date": service.last_date()})
 
