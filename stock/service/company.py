@@ -34,12 +34,17 @@ def update_copmany_list(start=None, end=None, each=False, ignore=False, last_dat
     session.close()
 
 
-def download_and_store_company_list(url=C.COMPANY_XLS_URL):
+def download_company_list(url=C.COMPANY_XLS_URL):
     from stock.cmd.import_company import Reader
     resp = requests.get(url)
     if resp.ok:
-        xls = resp.content
-        return Reader(filepath=io.BytesIO(xls)).store()
+        return Reader(filepath=io.BytesIO(resp.content))
+
+
+def download_and_store_company_list(url=C.COMPANY_XLS_URL):
+    reader = download_company_list(url)
+    if reader:
+        return reader.store()
     else:
         return False
 
