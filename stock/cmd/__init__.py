@@ -74,7 +74,7 @@ def db():
 
 @db.command(help="Create new all tables")
 def create():
-    models.Base.metadata.create_all()
+    service.table.create()
 
 
 @db.command(help="Drop all tables")
@@ -83,7 +83,7 @@ def drop(yes):
     # this doesn't work
     # if click.confirm("Drop all tables. Are you sure?"):
     if yes:
-        models.Base.metadata.drop_all()
+        service.table.drop()
     else:
         click.echo("Nothing")
 
@@ -92,12 +92,12 @@ def drop(yes):
 @click.option("--all", is_flag=True, default=False)
 def setup(all):
     click.echo("Start setup ...")
-
+    click.echo("Create table ...")
+    service.table.create()
+    click.echo("Download and store company list ...")
     service.company.download_and_store_company_list()
-
-    ctx = click.get_current_context()
-    for cmd in [create, company]:
-        ctx.invoke(cmd)
+    click.echo("Store day info")
+    query.DayInfo.sets(min_id=1, max_id=10, each=True, ignore=True)
 
 
 @cli.command(help="show companies")

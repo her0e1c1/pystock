@@ -5,6 +5,7 @@ from stock import util
 
 from . import company  # NOQA
 from . import search_field  # NOQA
+from . import table  # NOQA
 
 
 def last_date():
