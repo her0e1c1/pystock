@@ -25,7 +25,7 @@
   </table>
 
   <form action="{{ url_for('index') }}" method="get">
-    {% for v in [10, 5, -5, -10] %}
+    {% for v in [15, 10, 5, -5, -10, -15] %}
       {% set label = "%s%%%s" % (v|abs, v >= 0 and "以上" or "以下") %}
       {{ radio(v, "ratio_closing_minus_rolling_mean_25", "25日移動平均線 %s" % label) }}
     {% endfor %}
@@ -36,12 +36,12 @@
     {{ radio("1",  "closing_macd_minus_signal", "MACD ゴールデンクロス(買い)") }}
     {{ radio("-1", "closing_macd_minus_signal", "MACD デッドクロス(売り)") }}
     <br>
-    {{ radio(-3, "interval_closing_bollinger_band_20", "-2~-3シグマ(とっても買い)") }}
-    {{ radio(-2, "interval_closing_bollinger_band_20", "-1~-2シグマ(買い)") }}
+    {{ radio(-3, "interval_closing_bollinger_band_20", "-2~-3シグマ(買い)") }}
+    {{ radio(-2, "interval_closing_bollinger_band_20", "-1~-2シグマ(買いかも)") }}
     {{ radio(-1, "interval_closing_bollinger_band_20", "0~-1シグマ") }}
     {{ radio(1,  "interval_closing_bollinger_band_20", "0~1シグマ") }}
-    {{ radio(2,  "interval_closing_bollinger_band_20", "1~2シグマ(売り)") }}
-    {{ radio(3,  "interval_closing_bollinger_band_20", "2~3シグマ(とっても売り)") }}
+    {{ radio(2,  "interval_closing_bollinger_band_20", "1~2シグマ(売りかも)") }}
+    {{ radio(3,  "interval_closing_bollinger_band_20", "2~3シグマ(売り)") }}
     (売買指標は、もみ合いの相場の場合)
   </form>
   <ul>
