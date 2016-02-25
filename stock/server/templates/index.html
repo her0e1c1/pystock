@@ -46,7 +46,7 @@
   </form>
   <ul>
     {% for c in company_list %}
-     <li><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}</a></li>
+     <li><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}({{ c.code }})</a></li>
    {% endfor %}
   </ul>
 {% endblock %}
