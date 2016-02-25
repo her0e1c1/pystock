@@ -87,15 +87,18 @@ def drop(yes):
 
 
 @cli.command(help="Setup")
+@click.option("-l", "--limit", type=int, default=10)
 @click.option("--all", is_flag=True, default=False)
-def setup(all):
+def setup(all, limit):
+    if all:
+        limit = None
     click.echo("Start setup ...")
     click.echo("Create table ...")
     service.table.create()
     click.echo("Download and store company list ...")
     service.company.download_and_store_company_list()
     click.echo("Store day info")
-    query.DayInfo.sets(min_id=1, max_id=10, each=True, ignore=True)
+    service.company.update_copmany_list(limit=limit, each=True, ignore=True)
 
 
 @cli.command(help="show companies")

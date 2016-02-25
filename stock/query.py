@@ -87,6 +87,15 @@ class Company(Query):
     model = models.Company
 
     @classmethod
+    def all(cls, session=None, last_date=None, limit=None, **kw):
+        q = cls.query(session).filter_by(**kw)
+        if limit:
+            q = q.limit(limit)
+        if last_date:
+            q = q.filter(sql.not_(models.Company.day_info_list.any(date=last_date)))
+        return q.all()
+
+    @classmethod
     def first(cls, session=None, last_date=None, **kw):
         q = cls.query(session).filter_by(**kw)
         if last_date:

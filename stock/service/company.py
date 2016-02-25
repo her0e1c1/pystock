@@ -4,19 +4,33 @@ import io
 import requests
 
 from stock import query
+from stock import models
 from stock import config as C
+
+from .session import session_each
 
 from logging import getLogger
 logger = getLogger(__name__)
 
 
-def update_copmany_list():
-    # check company_id is valid
-    session = query.session()
-    c = query.Company.all(last_date=last_date, session=session)
-    if not c:
-        logger.info("SKIP: company(id=%s)" % company_id)
-        return
+def get_scraper():
+    from stock.scrape import YahooJapan
+    return YahooJapan()
+
+
+def update_copmany_list(start=None, end=None, each=False, ignore=False, last_date=None, limit=None):
+    session = query.models.Session()
+    for c in query.Company.all(last_date=last_date, session=session, limit=limit):
+        if not c:
+            logger.info("SKIP: company(id=%s)" % c.id)
+            continue
+
+        def add_instance(**kw):
+            kw["company_id"] = c.id
+            return models.DayInfo(**kw)
+
+        history = get_scraper().history(c.code, start, end)
+        session_each(history, add_instance, session=session, ignore=ignore, each=each)
     session.close()
 
 

@@ -19,11 +19,3 @@ def make_data_frame(day_info_query):
             for info in day_info_query],
         columns=["date", "closing", "volume", "opening", "high", "low"]
     )
-
-
-def scrape_and_store(min_id=1, max_id=None, start=None, end=None,
-                     each=False, ignore=False, last_date=None):
-    if max_id is None:
-        max_id = Company.max_id()
-    for id in range(min_id, max_id + 1):
-        set(id, each=each, ignore=True, last_date=last_date)
