@@ -6,7 +6,8 @@ from .session import Session
 
 
 def with_session(f, col_name):
-    Session().with_session(f, col_name)
+    with Session() as s:
+        s.with_session(f, col_name)
 
 
 def update_search_fields():

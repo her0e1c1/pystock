@@ -9,6 +9,12 @@ class Session(object):
     def __init__(self, ignore=False, each=False):
         self._s = query.models.Session()
 
+    def __enter__(self):
+        return self
+
+    def __exit__(self, type, value, tb):
+        self.close()
+
     def commit(self):
         self._s.commit()
 
