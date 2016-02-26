@@ -16,7 +16,7 @@ sched = BlockingScheduler()
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=15, minute=10)  # 0:10 (JST)
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=19, minute=0)
 def scheduled_scrape_japan():
-    ldate = service.last_date()
+    ldate = service.util.last_date()
     logger.info('CRON: Scrape and store stock at %s' % ldate)
     query.DayInfo.sets(each=True, ignore=True, last_date=ldate)
     service.search_field.update_search_fields()
