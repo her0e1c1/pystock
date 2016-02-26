@@ -1,6 +1,5 @@
 # coding: utf-8
 import time
-import calendar
 import datetime
 
 import sqlalchemy as sql
@@ -48,13 +47,6 @@ class DateRange(object):
 
 def dict_inverse(dct):
     return {v: k for k, v in dct.items()}
-
-
-def multiple_decorator(funcs):
-    def wrap(g):
-        for f in funcs:
-            g = f(g)
-    return wrap
 
 
 def str2date(datestr):

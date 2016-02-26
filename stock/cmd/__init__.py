@@ -12,6 +12,13 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def _multiple_decorator(funcs):
+    def wrap(g):
+        for f in funcs:
+            g = f(g)
+    return wrap
+
+
 def mkdate(ctx, param, datestr):
     return util.str2date(datestr)
 
@@ -125,7 +132,7 @@ def serve(port, debug):
 def scrape_():
     pass
 
-_decorator = util.multiple_decorator([
+_decorator = _multiple_decorator([
     click.option("--scraper", default=scrape.YahooJapan),
     click.option("--start"),
     click.option("--end"),
