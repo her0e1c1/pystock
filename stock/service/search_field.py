@@ -2,9 +2,11 @@
 import pandas as pd
 
 from stock import wrapper
-from . import session
+from .session import Session
 
-with_session = session.with_session
+
+def with_session(f, col_name):
+    Session().with_session(f, col_name)
 
 
 def update_search_fields():
