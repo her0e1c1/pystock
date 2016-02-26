@@ -1,5 +1,6 @@
 # coding: utf-8
-from flask import Flask, render_template, request, jsonify, abort
+from flask import Flask, request, jsonify, abort
+from flask import render_template as _render_template
 
 from stock import query
 from stock import service
@@ -7,6 +8,12 @@ from stock import config as C
 
 
 app = Flask(__name__)
+
+
+def render_template(name, **kw):
+    kw["service"] = service
+    kw["C"] = C
+    return _render_template(name, **kw)
 
 
 def to_int(key):
@@ -27,8 +34,7 @@ def index():
     ]
     d = {k: to_int(k) for k in field_keys}
     company_list = service.company.get(**d)
-    return render_template('index.html', **{"company_list": company_list,
-                                            "last_date": service.last_date()})
+    return render_template('index.html', **{"company_list": company_list})
 
 
 @app.route("/company/<int:id>", methods=["GET"])
@@ -77,4 +83,4 @@ def api(company_id):
 
 @app.route("/links", methods=["GET"])
 def links():
-    return render_template('links.html', **{"C": C})
+    return render_template('links.html')
