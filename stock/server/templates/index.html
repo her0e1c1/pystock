@@ -25,30 +25,55 @@
   </table>
 
   <form action="{{ url_for('index') }}" method="get">
+    <label class="col-sm-2 control-label">25日移動平均線 </label>
+    <div class="form-group">
     {% for v in [15, 10, 5, -5, -10, -15] %}
       {% set label = "%s%%%s" % (v|abs, v >= 0 and "以上" or "以下") %}
-      {{ radio(v, "ratio_closing_minus_rolling_mean_25", "25日移動平均線 %s" % label) }}
+      <label class="checkbox-inline">{{ radio(v, "ratio_closing_minus_rolling_mean_25", "%s" % label) }}</label>
     {% endfor %}
-    <br>
-    {{ radio("80", "closing_rsi_14", "RSI 80%以上(売り)") }}
-    {{ radio("70", "closing_rsi_14", "RSI 70%以上(売りかも)") }}
-    {{ radio("-30", "closing_rsi_14", "RSI 30%以下(買いかも)") }}
-    {{ radio("-20", "closing_rsi_14", "RSI 20%以下(買い)") }}
-    <br>
-    {{ radio("1",  "closing_macd_minus_signal", "MACD ゴールデンクロス(買い)") }}
-    {{ radio("-1", "closing_macd_minus_signal", "MACD デッドクロス(売り)") }}
-    <br>
-    {{ radio(-3, "interval_closing_bollinger_band_20", "-2~-3シグマ(買い)") }}
-    {{ radio(-2, "interval_closing_bollinger_band_20", "-1~-2シグマ(買いかも)") }}
-    {{ radio(-1, "interval_closing_bollinger_band_20", "0~-1シグマ") }}
-    {{ radio(1,  "interval_closing_bollinger_band_20", "0~1シグマ") }}
-    {{ radio(2,  "interval_closing_bollinger_band_20", "1~2シグマ(売りかも)") }}
-    {{ radio(3,  "interval_closing_bollinger_band_20", "2~3シグマ(売り)") }}
-    (売買指標は、もみ合いの相場の場合)
-    <br>
-    {{ radio("1",  "closing_stochastic_d_minus_sd", "slow stochastic ゴールデンクロス(買い)") }}
-    {{ radio("-1", "closing_stochastic_d_minus_sd", "slow stochastic デッドクロス(売り)") }}
-    (slowは、中長期向け)
+    </div>
+
+    <div class="form-group">
+    <label class="col-sm-2 control-label">RSI</label>
+    {% for value, label in [("80",  "80%以上(売り)"),
+                            ("70",  "70%以上(売りかも)"),
+                            ("-30", "30%以下(買いかも)"),
+                            ("-20", "20%以下(買い)"),
+    ] %}
+      <label class="checkbox-inline">{{ radio(value, "closing_rsi_14", label) }}</label>
+    {% endfor %}
+    </div>
+
+    <div class="form-group">
+    <label class="col-sm-2 control-label">ボリンジャーバンド</label>
+    {% for value, label in [("-3", "-2~-3シグマ(買い)"),
+                            ("-2", "-1~-2シグマ(買いかも)"),
+                            ("-1", "0~-1シグマ"),
+                            ("1" , "0~1シグマ"),
+                            ("2" , "1~2シグマ(売りかも)"),
+                            ("3" , "2~3シグマ(売り)"),
+    ] %}
+      <label class="checkbox-inline">{{ radio(value, "interval_closing_bollinger_band_20", label) }}</label>
+    {% endfor %}
+    </div>
+
+    <div class="form-group">
+    <label class="col-sm-2 control-label">MACD</label>
+    {% for value, label in [("-1", "デッドクロス(売り)"),
+                            ("1",  "ゴールデンクロス(買い)"),
+    ] %}
+      <label class="checkbox-inline">{{ radio(value, "closing_macd_minus_signal", label) }}</label>
+    {% endfor %}
+    </div>
+
+    <div class="form-group">
+    <label class="col-sm-2 control-label">SLOW STOCHASTIC</label>
+    {% for value, label in [("-1", "デッドクロス(売り)"),
+                            ("1",  "ゴールデンクロス(買い)"),
+    ] %}
+      <label class="checkbox-inline">{{ radio(value, "closing_stochastic_d_minus_sd", label) }}</label>
+    {% endfor %}
+    </div>
     <br>
   </form>
   <ul>
