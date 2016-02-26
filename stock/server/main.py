@@ -2,7 +2,6 @@
 from flask import Flask, request, jsonify
 from flask import render_template as _render_template
 
-from stock import query
 from stock import service
 from stock import config as C
 
@@ -46,7 +45,7 @@ def company(id):
 @app.route("/api/<int:company_id>", methods=["GET"])
 def api(company_id):
     company = service.company.first(id=company_id, raise_404=True)
-    q = query.DayInfo.get(company_id)
+    q = service.day_info.get(company_id)
     bbands = [{"name": "%dsigma" % s,
                "data": q.bollinger_band(sigma=s),
                "color": "black",

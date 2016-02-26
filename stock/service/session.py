@@ -5,7 +5,7 @@ from stock import query
 
 
 def with_session(f, col_name, session=None):
-    from stock.service import make_data_frame
+    from stock.service.day_info import make_data_frame
     session = session or query.models.Session()
     for c in query.Company.query(session):
         df = make_data_frame(query.DayInfo.get(company_id=c.id, session=session))

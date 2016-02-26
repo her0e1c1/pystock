@@ -36,7 +36,7 @@ def to_seq(dates, series):
 class DayInfoQuery(Query):
 
     def df(self):
-        from stock.service import make_data_frame
+        from stock.service.day_info import make_data_frame
         return make_data_frame(self)
 
     def rolling_mean(self, period=30):
