@@ -1,6 +1,7 @@
 # coding: utf-8
 import os
 import path
+import logging
 from collections import OrderedDict
 
 
@@ -14,6 +15,7 @@ ROOTDIR = path.Path(__file__).parent.parent
 HERE = os.path.dirname(__file__)
 
 DEBUG = False
+LOG_LEVEL = logging.INFO
 
 PORT = int(os.environ.get('PORT', 5000))
 
