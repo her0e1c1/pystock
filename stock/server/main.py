@@ -1,5 +1,5 @@
 # coding: utf-8
-from flask import Flask, request, jsonify, abort
+from flask import Flask, request, jsonify
 from flask import render_template as _render_template
 
 from stock import query
@@ -39,17 +39,13 @@ def index():
 
 @app.route("/company/<int:id>", methods=["GET"])
 def company(id):
-    company = query.Company.first(id=id)
-    if not company:
-        abort(404)
+    company = service.company.first(id=id, raise_404=True)
     return render_template('company.html', **{"company": company})
 
 
 @app.route("/api/<int:company_id>", methods=["GET"])
 def api(company_id):
-    company = query.Company.first(id=company_id)
-    if not company:
-        abort(404)
+    company = service.company.first(id=company_id, raise_404=True)
     q = query.DayInfo.get(company_id)
     bbands = [{"name": "%dsigma" % s,
                "data": q.bollinger_band(sigma=s),

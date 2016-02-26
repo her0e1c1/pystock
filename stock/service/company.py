@@ -2,6 +2,7 @@
 import io
 
 import requests
+from flask import abort
 
 from stock import query
 from stock import models
@@ -47,6 +48,13 @@ def download_and_store_company_list(url=C.COMPANY_XLS_URL):
         return reader.store()
     else:
         return False
+
+
+def first(id, raise_404=False):
+    company = query.Company.first(id=id)
+    if not company and raise_404:
+        abort(404)
+    return company
 
 
 def get(ratio_closing_minus_rolling_mean_25=None,
