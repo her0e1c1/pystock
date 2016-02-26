@@ -8,7 +8,7 @@ from stock import query
 from stock import models
 from stock import config as C
 
-from .session import session_each
+from .session import Session
 
 from logging import getLogger
 logger = getLogger(__name__)
@@ -20,8 +20,8 @@ def get_scraper():
 
 
 def update_copmany_list(start=None, end=None, each=False, ignore=False, last_date=None, limit=None):
-    session = query.models.Session()
-    for c in query.Company.all(last_date=last_date, session=session, limit=limit):
+    session = Session(ignore=ignore, each=each)
+    for c in query.Company.all(last_date=last_date, session=session._s, limit=limit):
         if not c:
             logger.info("SKIP: company(id=%s)" % c.id)
             continue
@@ -31,7 +31,7 @@ def update_copmany_list(start=None, end=None, each=False, ignore=False, last_dat
             return models.DayInfo(**kw)
 
         history = get_scraper().history(c.code, start, end)
-        session_each(history, add_instance, session=session, ignore=ignore, each=each)
+        session.each(history, add_instance)
     session.close()
 
 

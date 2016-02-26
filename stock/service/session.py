@@ -4,6 +4,34 @@ import sqlalchemy as sql
 from stock import query
 
 
+class Session(object):
+
+    def __init__(self, ignore=False, each=False):
+        self._s = query.models.Session()
+
+    def commit(self):
+        self._s.commit()
+
+    def close(self):
+        self._s.close()
+
+    def each(self, iterable, add_instance):
+        for i in iterable:
+            self._s.add(add_instance(**i))
+            if not self.each:
+                continue
+            try:
+                self.commit()
+            except sql.exc.IntegrityError:
+                self._s.rollback()
+        if not self.each:
+            try:
+                self.commit()
+            except sql.exc.IntegrityError as e:
+                if not self.gnore:
+                    raise e
+
+
 def with_session(f, col_name, session=None):
     from stock.service.day_info import make_data_frame
     session = session or query.models.Session()
@@ -21,27 +49,3 @@ def with_session(f, col_name, session=None):
         session.add(c)
     session.commit()
     session.close()
-
-
-def session_each(iterable, add_instance, each=False, ignore=False, session=None):
-    # TODO: use with statement
-    close = False
-    if session is None:
-        session = query.session()
-        close = True
-    for i in iterable:
-        session.add(add_instance(**i))
-        if not each:
-            continue
-        try:
-            session.commit()
-        except sql.exc.IntegrityError:
-            session.rollback()
-    if not each:
-        try:
-            session.commit()
-        except sql.exc.IntegrityError as e:
-            if not ignore:
-                raise e
-    if close:
-        session.close()
