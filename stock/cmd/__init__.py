@@ -63,9 +63,9 @@ or directly {url}
 """.format(url=C.COMPANY_XLS_URL))
 def company(url):
     if service.company.download_and_store_company_list(url):
-        click.echo("Get %s" % C.COMPANY_XLS_URL)
+        click.echo("Get %s" % url)
     else:
-        click.echo("Can't get %s" % C.COMPANY_XLS_URL)
+        click.echo("Can't get %s" % url)
 
 
 @cli.group()
