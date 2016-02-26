@@ -1,6 +1,10 @@
 {% extends "base.html" %}
 
 
+{% block title %}{{ company.name }} ({{ company.code }}) | {{ super() }}{% endblock %}
+{% block keywords %}{{ company.name }},{{ company.code }},{{ super() }}{% endblock %}
+
+
 {% block content %}
   <h2>{{ company.name }}</h2>
   <table>
