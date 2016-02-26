@@ -3,23 +3,27 @@ import os
 import path
 from collections import OrderedDict
 
+
+def set(**kw):
+    g = globals()
+    for k, v in kw.items():
+        g[k.upper()] = v  # raise KeyError if the key does not exist
+
+
 ROOTDIR = path.Path(__file__).parent.parent
 HERE = os.path.dirname(__file__)
 
-DEBUG = True
+DEBUG = False
 
 PORT = int(os.environ.get('PORT', 5000))
 
-# URL = "sqlite:///:memory:"
-# URL = "mysql+mysqlconnector://root@localhost/stock?charset=utf8"
+# sqlalchemy
+# DEFAULT_URL = "sqlite:///:memory:"
 DEFAULT_URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
 URL = os.environ.get("DATABASE_URL", DEFAULT_URL)
-
-# sqlalchemy
 CREATE_ENGINE = {
     "encoding": 'utf-8',
-    "echo": False,
-    # "echo": DEBUG,
+    "echo": DEBUG,
 }
 
 STATIC_DIR = os.path.join(ROOTDIR, "static")

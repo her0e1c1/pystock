@@ -121,11 +121,14 @@ def show(closing_minus_rolling_mean_25):
 
 
 @click.option("--port", default=C.PORT, type=int)
-@click.option("--debug", default=C.DEBUG, is_flag=True)
+@click.option("--debug", default=(not C.DEBUG), is_flag=True)
 @cli.command(help="Start server")
-def serve(port, debug):
+def serve(**kw):
     from stock.server import app
-    app.run(port=port, debug=debug)
+    msg = ", ".join(["%s = %s" % (k, v) for k, v in kw.items()])
+    click.echo(msg)
+    C.set(**kw)
+    app.run(**kw)
 
 
 @cli.group(name="scrape")
