@@ -185,13 +185,19 @@ def update(min_id, max_id, each, last_date):
 @cli.command(help="calculate everything", name="calc")
 @click.option("--all", is_flag=True, default=False)
 @click.option("--bband", "closing_bollinger_band", is_flag=True, default=False)
-@click.option("--rm25", is_flag=True, default=False)
-@click.option("--rsi", is_flag=True, default=False)
+@click.option("--rm25", "closing_minus_rolling_mean_25", is_flag=True, default=False)
+@click.option("--rsi", "closing_rsi_14", is_flag=True, default=False)
 @click.option("--min", "low_min", is_flag=True, default=False)
 @click.option("-D", "closing_stochastic_d_minus_sd", is_flag=True, default=False)
 @click.option("--macd", "closing_macd_minus_signal", is_flag=True, default=False)
 def calculate(**kw):
+    # need to pop if it is not a service
+    all = kw.pop("all")
     for method_name, do in kw.items():
-        if kw["all"] or do:
-            click.echo("CALC: %s" % method_name)
-            getattr(service.search_field, method_name)()
+        if all or do:
+            meth = getattr(service.search_field, method_name, None)
+            if meth:
+                click.echo("CALC: %s" % method_name)
+                meth()
+            else:
+                click.secho("CALC: %s is not found" % method_name, fg='red')
