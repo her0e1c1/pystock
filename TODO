@@ -48,3 +48,4 @@
 - dateをindexにしたSeriesに修正
 - 損切りの値段を算出
 - pandas.io.data.get_data_yahoo でリファクタ
+- ランキング(常にトップが入れ替わるように、ポイントつけて表示)
