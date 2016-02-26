@@ -85,12 +85,8 @@ def create():
 @db.command(help="Drop all tables")
 @click.option("-y", "yes", is_flag=True, default=False)
 def drop(yes):
-    # this doesn't work
-    # if click.confirm("Drop all tables. Are you sure?"):
-    if yes:
+    if yes or click.confirm("Drop all tables. Are you sure?"):
         service.table.drop()
-    else:
-        click.echo("Nothing")
 
 
 @cli.command(help="Setup")
