@@ -38,7 +38,6 @@ class DayInfo(Query):
     @classmethod
     def get(cls, company_id, start=None, end=None, session=None):
         q = cls.query(session).filter_by(company_id=company_id)
-        q = wrapper.DayInfoQuery(q)
         q = q.filter(util.DateRange(start, end).query(cls.model.date))
         q = q.order_by("date")
         return q

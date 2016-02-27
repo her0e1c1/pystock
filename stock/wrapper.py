@@ -5,39 +5,20 @@ import sqlalchemy as sql
 import pandas as pd
 
 
-class Query(object):
-
-    def __init__(self, q):
-        self.q = q
-
-    def __iter__(self):
-        return iter(self.q)
-
-    def __getattr__(self, name):
-        attr = getattr(self.q, name)
-        if callable(attr):
-            def f(*args, **kw):
-                r = attr(*args, **kw)
-                if isinstance(r, sql.orm.query.Query):
-                    return self.__class__(r)
-                else:
-                    return r
-            return f
-        else:
-            return attr
-
-
 def to_seq(dates, series):
     return list([a, b] for a, b
                 in zip(dates.values.tolist(), series.values.tolist())
                 if not pd.isnull(b))
 
 
-class DayInfoQuery(Query):
+class DayInfoQuery(object):
+
+    def __init__(self, q):
+        self.query = q
 
     def df(self):
         from stock.service.day_info import make_data_frame
-        return make_data_frame(self)
+        return make_data_frame(self.query)
 
     def rolling_mean(self, period=30):
         df = self.df()

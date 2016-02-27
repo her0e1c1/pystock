@@ -18,4 +18,5 @@ def make_data_frame(day_info_query):
 
 def get(company_id):
     q = query.DayInfo.get(company_id)
-    return q
+    from stock import wrapper
+    return wrapper.DayInfoQuery(q)
