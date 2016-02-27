@@ -147,14 +147,14 @@ def dead_cross(ins, format_string):
 buy_conditions = {
     "closing_rsi_14": lambda ins: ins.closing_rsi_14 <= 30,
     "closing_macd_minus_signal": lambda ins: golden_cross(ins, "closing_macd_minus_signal%s_26_12_9"),
-    "ratio_closing_minus_rolling_mean_25": lambda ins: ins.ratio_closing_minus_rolling_mean_25 >= 10,
+    "ratio_closing_minus_rolling_mean_25": lambda ins: ins.ratio_closing_minus_rolling_mean_25 <= -10,
     "interval_closing_bollinger_band_20": lambda ins: ins.interval_closing_bollinger_band_20 >= 3,
 }
 
 sell_conditions = {
     "closing_rsi_14": lambda ins: ins.closing_rsi_14 >= 70,
     "closing_macd_minus_signal": lambda ins: dead_cross(ins, "closing_macd_minus_signal%s_26_12_9"),
-    "ratio_closing_minus_rolling_mean_25": lambda ins: ins.ratio_closing_minus_rolling_mean_25 <= -10,
+    "ratio_closing_minus_rolling_mean_25": lambda ins: ins.ratio_closing_minus_rolling_mean_25 >= 10,
     "interval_closing_bollinger_band_20": lambda ins: ins.interval_closing_bollinger_band_20 <= -3,
 }
 
