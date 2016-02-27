@@ -1,6 +1,5 @@
 # coding: utf-8
 import os
-import path
 import logging
 from collections import OrderedDict
 
@@ -11,7 +10,11 @@ def set(**kw):
         g[k.upper()] = v  # raise KeyError if the key does not exist
 
 
-ROOTDIR = path.Path(__file__).parent.parent
+# Heroku can't import path (I don't know the reason)
+# import path
+# ROOTDIR = path.Path(__file__).parent.parent
+ROOTDIR = "/".join(os.path.abspath(__file__).split("/")[:-2])
+
 HERE = os.path.dirname(__file__)
 
 DEBUG = False
