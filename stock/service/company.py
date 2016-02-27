@@ -58,6 +58,8 @@ def first(id, raise_404=False):
 
 
 def _percent(q, kw, col_name):
+    if col_name not in kw or kw[col_name] is None:
+        return q
     val = kw[col_name]
     col = getattr(query.models.CompanySearchField, col_name)
     if val >= 0:
@@ -73,11 +75,8 @@ def get(**kw):
     if any(kw.values()):
         q = q.join(query.models.Company.search_field)
 
-    if kw["ratio_closing_minus_rolling_mean_25"] is not None:
-        q = _percent(q, kw, "ratio_closing_minus_rolling_mean_25")
-
-    if kw["ratio_closing1_minus_closing2"] is not None:
-        q = _percent(q, kw, "ratio_closing1_minus_closing2")
+    q = _percent(q, kw, "ratio_closing_minus_rolling_mean_25")
+    q = _percent(q, kw, "ratio_closing1_minus_closing2")
 
     if kw["closing_rsi_14"] is not None:
         rsi = kw["closing_rsi_14"]
