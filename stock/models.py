@@ -156,4 +156,3 @@ class CompanySearchField(Base):
     @property
     def w(self):
         return wrapper.CompanySearchField(self)
-
