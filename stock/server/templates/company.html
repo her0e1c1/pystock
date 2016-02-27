@@ -4,10 +4,15 @@
 {% block title %}{{ company.name }} ({{ company.code }}) | {{ super() }}{% endblock %}
 {% block keywords %}{{ company.name }},{{ company.code }},{{ super() }}{% endblock %}
 
+{% macro show_signal(key) %}
+{% set s = company.search_field.w.signal(key) %}
+{% if s != "" %}
+ <span class="label label-primary">{{ s }}</span>
+{% endif %}
+{% endmacro %}
 
 {% block content %}
   <h2>{{ company.name }}</h2>
-  {% set get_signal = company.search_field.w.signal %}
   <table>
     <tr>
       <th>Code</th>
@@ -18,8 +23,7 @@
       <td>{{ company.code }}</td>
       <td></td>
       <td>
-        {{ company.search_field.closing_rsi_14 }}
-        {{ get_signal("closing_rsi_14") }}
+        {{ company.search_field.closing_rsi_14 }} {{ show_signal("closing_rsi_14") }}
       </td>
     </tr>
   </table>
