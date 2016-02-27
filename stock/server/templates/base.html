@@ -15,15 +15,15 @@
     {% block head %}{% endblock %}
   </head>
   <body>
-    <div id="content">
+    <header>
       <a href="/">TOP</a>
+      <a href="/about">このサイトについて</a>
+    </header>
+    <div id="content">
       {% block content %}{% endblock %}
     </div>
     <footer>
       {% block footer %}{{ cm.copy_right() }}{% endblock %}
-      <ul>
-        <li><a href="/links">LINKS</a></li>
-      </ul>
     </footer>
   </body>
 </html>

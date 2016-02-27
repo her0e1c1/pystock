@@ -76,6 +76,6 @@ def api(company_id):
     })
 
 
-@app.route("/links", methods=["GET"])
-def links():
-    return render_template('links.html')
+@app.route("/about", methods=["GET"])
+def about():
+    return render_template('about.html')

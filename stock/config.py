@@ -56,20 +56,3 @@ SHEET_NAME = "Sheet1"
 
 # 今日から株価を取得する期間
 DEFAULT_DAYS_PERIOD = 3 * 30
-
-# Stock links
-STOCK_LINKS = [
-    # screening
-    "http://www.traders.co.jp/domestic_stocks/invest_tool/screening/screening_top.asp",
-    "http://jp.kabumap.com/servlets/kabumap/Action?SRC=navList/base&cid=find",
-    "http://www.rizumu.net/search/",
-    "http://minkabu.jp/screening",
-    "http://kabusensor.com/screening/",
-    "http://www.dreamvisor.com/quote_search_menu.cgi",
-    "http://www.marble-cafe.com/alpha/cgi/screening/sacs.cgi",
-    "http://www.stockweather.co.jp/sw2/screening.aspx",
-
-    # Others
-    "http://www.sevendata.co.jp/",
-    "http://chartnavi.com/",
-]

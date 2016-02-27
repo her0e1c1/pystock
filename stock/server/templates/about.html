@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+<h1>このサイトについて</h1>
+
+<h2>はじめに</h2>
+
+<p>
+プログラマーが個人投資家向けのシステムを開発しています。
+まだまだ開発段階ではありますが、個人投資家の方からのフィードバックを頂ければ幸いです。
+(こちらにメール頂ければと思います。hiroyuki.ishii.42アットマークgmail.com)
+</p>
+
+<p>
+システムは、オープンソースとして公開していますので、
+ソースコードについて、アドバイス頂ければ大変うれしいです。
+</p>
+
+<ul>
+  <li><a href="https://github.com/her0e1c1/pystock">ソースコード</a></li>
+  <li><a href="http://her0e1c1.hatenablog.com/">開発者ブログ</a></li>
+</ul>
+
+<h2>同じようなサイト</h2>
+
+{% set links = [
+    "http://www.traders.co.jp/domestic_stocks/invest_tool/screening/screening_top.asp",
+    "http://jp.kabumap.com/servlets/kabumap/Action?SRC=navList/base&cid=find",
+    "http://www.rizumu.net/search/",
+    "http://minkabu.jp/screening",
+    "http://kabusensor.com/screening/",
+    "http://www.dreamvisor.com/quote_search_menu.cgi",
+    "http://www.marble-cafe.com/alpha/cgi/screening/sacs.cgi",
+    "http://www.stockweather.co.jp/sw2/screening.aspx",
+
+    "http://www.sevendata.co.jp/",
+    "http://chartnavi.com/",
+] %}
+
+<ul>
+  {% for l in links %}
+  <li><a href="{{ l }}">{{ l }}</a></li>
+  {% endfor %}
+</ul>
+
+{% endblock %}
