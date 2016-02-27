@@ -25,13 +25,14 @@
   </table>
 
   <h2>シグナル</h2>
-  <p>現在はもみ合い相場での判定. 今後はもみ合いと上昇・下降相場に応じたシグナルを作成予定<p>
+
   <dl class="dl-horizontal">
     <dt>25日移動平均線乖離</dt><dd>{{ show_signal("ratio_closing_minus_rolling_mean_25") }}</dd>
     <dt>ボリンジャーバンド</dt><dd>{{ show_signal("interval_closing_bollinger_band_20") }}</dd>
     <dt>RSI</dt><dd>{{ show_signal("closing_rsi_14") }}</dd>
     <dt>MACD</dt><dd>{{ show_signal("closing_macd_minus_signal") }}</dd>
   </dl>
+  <p>現在はもみ合い相場での判定. 今後はもみ合いと上昇・下降相場に応じたシグナルを作成予定<p>
 
   <div id="container" style="min-width: 740px; height: 420px; margin: 0 auto"></div>
   <script type="text/javascript">
