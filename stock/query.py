@@ -5,7 +5,6 @@ import sqlalchemy as sql
 
 from . import models
 from . import util
-from . import wrapper
 
 logger = getLogger(__name__)
 
