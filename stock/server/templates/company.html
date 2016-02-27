@@ -7,6 +7,7 @@
 
 {% block content %}
   <h2>{{ company.name }}</h2>
+  {% set get_signal = company.search_field.w.signal %}
   <table>
     <tr>
       <th>Code</th>
@@ -16,9 +17,13 @@
     <tr>
       <td>{{ company.code }}</td>
       <td></td>
-      <td>{{ company.search_field.closing_rsi_14 }}</td>
+      <td>
+        {{ company.search_field.closing_rsi_14 }}
+        {{ get_signal("closing_rsi_14") }}
+      </td>
     </tr>
   </table>
+
   <div id="container" style="min-width: 740px; height: 420px; margin: 0 auto"></div>
   <script type="text/javascript">
     $(function(){

@@ -125,6 +125,42 @@ class Company(Wrapper):
         return pd.DataFrame.from_records(data_records)
 
 
+buy_conditions = {
+    "closing_rsi_14": lambda col: col <= 30,
+}
+
+sell_conditions = {
+    "closing_rsi_14": lambda col: col >= 70,
+}
+
+
+class CompanySearchField(Wrapper):
+
+    @property
+    def number_of_signals(self):
+        return len(self.signals)
+
+    def signal(self, col_name):
+        val = getattr(self.ins, col_name)
+        buy = buy_conditions[col_name]
+        sell = sell_conditions[col_name]
+        if buy(val):
+            return "BUY"
+        elif sell(val):
+            return "SELL"
+        else:
+            return ""
+
+    def signals(self):
+        # TODO: implement
+        s = {}
+        for meth in dir(self):
+            prefix = "signal_"
+            if meth.startswith(prefix):
+                s[meth[len(prefix):]] = getattr(self, meth)()
+        return s
+
+
 def stochastic_k(prices, k):
     l = pd.rolling_min(prices, k)
     h = pd.rolling_max(prices, k)

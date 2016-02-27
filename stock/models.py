@@ -152,3 +152,8 @@ class CompanySearchField(Base):
         nullable=True,
     )
     company = sql.orm.relation("Company", back_populates="search_field")
+
+    @property
+    def w(self):
+        return wrapper.CompanySearchField(self)
+
