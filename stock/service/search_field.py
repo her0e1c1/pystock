@@ -5,6 +5,21 @@ from stock import wrapper
 from .session import Session
 
 
+def last(series, offset_from_last=0):
+    i = series.last_valid_index()
+    if i is None:
+        return
+    elif i - offset_from_last >= 0:
+        return series[i - offset_from_last]
+
+
+def increment(a, b):
+    if a is None or b is None:
+        return
+    elif a.is_integer() and b.is_integer():
+        return float((a - b) / b) * 100
+
+
 def with_session(f, col_name):
     with Session() as s:
         s.with_session(f, col_name)
@@ -21,10 +36,8 @@ def update_search_fields():
 def closing_minus_rolling_mean_25(period=25):
     """長期移動平均線と現在の株価の差を予め計算"""
     def f(df):
-        closing = df.closing.tail(1)
-        mean = pd.rolling_mean(df.closing, period).tail(1)
-        if not (closing.empty or mean.empty):
-            return float((closing - mean) / closing) * 100
+        mean = pd.rolling_mean(df.closing, period)
+        return increment(last(df.closing), last(mean))
 
     with_session(f, "ratio_closing_minus_rolling_mean_25")
 
@@ -104,3 +117,12 @@ def closing_stochastic_d_minus_sd():
         return f
     with_session(wrap(1), "closing_stochastic_d_minus_sd1_14_3_3")
     with_session(wrap(2), "closing_stochastic_d_minus_sd2_14_3_3")
+
+
+def ratio_closing1_minus_closing2():
+    def f(df):
+        c0 = last(df.closing)
+        c1 = last(df.closing, 1)
+        return increment(c0, c1)
+
+    with_session(f, "ratio_closing1_minus_closing2")

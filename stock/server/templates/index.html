@@ -6,6 +6,15 @@
  {{ label }}
 {% endmacro %}
 
+{% macro radio_group(label, key, radios) %}
+<div class="form-group">
+<label class="col-sm-2 control-label">{{ label }}</label>
+{% for value, label in radios %}
+  <label class="checkbox-inline">{{ radio(value, key, label) }}</label>
+{% endfor %}
+</div>
+{% endmacro %}
+
 {% block content %}
   <script type="text/javascript">
     $(function(){
@@ -32,6 +41,13 @@
       <label class="checkbox-inline">{{ radio(v, "ratio_closing_minus_rolling_mean_25", "%s" % label) }}</label>
     {% endfor %}
     </div>
+
+    {{ radio_group("値上がり率", "ratio_closing1_minus_closing2",
+       [("10", "10%以上"),
+        ("5",  "5%以上"),
+        ("-5", "5%以下"),
+        ("-10","10%以下")]
+    ) }}
 
     <div class="form-group">
     <label class="col-sm-2 control-label">RSI</label>

@@ -184,6 +184,7 @@ def update(min_id, max_id, each, last_date):
 
 @cli.command(help="calculate everything", name="calc")
 @click.option("--all", is_flag=True, default=False)
+@click.option("--rcmc", "ratio_closing1_minus_closing2", is_flag=True, default=False)
 @click.option("--bband", "closing_bollinger_band", is_flag=True, default=False)
 @click.option("--rm25", "closing_minus_rolling_mean_25", is_flag=True, default=False)
 @click.option("--rsi", "closing_rsi_14", is_flag=True, default=False)

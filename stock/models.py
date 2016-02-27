@@ -128,6 +128,8 @@ class CompanySearchField(Base):
 
     # WARN: postgresでは、大文字小文字を区別しないのでrsiをRSIなどと記述しない
     id = sql.Column(sql.Integer, primary_key=True)
+
+    ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True)
     ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
     closing_rsi_14 = sql.Column(sql.Float, nullable=True)
 

@@ -25,6 +25,7 @@ def to_int(key):
 @app.route("/", methods=["GET"])
 def index():
     field_keys = [
+        "ratio_closing1_minus_closing2",
         "ratio_closing_minus_rolling_mean_25",
         "closing_rsi_14",
         "closing_macd_minus_signal",
