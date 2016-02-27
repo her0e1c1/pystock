@@ -41,9 +41,7 @@ class DayInfoQuery(Query):
 
     def rolling_mean(self, period=30):
         df = self.df()
-        mean = pd.rolling_mean(df.closing, period)
-        return list([a, b] for a, b in zip(df.date.values.tolist(), mean.values.tolist())
-                    if not pd.isnull(b))
+        return to_seq(df.date, pd.rolling_mean(df.closing, period))
 
     def bollinger_band(self, period=20, sigma=2):
         from stock.service import chart
@@ -78,9 +76,7 @@ class DayInfoQuery(Query):
     def RSI(self, period):
         from stock.service import chart
         df = self.df()
-        rsi = chart.rsi(df.closing, period)
-        return list([a, b] for a, b in zip(df.date.values.tolist(), rsi.values.tolist())
-                    if not pd.isnull(b))
+        return to_seq(df.date, chart.rsi(df.closing, period))
 
     def ohlc(self):
         return [(d["date"], d["opening"], d["high"], d["low"], d["closing"])
@@ -88,8 +84,7 @@ class DayInfoQuery(Query):
 
     def volume(self):
         df = self.df()
-        return list(zip(df.date.values.tolist(),
-                        df.volume.values.tolist()))
+        return to_seq(df.date, df.volume)
 
     def closing(self):
         df = self.df()
