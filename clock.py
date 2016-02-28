@@ -18,7 +18,7 @@ sched = BlockingScheduler()
 def scheduled_scrape_japan():
     ldate = service.util.last_date()
     logger.info('CRON: Scrape and store stock at %s' % ldate)
-    query.DayInfo.sets(each=True, ignore=True, last_date=ldate)
+    service.company.update_copmany_list(each=True, ignore=True, last_date=ldate)
     service.search_field.update_search_fields()
 
 
