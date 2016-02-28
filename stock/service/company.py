@@ -30,6 +30,7 @@ def update_copmany_list(start=None, end=None, each=False, ignore=False, last_dat
             kw["company_id"] = c.id
             return models.DayInfo(**kw)
 
+        # 1日だけ更新する場合でも複数ページにアクセスしている(無駄)
         history = get_scraper().history(c.code, start, end)
         session.each(history, add_instance)
     session.close()
