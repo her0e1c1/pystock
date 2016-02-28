@@ -1,7 +1,6 @@
 # coding: utf-8
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from stock import query
 from stock import service
 
 import logging

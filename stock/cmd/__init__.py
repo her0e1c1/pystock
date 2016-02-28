@@ -1,7 +1,6 @@
 # coding: utf-8
 import click
 
-from stock import query
 from stock import scrape
 from stock import util
 from stock import service
@@ -44,15 +43,6 @@ def cli():
 @cli.group()
 def store():
     pass
-
-
-@click.option("--start", callback=mkdate)
-@click.option("--end", callback=mkdate)
-@click.option("--code")
-@click.option("--each", is_flag=True, default=True)
-@store.command()
-def history(code, start, end, each):
-    query.DayInfo.set(code, start, end, each=each)
 
 
 @click.option("--url", default=C.COMPANY_XLS_URL)
@@ -170,16 +160,12 @@ def current_value(code, scraper):
     click.echo(value)
 
 
-@click.option("--max-id", type=int)
-@click.option("--min-id", type=int, default=1)
+@click.option("--limit", type=int, default=10)
 @click.option("--each", is_flag=True, default=False)
 @click.option("--last-date", callback=mkdate)
 @cli.command(help="update day info")
-def update(min_id, max_id, each, last_date):
-    # 1日だけ更新する場合でも複数ページにアクセスする無駄を除くため、
-    # last_dateを開始と終了日時に設定する
-    query.DayInfo.sets(min_id=min_id, max_id=max_id,
-                       each=each, ignore=True, last_date=last_date)
+def update(min_id, max_id, each, last_date, limit):
+    service.company.update_copmany_list(limit=limit, each=True, ignore=True)
 
 
 @cli.command(help="calculate everything", name="calc")

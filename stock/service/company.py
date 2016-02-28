@@ -19,20 +19,30 @@ def get_scraper():
     return YahooJapan()
 
 
+def update_copmany(id, start=None, end=None):
+    with Session() as s:
+        c = query.Company.query(session=s).first(id=id)
+        _update_copmany(s, c, start=start, end=end)
+
+
+def _update_copmany(session, company, start=None, end=None):
+    if not company:
+        logger.info("SKIP: company(id=%s)" % company.id)
+        return
+
+    def add_instance(**kw):
+        kw["company_id"] = company.id
+        return models.DayInfo(**kw)
+
+    # 1日だけ更新する場合でも複数ページにアクセスしている(無駄)
+    history = get_scraper().history(company.code, start, end)
+    session.each(history, add_instance)
+
+
 def update_copmany_list(start=None, end=None, each=False, ignore=False, last_date=None, limit=None):
     session = Session(ignore=ignore, each=each)
     for c in query.Company.all(last_date=last_date, session=session._s, limit=limit):
-        if not c:
-            logger.info("SKIP: company(id=%s)" % c.id)
-            continue
-
-        def add_instance(**kw):
-            kw["company_id"] = c.id
-            return models.DayInfo(**kw)
-
-        # 1日だけ更新する場合でも複数ページにアクセスしている(無駄)
-        history = get_scraper().history(c.code, start, end)
-        session.each(history, add_instance)
+        _update_copmany(session, c)
     session.close()
 
 
