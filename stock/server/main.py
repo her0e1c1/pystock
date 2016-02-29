@@ -47,8 +47,10 @@ def company(id):
 def api(company_id):
     company = service.company.first(id=company_id, raise_404=True)
     q = service.day_info.get(company_id)
-    d = q.to_dict()
-    d["company"] = company.w.to_dict()
+    d = {
+        "company": company.w.to_dict(),
+        "series": q.to_series(),
+    }
     return jsonify(d)
 
 
