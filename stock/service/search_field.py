@@ -1,8 +1,8 @@
 # coding: utf-8
 import pandas as pd
 
-from stock import wrapper
 from .session import Session
+from stock.service import chart
 
 
 def last(series, offset_from_last=0):
@@ -46,7 +46,7 @@ def closing_minus_rolling_mean_25(period=25):
 def closing_rsi_14(period=14):
     """営業最終日のRSIを求める"""
     def f(df):
-        rsi = wrapper.RSI(df.closing, period)
+        rsi = chart.rsi(df.closing, period)
         if not rsi.empty:
             return float(rsi[rsi.last_valid_index()])
     with_session(f, "closing_rsi_14")
@@ -60,8 +60,8 @@ def closing_macd_minus_signal():
                 return p[lvi - (index - 1)]
 
         def f(df):
-            macd = last(wrapper.macd_line(df.closing))
-            signal = last(wrapper.macd_signal(df.closing))
+            macd = last(chart.macd_line(df.closing))
+            signal = last(chart.macd_signal(df.closing))
             if macd is not None and signal is not None:
                 return float(macd - signal)
         return f
@@ -111,8 +111,8 @@ def closing_stochastic_d_minus_sd():
 
         def f(df):
             k, d, sd = 14, 3, 3
-            fast = last(wrapper.stochastic_d(df.closing, k=k, d=d))
-            slow = last(wrapper.stochastic_sd(df.closing, k=k, d=d, sd=sd))
+            fast = last(chart.stochastic_d(df.closing, k=k, d=d))
+            slow = last(chart.stochastic_sd(df.closing, k=k, d=d, sd=sd))
             if fast is not None and slow is not None:
                 return float(fast - slow)
         return f
