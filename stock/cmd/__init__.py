@@ -160,12 +160,19 @@ def current_value(code, scraper):
     click.echo(value)
 
 
-@click.option("--limit", type=int, default=10)
+@click.option("--limit", type=int, default=None)
 @click.option("--each", is_flag=True, default=False)
+@click.option("--no-field", is_flag=True, default=True)
 @click.option("--last-date", callback=mkdate)
 @cli.command(help="update day info")
-def update(min_id, max_id, each, last_date, limit):
-    service.company.update_copmany_list(limit=limit, each=True, ignore=True)
+def update(each, last_date, limit, no_field):
+    if last_date is None:
+        last_date = service.util.last_date()
+    click.echo("update company list")
+    service.company.update_copmany_list(each=True, ignore=True, last_date=last_date)
+    if no_field:
+        click.echo("update search fields")
+        service.search_field.update_search_fields()
 
 
 @cli.command(help="calculate everything", name="calc")
