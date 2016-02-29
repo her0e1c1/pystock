@@ -96,9 +96,9 @@ class DayInfoQuery(object):
                 {"name": "macd_signal", "data": self.macd_signal(), "yAxis": 3},
             ],
             "stochastic": [
-                {"name": "fast %K", "data": self.stochastic_k(), "yAxis": 4},
-                {"name": "fast %D / slow %K", "data": self.stochastic_d(), "yAxis": 4},
-                {"name": "slow %D", "data": self.stochastic_sd(), "yAxis": 4},
+                {"name": "%K", "data": self.stochastic_k(), "yAxis": 4},
+                {"name": "%D", "data": self.stochastic_d(), "yAxis": 4},
+                {"name": "%SD", "data": self.stochastic_sd(), "yAxis": 4},
             ],
         }
 
