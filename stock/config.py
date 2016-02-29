@@ -17,7 +17,7 @@ ROOTDIR = "/".join(os.path.abspath(__file__).split("/")[:-2])
 
 HERE = os.path.dirname(__file__)
 
-DEBUG = False
+DEBUG = True
 LOG_LEVEL = logging.INFO
 
 PORT = int(os.environ.get('PORT', 5000))
