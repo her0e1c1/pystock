@@ -66,13 +66,6 @@ class DayInfoQuery(object):
         df = self.df()
         return to_seq(df.date, df.volume)
 
-    def closing(self):
-        df = self.df()
-        return to_seq(df.date, df.closing)
-
-    def to_series(self, type="closing"):
-        return [(info.w.js_datetime, info.w.closing) for info in self]
-
     def to_dict(self):
         bbands = [{"name": "%dsigma" % s,
                    "data": self.bollinger_band(sigma=s),
