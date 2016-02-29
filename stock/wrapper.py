@@ -68,8 +68,7 @@ class DayInfoQuery(object):
 
     def closing(self):
         df = self.df()
-        return list(zip(df.date.values.tolist(),
-                        df.closing.values.tolist()))
+        return to_seq(df.date, df.closing)
 
     def to_series(self, type="closing"):
         return [(info.w.js_datetime, info.w.closing) for info in self]
