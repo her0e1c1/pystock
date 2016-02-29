@@ -47,34 +47,9 @@ def company(id):
 def api(company_id):
     company = service.company.first(id=company_id, raise_404=True)
     q = service.day_info.get(company_id)
-    bbands = [{"name": "%dsigma" % s,
-               "data": q.bollinger_band(sigma=s),
-               "color": "black",
-               "lineWidth": 0.5}
-              for s in [3, 2, 1, -1, -2, -3]]
-    return jsonify({
-        "company": company.w.to_dict(),
-        "rolling_means": [
-            {"name": "rolling_mean25", "data": q.rolling_mean(period=25)},
-            {"name": "rolling_mean5", "data": q.rolling_mean(period=5)},
-        ] + bbands,
-        "ohlc": q.ohlc(),
-        "columns": [
-            {"name": "volume", "data": q.volume()},
-        ],
-        "percentages": [
-            {"name": "RSI", "data": q.RSI(period=14)},
-        ],
-        "macd": [
-            {"name": "macd_line", "data": q.macd_line(), "yAxis": 3},
-            {"name": "macd_signal", "data": q.macd_signal(), "yAxis": 3},
-        ],
-        "stochastic": [
-            {"name": "fast %K", "data": q.stochastic_k(), "yAxis": 4},
-            {"name": "fast %D / slow %K", "data": q.stochastic_d(), "yAxis": 4},
-            {"name": "slow %D", "data": q.stochastic_sd(), "yAxis": 4},
-        ],
-    })
+    d = q.to_dict()
+    d["company"] = company.w.to_dict()
+    return jsonify(d)
 
 
 @app.route("/about", methods=["GET"])

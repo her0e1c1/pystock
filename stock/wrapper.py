@@ -74,6 +74,35 @@ class DayInfoQuery(object):
     def to_series(self, type="closing"):
         return [(info.w.js_datetime, info.w.closing) for info in self]
 
+    def to_dict(self):
+        bbands = [{"name": "%dsigma" % s,
+                   "data": self.bollinger_band(sigma=s),
+                   "color": "black",
+                   "lineWidth": 0.5}
+                  for s in [3, 2, 1, -1, -2, -3]]
+        return {
+            "rolling_means": [
+                {"name": "rolling_mean25", "data": self.rolling_mean(period=25)},
+                {"name": "rolling_mean5", "data": self.rolling_mean(period=5)},
+            ] + bbands,
+            "ohlc": self.ohlc(),
+            "columns": [
+                {"name": "volume", "data": self.volume()},
+            ],
+            "percentages": [
+                {"name": "RSI", "data": self.RSI(period=14)},
+            ],
+            "macd": [
+                {"name": "macd_line", "data": self.macd_line(), "yAxis": 3},
+                {"name": "macd_signal", "data": self.macd_signal(), "yAxis": 3},
+            ],
+            "stochastic": [
+                {"name": "fast %K", "data": self.stochastic_k(), "yAxis": 4},
+                {"name": "fast %D / slow %K", "data": self.stochastic_d(), "yAxis": 4},
+                {"name": "slow %D", "data": self.stochastic_sd(), "yAxis": 4},
+            ],
+        }
+
 
 class Wrapper(object):
 
