@@ -129,24 +129,24 @@ class CompanySearchField(Base):
     # WARN: postgresでは、大文字小文字を区別しないのでrsiをRSIなどと記述しない
     id = sql.Column(sql.Integer, primary_key=True)
 
-    ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True)
-    ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True)
-    closing_rsi_14 = sql.Column(sql.Float, nullable=True)
+    ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True, index=True)
+    ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True, index=True)
+    closing_rsi_14 = sql.Column(sql.Float, nullable=True, index=True)
 
     # MACD
-    closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True)
-    closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True)
+    closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True, index=True)
+    closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True, index=True)
 
     # stochastic
-    closing_stochastic_d_minus_sd1_14_3_3 = sql.Column(sql.Float, nullable=True)
-    closing_stochastic_d_minus_sd2_14_3_3 = sql.Column(sql.Float, nullable=True)
+    closing_stochastic_d_minus_sd1_14_3_3 = sql.Column(sql.Float, nullable=True, index=True)
+    closing_stochastic_d_minus_sd2_14_3_3 = sql.Column(sql.Float, nullable=True, index=True)
 
     # (0, 1 sigma) => 1, (1 sigma, 2 sigma) => 2 and so on
-    interval_closing_bollinger_band_20 = sql.Column(sql.Integer, nullable=True)
+    interval_closing_bollinger_band_20 = sql.Column(sql.Integer, nullable=True, index=True)
 
-    low_min_25 = sql.Column(sql.Float, nullable=True)
-    low_min_75 = sql.Column(sql.Float, nullable=True)
-    low_min_200 = sql.Column(sql.Float, nullable=True)
+    low_min_25 = sql.Column(sql.Float, nullable=True, index=True)
+    low_min_75 = sql.Column(sql.Float, nullable=True, index=True)
+    low_min_200 = sql.Column(sql.Float, nullable=True, index=True)
 
     company_id = sql .Column(
         sql.Integer,
