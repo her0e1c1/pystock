@@ -177,6 +177,7 @@ def update(min_id, max_id, each, last_date, limit):
 @click.option("--min", "low_min", is_flag=True, default=False)
 @click.option("-D", "closing_stochastic_d_minus_sd", is_flag=True, default=False)
 @click.option("--macd", "closing_macd_minus_signal", is_flag=True, default=False)
+@click.option("--lmc", "ratio_sigma_low_minus_closing", is_flag=True, default=False)
 def calculate(**kw):
     # need to pop if it is not a service
     all = kw.pop("all")

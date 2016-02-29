@@ -16,13 +16,19 @@
   <table>
     <tr>
       <th>Code</th>
-      <th>Close</th>
+      <th>最終日の終値</th>
+      <!-- TODO: reactで説明文をpopup表示 -->
+      <th>明日の予想安値(68%)</th>
+      <th>明日の予想安値(95%)</th>
     </tr>
     <tr>
       <td>{{ company.code }}</td>
       <td></td>
+      <td>{{ company.search_field.ratio_1sigma_low_minus_closing }}</td>
+      <td>{{ company.search_field.ratio_2sigma_low_minus_closing }}</td>
     </tr>
   </table>
+  <p>予想安値は、前日の終値よりも安値が下回った場合の予想価格を算出</p>
 
   <h2>シグナル</h2>
 

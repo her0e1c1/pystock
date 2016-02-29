@@ -31,6 +31,7 @@ def update_search_fields():
     closing_macd_minus_signal()
     low_min()
     closing_stochastic_d_minus_sd()
+    ratio_sigma_low_minus_closing()
 
 
 def closing_minus_rolling_mean_25(period=25):
@@ -126,3 +127,25 @@ def ratio_closing1_minus_closing2():
         return increment(c0, c1)
 
     with_session(f, "ratio_closing1_minus_closing2")
+
+
+def ratio_sigma_low_minus_closing(period=20):
+    """
+    安値と前の日の終値の割合を求める。
+    ボリンジャーバンドの考え方を応用して、次の日の安値を求める.
+    """
+    def wrap(index):
+        def f(df):
+            c = df.closing.shift(1)
+            l = df.low
+            d = (l - c)
+            d = d[d < 0][:period]
+            f = float(d.mean() - index * d.std())
+            li = c.last_valid_index()
+            if li:
+                l = float(c[li])
+                if not pd.isnull(f) and not pd.isnull(l):
+                    return l + f
+        return f
+    with_session(wrap(1), "ratio_1sigma_low_minus_closing")
+    with_session(wrap(2), "ratio_2sigma_low_minus_closing")

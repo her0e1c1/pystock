@@ -132,6 +132,8 @@ class CompanySearchField(Base):
     ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True, index=True)
     ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True, index=True)
     closing_rsi_14 = sql.Column(sql.Float, nullable=True, index=True)
+    ratio_1sigma_low_minus_closing = sql.Column(sql.Float, nullable=True, index=True)
+    ratio_2sigma_low_minus_closing = sql.Column(sql.Float, nullable=True, index=True)
 
     # MACD
     closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True, index=True)

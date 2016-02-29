@@ -92,9 +92,14 @@
     </div>
     <br>
   </form>
-  <ul>
+  <table>
+    <tr>
+      <th>会社名</th>
+    </tr>
     {% for c in company_list %}
-     <li><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}({{ c.code }})</a></li>
-   {% endfor %}
-  </ul>
+    <tr>
+      <td><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}({{ c.code }})</a><td>
+    </tr>
+    {% endfor %}
+  </table>
 {% endblock %}
