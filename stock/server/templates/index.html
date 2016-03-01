@@ -9,6 +9,7 @@
 {% macro radio_group(label, key, radios) %}
 <div class="form-group">
 <label class="col-sm-2 control-label">{{ label }}</label>
+  <label class="checkbox-inline">{{ radio("", key, "なし") }}</label>
 {% for value, label in radios %}
   <label class="checkbox-inline">{{ radio(value, key, label) }}</label>
 {% endfor %}
@@ -34,13 +35,14 @@
   </table>
 
   <form action="{{ url_for('index') }}" method="get">
-    <label class="col-sm-2 control-label">25日移動平均線 </label>
-    <div class="form-group">
-    {% for v in [15, 10, 5, -5, -10, -15] %}
-      {% set label = "%s%%%s" % (v|abs, v >= 0 and "以上" or "以下") %}
-      <label class="checkbox-inline">{{ radio(v, "ratio_closing_minus_rolling_mean_25", "%s" % label) }}</label>
-    {% endfor %}
-    </div>
+    {{ radio_group("25日移動平均線", "ratio_closing_minus_rolling_mean_25",
+       [("15", "15%以上"),
+        ("10", "10%以上"),
+        ("5",  "5%以上"),
+        ("-5", "5%以下"),
+        ("-10","10%以下"),
+        ("-15","15%以下")]
+    ) }}
 
     {{ radio_group("値上がり率", "ratio_closing1_minus_closing2",
        [("10", "10%以上"),
@@ -49,48 +51,31 @@
         ("-10","10%以下")]
     ) }}
 
-    <div class="form-group">
-    <label class="col-sm-2 control-label">RSI</label>
-    {% for value, label in [("80",  "80%以上(売り)"),
-                            ("70",  "70%以上(売りかも)"),
-                            ("-30", "30%以下(買いかも)"),
-                            ("-20", "20%以下(買い)"),
-    ] %}
-      <label class="checkbox-inline">{{ radio(value, "closing_rsi_14", label) }}</label>
-    {% endfor %}
-    </div>
+    {{ radio_group("RSI", "closing_rsi_14",
+       [("80",  "80%以上(売り)"),
+        ("70",  "70%以上(売りかも)"),
+        ("-30", "30%以下(買いかも)"),
+        ("-20", "20%以下(買い)")]
+    ) }}
 
-    <div class="form-group">
-    <label class="col-sm-2 control-label">ボリンジャーバンド</label>
-    {% for value, label in [("-3", "-2~-3シグマ(買い)"),
-                            ("-2", "-1~-2シグマ(買いかも)"),
-                            ("-1", "0~-1シグマ"),
-                            ("1" , "0~1シグマ"),
-                            ("2" , "1~2シグマ(売りかも)"),
-                            ("3" , "2~3シグマ(売り)"),
-    ] %}
-      <label class="checkbox-inline">{{ radio(value, "interval_closing_bollinger_band_20", label) }}</label>
-    {% endfor %}
-    </div>
+    {{ radio_group("ボリンジャーバンド", "interval_closing_bollinger_band_20",
+       [("-3", "-2~-3シグマ(買い)"),
+        ("-2", "-1~-2シグマ(買いかも)"),
+        ("-1", "0~-1シグマ"),
+        ("1" , "0~1シグマ"),
+        ("2" , "1~2シグマ(売りかも)"),
+        ("3" , "2~3シグマ(売り)")]
+     ) }}
 
-    <div class="form-group">
-    <label class="col-sm-2 control-label">MACD</label>
-    {% for value, label in [("-1", "デッドクロス(売り)"),
-                            ("1",  "ゴールデンクロス(買い)"),
-    ] %}
-      <label class="checkbox-inline">{{ radio(value, "closing_macd_minus_signal", label) }}</label>
-    {% endfor %}
-    </div>
+    {{ radio_group("MACD", "closing_macd_minus_signal",
+       [("-1", "デッドクロス(売り)"),
+        ("1",  "ゴールデンクロス(買い)")]
+     ) }}
 
-    <div class="form-group">
-    <label class="col-sm-2 control-label">SLOW STOCHASTIC</label>
-    {% for value, label in [("-1", "デッドクロス(売り)"),
-                            ("1",  "ゴールデンクロス(買い)"),
-    ] %}
-      <label class="checkbox-inline">{{ radio(value, "closing_stochastic_d_minus_sd", label) }}</label>
-    {% endfor %}
-    </div>
-    <br>
+    {{ radio_group("SLOW STOCHASTIC", "closing_stochastic_d_minus_sd",
+       [("-1", "デッドクロス(売り)"),
+        ("1",  "ゴールデンクロス(買い)")]
+    ) }}
   </form>
   <table>
     <tr>
