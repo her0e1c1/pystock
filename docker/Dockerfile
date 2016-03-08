@@ -34,6 +34,8 @@ WORKDIR ./pystock
 RUN easy_install-3.4 pip
 RUN pip3.4 install -r requirements.txt
 
+ENV LANG en_US.UTF-8
+
 # CMD gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
 
 # docker build -t pystock-server -f ./docker/Dockerfile .
