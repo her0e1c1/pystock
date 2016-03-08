@@ -20,6 +20,7 @@ HERE = os.path.dirname(__file__)
 DEBUG = False
 LOG_LEVEL = logging.INFO
 
+HOST = "localhost"
 PORT = int(os.environ.get('PORT', 5000))
 
 # sqlalchemy

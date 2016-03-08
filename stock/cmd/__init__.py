@@ -103,6 +103,7 @@ def show(closing_minus_rolling_mean_25):
 
 
 @click.option("--port", default=C.PORT, type=int)
+@click.option("--host", default=C.HOST)
 @click.option("-l", "--log-level", default=C.LOG_LEVEL, type=int)
 @click.option("--debug", default=(not C.DEBUG), is_flag=True)
 @cli.command(help="Start server")
