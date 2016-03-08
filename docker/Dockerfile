@@ -36,6 +36,8 @@ RUN pip3.4 install -r requirements.txt
 
 # CMD gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
 
+# docker build -t pystock-server -f ./docker/Dockerfile .
+
 # docker-machine ip
 # docker -it -p 8000:80 IMAGE_NAME /bin/bash
 # curl http://192.168.99.100:8000
