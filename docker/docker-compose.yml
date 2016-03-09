@@ -48,7 +48,10 @@ services:
         - base
         - pystock_repo
     working_dir: /pystock
-    entrypoint: sh -c "python3 setup.py develop && pystock setup"
 
     # web can't wait for mysql to start completely. so manually run this
+    # docker exec docker_web_1 sh -c "python3 setup.py develop && pystock setup"
+
+    # next enter shell
+    # docker exec -it docker_web_1 bash
     # pystock serve --port 80 --host 0.0.0.0
