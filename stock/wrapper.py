@@ -157,12 +157,14 @@ class CompanySearchField(Wrapper):
     def signal(self, col_name):
         buy = buy_conditions[col_name]
         sell = sell_conditions[col_name]
-        if buy(self.ins):
-            return "BUY"
-        elif sell(self.ins):
-            return "SELL"
-        else:
-            return ""
+        try:
+            if buy(self.ins):
+                return "BUY"
+            elif sell(self.ins):
+                return "SELL"
+        except TypeError:
+            pass
+        return ""
 
     def signals(self):
         # TODO: implement
