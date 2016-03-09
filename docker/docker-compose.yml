@@ -41,4 +41,6 @@ services:
         - base
         - mysql
         - pystock_repo
-    command: sh -c "/bin/pip3 install -r /pystock/requirements.txt && /bin/python3.4 /pystock/setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
+    command: sh -c "/bin/pip3 install -r /pystock/requirements.txt && /bin/python3.4 /pystock/setup.py develop"
+    # web can't wait for mysql to start completely. so manually run this
+    # pystock setup && pystock serve --port 80 --host 0.0.0.0
