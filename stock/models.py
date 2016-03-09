@@ -6,7 +6,7 @@ from . import config as C
 from . import wrapper
 
 
-engine = sql.create_engine(C.URL, **C.CREATE_ENGINE)
+engine = sql.create_engine(C.DATABASE_URL, **C.CREATE_ENGINE)
 Base = declarative_base(bind=engine)
 Session = sql.orm.sessionmaker(bind=engine)
 

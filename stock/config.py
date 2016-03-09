@@ -26,8 +26,7 @@ PORT = int(os.environ.get('PORT', 5000))
 # sqlalchemy
 # DATABASE_URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
 # DATABASE_URL = "sqlite:///:memory:"
-DATABASE_URL = "sqlite:///%s/db.sqlite3" % HERE
-URL = os.environ.get("DATABASE_URL", DATABASE_URL)
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///%s/db.sqlite3" % HERE)
 CREATE_ENGINE = {
     "encoding": 'utf-8',
     "echo": DEBUG,
