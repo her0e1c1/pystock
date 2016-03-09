@@ -5,6 +5,7 @@
 
 version: '2'
 
+# docker build -t pystock-base -f ./base/Dockerfile .
 services:
   base:
     build: ./base
@@ -16,6 +17,8 @@ services:
     volumes:
         - ../:/pystock
 
+  # 以下のコマンドで起動中のmysqlのコンソールに入れる
+  # docker exec -it docker_mysql_1 mysql stock
   mysql:
     image: mysql
     ports:
@@ -29,7 +32,7 @@ services:
   # 開発中は、以下のコマンドを実行しておく(ENVは設定されてるけど、portは違うみたいとかなんかある)
   # docker-compose run web
   web:
-    image: docker_pystock_base
+    image: docker_base
     # build: ./web
     ports:
         - "8002:80"
@@ -40,5 +43,15 @@ services:
     depends_on:
         - base
         - pystock_repo
+    working_dir: /pystock
+
+    # docker start NAME && docker attach NAME
+    stdin_open: true
+    tty: true
+
+    # entrypointがあるとattachできないみたい
+    # I don't know how to use???
+    # entrypoint: python3 setup.py develop
+    # command: pystock setup
     # web can't wait for mysql to start completely. so manually run this
     # pystock setup && pystock serve --port 80 --host 0.0.0.0

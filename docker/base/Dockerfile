@@ -28,6 +28,7 @@ EXPOSE 80
 # you can't use ssh agent forwarding
 # RUN git clone git@github.com:her0e1c1/pystock.git
 RUN git clone https://github.com/her0e1c1/pystock.git
+# 本来は、ADD requirements.txtしてgitとは無縁の関係にする
 
 WORKDIR ./pystock
 
