@@ -1,12 +1,18 @@
+# docker-machine ip
+# docker -it -p 8000:80 IMAGE_NAME /bin/bash
+# curl http://192.168.99.100:8000
+
 # サーバーをデーモンで起動(まとめて)
 # docker-compose up -d
 
 version: '2'
 
-# docker build -t pystock-base -f ./base/Dockerfile .
 services:
+  # docker build -t pystock-base -f ./base/Dockerfile .
   base:
-    build: ./base
+    build:
+      context: ../
+      dockerfile: ./docker/base/Dockerfile
     container_name: pystock_base
 
   pystock_repo:
@@ -21,6 +27,13 @@ services:
   # docker commit docker_mysql_1 docker_mysql_1:v1
   # 別名の方がよい?
   # docker commit docker_mysql_1 OTHER
+
+# mysql
+# need -d (or you can't handle the mysql process)
+# need setting port (or you can't access from outside)
+# need one of env vars. MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
+# docker run -v `pwd`/pystock/docker/mysql/conf.d:/etc/mysql/conf.d --name pystock-mysql -d -e MYSQL_ALLOW_EMPTY_PASSWORD="1" -e MYSQL_DATABASE=stock -p 3306:3306 mysql
+
   mysql:
     image: mysql
     container_name: pystock_mysql
@@ -39,7 +52,19 @@ services:
         - "9002:80"
     environment:
         DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
+
+    # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
     entrypoint: pystock serve --port 80 --host 0.0.0.0
+
+# on host
+# git clone git@github.com:her0e1c1/pystock.git
+# docker create -v `pwd`./pystock:/pystock --name pystock-repo centos
+# busybox seems to be not updated even if host changes it
+# docker create -v `pwd`./pystock:/pystock --name pystock-repo busybox
+# check if the repo is mounted
+# docker run --volumes-from pystock-repo centos ls /pystock
+# run
+# docker run -e DATABASE_URL="mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8" -p 8000:80 --rm --volumes-from pystock -it pystock-repo sh -c "/bin/python3.4 /pystock/setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
 
   web:
     image: docker_base
