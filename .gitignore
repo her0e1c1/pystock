@@ -3,6 +3,7 @@ __pycache__/
 *.ipynb 
 *.pyc
 *.sqlite3
+*.swp
 stock.egg-info/
 dist/
 build/
