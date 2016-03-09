@@ -1,0 +1,39 @@
+# サーバーをデーモンで起動
+# docker-compose up -d
+
+version: '2'
+
+services:
+  pystock_base:
+    build: ./base
+    container_name: pystock_base
+
+  pystock-repo2:
+    image: centos
+    container_name: pystock-repo2
+    volumes:
+        - ../:/pystock
+
+  pystock-mysql:
+    image: mysql
+    ports:
+        - "3306:3306"
+    volumes:
+        - ./mysql/conf.d:/etc/mysql/conf.d
+    environment:
+        MYSQL_ALLOW_EMPTY_PASSWORD: 1
+        MYSQL_DATABASE: stock
+
+  pystock-server:
+    # FIXME: use image of pystock-base
+    image: hog5
+    ports:
+        - "8002:80"
+    volumes_from:
+        - pystock-repo2
+    environment:
+        DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
+    depends_on:
+        - pystock_base
+        - pystock-repo2
+    command: sh -c "/bin/pip3 install -r /pystock/requirements.txt && /bin/python3.4 /pystock/setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
