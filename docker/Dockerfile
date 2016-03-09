@@ -46,6 +46,16 @@ ENV LANG en_US.UTF-8
 
 # on host
 # git clone git@github.com:her0e1c1/pystock.git
-# docker create -v `pwd`./pystock:/pystock --name pystock busybox
-# docker run --volumes-from pystock centos ls /pystock
-# docker run -p 8000:80 --rm --volumes-from pystock -it hog5 sh -c "/bin/python3.4 /pystock/setup.py develop && pystock serve --port 80 --host 0.0.0.0"
+# docker create -v `pwd`./pystock:/pystock --name pystock-repo centos
+# busybox seems to be not updated even if host changes it
+# docker create -v `pwd`./pystock:/pystock --name pystock-repo busybox
+# check if the repo is mounted
+# docker run --volumes-from pystock-repo centos ls /pystock
+# run
+# docker run -e DATABASE_URL="mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8" -p 8000:80 --rm --volumes-from pystock -it pystock-repo sh -c "/bin/python3.4 /pystock/setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
+
+# mysql
+# need -d (or you can't handle the mysql process)
+# need setting port (or you can't access from outside)
+# need one of env vars. MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
+# docker run -v `pwd`/pystock/docker/mysql/conf.d:/etc/mysql/conf.d --name pystock-mysql -d -e MYSQL_ALLOW_EMPTY_PASSWORD="1" -e MYSQL_DATABASE=stock -p 3306:3306 mysql
