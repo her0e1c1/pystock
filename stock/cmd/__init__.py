@@ -113,6 +113,7 @@ def serve(**kw):
     msg = ", ".join(["%s = %s" % (k, v) for k, v in kw.items()])
     click.echo(msg)
     C.set(**kw)
+    click.echo("DATABASE_URL: %s" % C.DATABASE_URL)
     logging.basicConfig(level=kw.pop("log_level"))
     app.run(**kw)
 
