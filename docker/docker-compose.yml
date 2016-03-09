@@ -42,8 +42,6 @@ services:
         DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
     entrypoint: pystock serve --port 80 --host 0.0.0.0
 
-  # 開発中は、以下のコマンドを実行しておく(ENVは設定されてるけど、portは違うみたいとかなんかある)
-  # docker-compose run web
   web:
     image: docker_base
     # build: ./web
@@ -58,9 +56,12 @@ services:
         - pystock_repo
     working_dir: /pystock
 
+    # ttyを設定しない場合は直接入るみたい(ttyの設定は必須)
+    # docker-compose run web
+    tty: true
+    stdin_open: true
+
     # web can't wait for mysql to start completely. so manually run this
     # docker exec docker_web_1 sh -c "python3 setup.py develop && pystock setup"
-
-    # next enter shell
+    # docker exec docker_web_1 pystock serve --port 80 --host 0.0.0.0
     # docker exec -it docker_web_1 bash
-    # pystock serve --port 80 --host 0.0.0.0
