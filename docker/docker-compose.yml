@@ -25,6 +25,7 @@ services:
   # docker commit docker_mysql_1 OTHER
   mysql:
     image: mysql
+    container_name: pystock_mysql
     ports:
         - "3306:3306"
     volumes:
@@ -44,6 +45,7 @@ services:
 
   web:
     image: docker_base
+    container_name: pystock_web
     # build: ./web
     ports:
         - "8002:80"
