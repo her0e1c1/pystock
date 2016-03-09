@@ -24,8 +24,8 @@ HOST = "localhost"
 PORT = int(os.environ.get('PORT', 5000))
 
 # sqlalchemy
-# DEFAULT_URL = "sqlite:///:memory:"
-DEFAULT_URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
+# DEFAULT_URL = "mysql+pymysql://root@localhost/stock?charset=utf8"
+DEFAULT_URL = "sqlite:///:memory:"
 URL = os.environ.get("DATABASE_URL", DEFAULT_URL)
 CREATE_ENGINE = {
     "encoding": 'utf-8',
