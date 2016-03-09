@@ -46,6 +46,6 @@ ENV LANG en_US.UTF-8
 
 # on host
 # git clone git@github.com:her0e1c1/pystock.git
-# docker create -v `pwd`./pystock:/pystock --name pystock
+# docker create -v `pwd`./pystock:/pystock --name pystock busybox
 # docker run --volumes-from pystock centos ls /pystock
 # docker run -p 8000:80 --rm --volumes-from pystock -it hog5 sh -c "/bin/python3.4 /pystock/setup.py develop && pystock serve --port 80 --host 0.0.0.0"
