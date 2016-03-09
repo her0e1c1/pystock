@@ -33,6 +33,15 @@ services:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
         MYSQL_DATABASE: stock
 
+  test:
+    build: ./test
+    container_name: pystock_test
+    ports:
+        - "9002:80"
+    environment:
+        DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
+    entrypoint: pystock serve --port 80 --host 0.0.0.0
+
   # 開発中は、以下のコマンドを実行しておく(ENVは設定されてるけど、portは違うみたいとかなんかある)
   # docker-compose run web
   web:
