@@ -88,6 +88,8 @@ def setup(all, limit):
     service.company.download_and_store_company_list()
     click.echo("Store day info")
     service.company.update_copmany_list(limit=limit, each=True, ignore=True)
+    click.echo("Update search fields")
+    service.search_field.update_search_fields()
 
 
 @cli.command(help="show companies")
