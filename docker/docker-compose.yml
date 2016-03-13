@@ -2,10 +2,18 @@
 # docker -it -p 8000:80 IMAGE_NAME /bin/bash
 # curl http://192.168.99.100:8000
 
+# docker_の接頭辞は-pオプションで変更可能
+# docker-compose -p PROJECT_NAME up -d
+
 # サーバーをデーモンで起動(まとめて)
 # docker-compose up -d
 
 version: '2'
+
+volumes:
+  pystock_volume:
+    driver: local
+    # external: true
 
 services:
   # docker build -t pystock-base -f ./base/Dockerfile .
@@ -32,15 +40,19 @@ services:
 # need -d (or you can't handle the mysql process)
 # need setting port (or you can't access from outside)
 # need one of env vars. MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
-# docker run -v `pwd`/pystock/docker/mysql/conf.d:/etc/mysql/conf.d --name pystock-mysql -d -e MYSQL_ALLOW_EMPTY_PASSWORD="1" -e MYSQL_DATABASE=stock -p 3306:3306 mysql
+# docker run -v `pwd`/mysql/conf.d:/etc/mysql/conf.d -e MYSQL_ALLOW_EMPTY_PASSWORD="1" -e MYSQL_DATABASE=stock -p 3306:3306 mysql
 
   mysql:
     image: mysql
     container_name: pystock_mysql
     ports:
-        - "3306:3306"
+        - "3307:3306"
     volumes:
         - ./mysql/conf.d:/etc/mysql/conf.d
+        # これで、${PROJECT_NAME}_pystock_volumeをマウントする
+        - pystock_volume:/var/lib/mysql
+    # depends_on:
+    #     - pystock_volume
     environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
         MYSQL_DATABASE: stock
@@ -48,10 +60,14 @@ services:
   test:
     build: ./test
     container_name: pystock_test
+    depends_on:
+        - mysql
+    links:
+      - mysql:db
     ports:
         - "9002:80"
     environment:
-        DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
+        DATABASE_URL: "mysql+pymysql://root@db:3306/stock?charset=utf8"
 
     # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
     entrypoint: pystock serve --port 80 --host 0.0.0.0
@@ -75,9 +91,12 @@ services:
     volumes_from:
         - pystock_repo
     environment:
-        DATABASE_URL: "mysql+pymysql://root@192.168.99.100:3306/stock?charset=utf8"
+        DATABASE_URL: "mysql+pymysql://root@db:3306/stock?charset=utf8"
+    links:
+      - mysql:db
     depends_on:
         - base
+        - mysql
         - pystock_repo
     working_dir: /pystock
 
@@ -87,7 +106,9 @@ services:
     stdin_open: true
 
     # web can't wait for mysql to start completely. so manually run this
-    # docker exec docker_web_1 sh -c "python3 setup.py develop && pystock setup"
     # docker exec pystock_web python3 setup.py develop
+    # docker exec pystock_web pystock setup
+    # docker commit pystock_mysql pystock_mysql_setup
+
     # docker exec pystock_web pystock serve --port 80 --host 0.0.0.0
     # docker exec -it pystock_web bash
