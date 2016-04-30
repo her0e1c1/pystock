@@ -24,7 +24,7 @@ services:
     ports:
       - 80
     environment:
-      DATABASE_URL: "mysql+pymysql://root@db:3306/stock?charset=utf8"
+      DATABASE_URL: "mysql+pymysql://root@db:3306/db?charset=utf8"
 
     links:
       - mysql:db
@@ -46,7 +46,7 @@ services:
     ports:
       - 80
     environment:
-        DATABASE_URL: "mysql+pymysql://root@db:3306/stock?charset=utf8"
+        DATABASE_URL: "mysql+pymysql://root@db:3306/db?charset=utf8"
     links:
       - mysql:db
     volumes:
