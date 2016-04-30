@@ -34,7 +34,7 @@ services:
     links:
       - mysql:db
     ports:
-        - "9002:80"
+      - "10000-20000:80"
     environment:
         DATABASE_URL: "mysql+pymysql://root@db:3306/stock?charset=utf8"
 
@@ -45,7 +45,7 @@ services:
     image: docker_base
     container_name: pystock_web
     ports:
-        - "8002:80"
+      - "10000-20000:80"
     volumes_from:
         - pystock_repo
     environment:
@@ -59,6 +59,5 @@ services:
     working_dir: /pystock
 
     # ttyを設定しない場合は直接入るみたい(ttyの設定は必須)
-    # docker-compose run web
     tty: true
     stdin_open: true
