@@ -1,11 +1,9 @@
 FROM python:3.4
 
-RUN apt-get install -y \
-    postgresql
+# We don't need this for development
+# RUN apt-get install -y postgresql-9.4
 
 USER docker
-
-WORKDIR /home/docker
 
 ADD requirements.txt ./
 
