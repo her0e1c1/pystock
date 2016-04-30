@@ -39,7 +39,7 @@ services:
     # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
     entrypoint: sh -c "python setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
 
-  web:
+  backend:
     build:
       context: ../
       dockerfile: ./docker/base/Dockerfile
