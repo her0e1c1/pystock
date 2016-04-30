@@ -7,5 +7,8 @@ ADD requirements.txt ./
 
 RUN pip install -r requirements.txt
 
+# for dev
+RUN pip install ipython pdbpp pytest
+
 ENV LC_ALL C.UTF-8
 ENV LANG C.UTF-8
