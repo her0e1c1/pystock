@@ -5,9 +5,11 @@
 {% block keywords %}{{ company.name }},{{ company.code }},{{ super() }}{% endblock %}
 
 {% macro show_signal(key) %}
+{% if company.search_field %}
 {% set s = company.search_field.w.signal(key) %}
 {% if s != "" %}
  <span class="label label-primary">{{ s }}</span>
+ {% endif %}
 {% endif %}
 {% endmacro %}
 
