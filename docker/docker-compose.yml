@@ -13,7 +13,6 @@ version: '2'
 volumes:
   pystock_volume:
     driver: local
-    # external: true
 
 services:
   # docker build -t pystock-base -f ./base/Dockerfile .
@@ -25,34 +24,16 @@ services:
 
   pystock_repo:
     image: centos
-    container_name: pystock_repo
     volumes:
         - ../:/pystock
 
-  # 以下のコマンドで起動中のmysqlのコンソールに入れる
-  # docker exec -it docker_mysql_1 mysql stock
-  # snapshot
-  # docker commit docker_mysql_1 docker_mysql_1:v1
-  # 別名の方がよい?
-  # docker commit docker_mysql_1 OTHER
-
-# mysql
-# need -d (or you can't handle the mysql process)
-# need setting port (or you can't access from outside)
-# need one of env vars. MYSQL_ROOT_PASSWORD, MYSQL_ALLOW_EMPTY_PASSWORD and MYSQL_RANDOM_ROOT_PASSWORD
-# docker run -v `pwd`/mysql/conf.d:/etc/mysql/conf.d -e MYSQL_ALLOW_EMPTY_PASSWORD="1" -e MYSQL_DATABASE=stock -p 3306:3306 mysql
-
   mysql:
     image: mysql
-    container_name: pystock_mysql
-    ports:
-        - "3307:3306"
     volumes:
         - ./mysql/conf.d:/etc/mysql/conf.d
-        # これで、${PROJECT_NAME}_pystock_volumeをマウントする
         - pystock_volume:/var/lib/mysql
-    # depends_on:
-    #     - pystock_volume
+        - ..:/docker
+    working_dir: /docker
     environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
         MYSQL_DATABASE: stock
@@ -85,7 +66,6 @@ services:
   web:
     image: docker_base
     container_name: pystock_web
-    # build: ./web
     ports:
         - "8002:80"
     volumes_from:
