@@ -14,7 +14,7 @@ services:
     working_dir: /docker
     environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
-        MYSQL_DATABASE: stock
+        MYSQL_DATABASE: db
 
   # this should be always working on local for checking
   test:
