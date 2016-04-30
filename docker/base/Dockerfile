@@ -1,13 +1,7 @@
 FROM python:3.4
 
-RUN yum update -y && yum install -y epel-release
-RUN yum install -y \
-    gcc \
-    gcc-c++ \
-    make \
-    postgresql \
-    postgresql-devel \
-    git
+RUN apt-get install -y \
+    postgresql
 
 USER docker
 
