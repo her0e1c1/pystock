@@ -58,7 +58,10 @@
 - client jsで計算(簡単なもの)
 - Java (Play) で置き換える(計算とアプリの分割)
 - 検索窓をつける
+- awsに移行
 - https://www.quandl.com/
 - micro service
 - drone
 - マザーズみたいな会社は、入れ替わりが激しいので、新旧の変更を入れられるようにする
+- model(table定義) wrapper(tableの値を修正して、参照しやすくしたクラス. wrapper.highでその値を取れる)
+ - modelと1to1に対応

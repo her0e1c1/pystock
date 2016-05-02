@@ -12,6 +12,7 @@ Session = sql.orm.sessionmaker(bind=engine)
 
 
 class StockExchange(Base):
+
     __tablename__ = "stock_exchange"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -24,6 +25,7 @@ class StockExchange(Base):
 
 
 class DayInfo(Base):
+
     __tablename__ = "day_info"
     __table_args__ = (sql.UniqueConstraint('date', 'company_id'), )
 
@@ -77,6 +79,7 @@ class SplitStockDate(Base):
 
 
 class Company(Base):
+
     __tablename__ = "company"
     __table_args__ = (sql.UniqueConstraint("code"), )
 
@@ -116,6 +119,7 @@ class Company(Base):
 
 
 class CurrentValue(Base):
+
     __tablename__ = "current_value"
 
     id = sql.Column(sql.Integer, primary_key=True)
@@ -124,9 +128,9 @@ class CurrentValue(Base):
 
 
 class CompanySearchField(Base):
+
     __tablename__ = "company_search_field"
 
-    # WARN: postgresでは、大文字小文字を区別しないのでrsiをRSIなどと記述しない
     id = sql.Column(sql.Integer, primary_key=True)
 
     ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True, index=True)
