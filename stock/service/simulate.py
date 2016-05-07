@@ -54,6 +54,13 @@ class Status(object):
         price = self.simulator.series[date]
         return increment_ratio(self.current, price) <= -self.simulator.lostcut
 
+    def finish(self):
+        if self.current is None:
+            return
+        last = self.simulator.series.last_valid_index()
+        self.sell(last)
+        return False
+
     def buy(self, date):
         self.current = self.simulator.series[date]
         self.accumulation -= self.simulator.series[date]
@@ -105,6 +112,8 @@ class Simulator(object):
             else:
                 continue
             result.append(dict(status.to_dict(), **{"date": date, "tag": tag}))
+        if status.finish() is False:
+            result.append(dict(status.to_dict(), **{"tag": "force"}))
         return pd.DataFrame(result)
 
 

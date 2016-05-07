@@ -24,6 +24,21 @@ class StockExchange(Base):
     )
 
 
+class Price(Base):
+
+    __tablename__ = "price"
+    __table_args__ = (sql.UniqueConstraint('date', 'qcode'), )
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    high = sql.Column(sql.Float, nullable=False)
+    low = sql.Column(sql.Float, nullable=False)
+    open = sql.Column(sql.Float, nullable=False)
+    close = sql.Column(sql.Float, nullable=False)
+    date = sql.Column(sql.Date, nullable=False)
+    qcode = sql.Column(sql.String(64), nullable=False, index=True)
+    volume = sql.Column(sql.Integer, nullable=True)
+
+
 class DayInfo(Base):
 
     __tablename__ = "day_info"

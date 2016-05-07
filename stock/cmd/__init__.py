@@ -206,11 +206,5 @@ def calculate(**kw):
 @click.option("--quandle-code", default="NIKKEI/INDEX")
 @click.option("--ratio", default=10, type=int)
 def simulate(**kw):
-    # need to cache data
-    import quandl
-    from stock.service.simulate import RollingMean
-    mydata = quandl.get("NIKKEI/INDEX")
-    # mydata[mydata.columns[0]]
-    series = mydata['Open Price']
-    # click.echo(RollingMean(series, ratio=kw.get("ratio")).sell())
-    print(RollingMean(series, ratio=kw.get("ratio")).simulate())
+    from stock.service.table import show
+    show(kw)
