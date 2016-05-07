@@ -200,3 +200,17 @@ def calculate(**kw):
                 meth()
             else:
                 click.secho("CALC: %s is not found" % method_name, fg='red')
+
+
+@cli.command(help="simulate", name="sm")
+@click.option("--quandle-code", default="NIKKEI/INDEX")
+@click.option("--ratio", default=10, type=int)
+def simulate(**kw):
+    # need to cache data
+    import quandl
+    from stock.service.simulate import RollingMean
+    mydata = quandl.get("NIKKEI/INDEX")
+    # mydata[mydata.columns[0]]
+    series = mydata['Open Price']
+    # click.echo(RollingMean(series, ratio=kw.get("ratio")).sell())
+    print(RollingMean(series, ratio=kw.get("ratio")).simulate())

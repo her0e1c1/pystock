@@ -12,6 +12,7 @@ python-dateutil
 beautifulsoup4
 pandas
 xlrd
+Quandl
 
 # sql
 sqlalchemy
