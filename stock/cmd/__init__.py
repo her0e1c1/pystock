@@ -204,7 +204,7 @@ def calculate(**kw):
 
 @cli.command(help="simulate", name="sm")
 @click.option("--quandle-code", default="NIKKEI/INDEX")
-@click.option("--ratio", default=10, type=int)
+@click.option("--ratio", default=10, type=float)
 def simulate(**kw):
     from stock.service.table import show
     show(kw)

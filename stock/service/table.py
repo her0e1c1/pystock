@@ -18,7 +18,7 @@ def show(kw):
     data = s.query(models.Price).filter_by(qcode=qcode).all()
     if data:
         query = s.query(models.Price).filter_by(qcode=qcode)
-        mydata = pd.read_sql(query.statement, query.session.bind)
+        mydata = pd.read_sql(query.statement, query.session.bind, index_col="date")
     else:
         mydata = quandl.get(qcode)
         # mydata[mydata.columns[0]]
@@ -38,8 +38,7 @@ def show(kw):
         mydata = mydata.rename(columns=columns)
         mydata = mydata[pd.isnull(mydata.open) == False]
         mydata['qcode'] = qcode
-        # not need to commit
-        mydata.to_sql("price", models.engine, if_exists='append')
+        mydata.to_sql("price", models.engine, if_exists='append')  # not need to commit
 
     series = mydata.open
     print(RollingMean(series, ratio=kw.get("ratio")).simulate())

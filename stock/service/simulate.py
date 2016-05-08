@@ -1,4 +1,5 @@
 import enum
+from collections import OrderedDict
 import pandas as pd
 
 
@@ -8,29 +9,18 @@ class Timing(enum.Enum):
 
 # class Timing_(enum.Enum):
 #     BUY = "buy"
+
 #     SELL = "sell"
 #     LOSTCUST = "lostcust"
+#     FORCE = "force"
 
 
-def increment_ratio(a, b):
-    return ((a - b) / b) * 100
+def increment_ratio(a2, a1):
+    return ((a2 - a1) / a1) * 100
 
 
 def timing(*series):
     return pd.concat(series, axis=1).T.apply(lambda x: x.all())
-
-
-def simulate(series, timing):
-    money = 0
-    status = True
-    for date, t in timing.to_dict().items():
-        if status and t:
-            money -= series[date]
-            status = False
-        elif not status and not t:
-            money += series[date]
-            status = True
-    return money
 
 
 class Status(object):
@@ -52,7 +42,7 @@ class Status(object):
         if self.current is None:
             return False
         price = self.simulator.series[date]
-        return increment_ratio(self.current, price) <= -self.simulator.lostcut
+        return increment_ratio(price, self.current) <= -self.simulator.lostcut
 
     def finish(self):
         if self.current is None:
@@ -100,7 +90,7 @@ class Simulator(object):
     def simulate(self):
         result = []
         status = Status(simulator=self)
-        for date, _ in self.series.to_dict().items():
+        for date in OrderedDict(self.series):
             tag = None
             if status.is_lostcut(date):
                 status.sell(date)
@@ -137,6 +127,6 @@ class RollingMean(object):
         return x[-self.ratio >= x]
 
     def simulate(self):
-        buy = self.buy()
-        sell = self.sell()
+        buy = self.buy().map(lambda x: True)
+        sell = self.sell().map(lambda x: False)
         return Simulator(self.series, timing(buy, sell)).simulate()
