@@ -10,7 +10,6 @@ click
 requests
 python-dateutil
 beautifulsoup4
-pandas
 xlrd
 Quandl
 
@@ -18,3 +17,11 @@ Quandl
 sqlalchemy
 psycopg2
 PyMySQL
+
+# math
+ipython
+pandas
+matplotlib
+scipy
+scikit-learn
+jupyter
