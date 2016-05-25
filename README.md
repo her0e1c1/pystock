@@ -57,3 +57,11 @@ if your os is freebsd, then do this ::
        xls = pd.ExcelFile("./first-d-j.xls")
        print(xls.sheet_names)  # check sheet name
        df = xls.parse("Sheet1")
+
+## Jupyter
+
+### Esc mode
+j
+k
+Enter
+d

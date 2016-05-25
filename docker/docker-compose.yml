@@ -54,7 +54,7 @@ services:
     depends_on:
         - mysql
     working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && bash"
+    # entrypoint: sh -c "python setup.py develop && bash"
     tty: true
     stdin_open: true
 
@@ -71,3 +71,14 @@ services:
         - ..:/repo
     working_dir: /repo
     entrypoint: sh -c "python setup.py develop && pystock serve --host 0.0.0.0 --port 80"
+
+  jupyter:
+    build:
+      context: ../
+      dockerfile: ./docker/base/Dockerfile
+    ports:
+      - 8888
+    entrypoint: sh -c "cd /repo && python setup.py develop && cd /working && pystock db create && jupyter notebook --ip 0.0.0.0 --port 8888"
+    volumes:
+        - ..:/repo
+    working_dir: /working

@@ -24,4 +24,5 @@ pandas
 matplotlib
 scipy
 scikit-learn
+scipy
 jupyter
