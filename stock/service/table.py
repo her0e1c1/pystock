@@ -5,12 +5,11 @@ import quandl
 import matplotlib.pyplot as plt
 
 from stock import models
-from stock.service.simulate import RollingMean
+from stock.service.simulate import RollingMean, MACD
 from stock.service.simulate import timing
 
 
 DEFAULT_ROLLING_MEAN_RATIO = 5
-
 
 
 class PriceType(enum.Enum):
@@ -50,17 +49,14 @@ def drow(df):
 # PriceFrame(qcode="XXX").open.rolling_mean(25).plot()
 
 
-class Chart(object):
-    pass
 
-
-def chart(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, **kw):
+def chart(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, **kw):
     if not isinstance(price_type, enum.Enum):
         price_type = PriceType(price_type)
     df = get_from_quandl(qcode, last_date=None)
     series = getattr(df, price_type.name)
+    return MACD(series)
     return RollingMean(series, ratio=kw.get("ratio", DEFAULT_ROLLING_MEAN_RATIO))
-
 
 
 def simulate(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, **kw):
@@ -69,6 +65,7 @@ def simulate(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, **kw):
     df = get_from_quandl(qcode, last_date=None)
     series = getattr(df, price_type.name)
     return RollingMean(series, ratio=kw.get("ratio", DEFAULT_ROLLING_MEAN_RATIO)).simulate()
+
 
 
 # TODO: use sqlite3

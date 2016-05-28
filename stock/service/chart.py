@@ -23,13 +23,13 @@ def bollinger_band(prices, period, sigma):
     return mean + sigma * std
 
 
-def macd_line(prices, fast=26, slow=12, signal=9):
+def macd_line(series, fast=26, slow=12, signal=9):
     # Chris Manning (fast, slow, signal) = (17, 9, 7)
-    return pd.ewma(prices, span=slow) - pd.ewma(prices, span=fast)
+    return pd.ewma(series, span=slow) - pd.ewma(series, span=fast)
 
 
-def macd_signal(prices, fast=26, slow=12, signal=9):
-    return pd.ewma(macd_line(prices, fast=fast, slow=slow, signal=signal), span=signal)
+def macd_signal(series, fast=26, slow=12, signal=9):
+    return pd.ewma(macd_line(series, fast=fast, slow=slow, signal=signal), span=signal)
 
 
 def rsi(prices, period=14):

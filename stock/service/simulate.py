@@ -92,6 +92,9 @@ class Status(object):
     def is_buy(self, date):
         if date not in self.simulator.timing:
             return False
+        last = self.simulator.series.last_valid_index()
+        if date == last:
+            return False
         return (self.action in [None, Action.SELL, Action.LOSTCUT]) and self.simulator.timing[date] == Timing.BUY
 
     def is_sell(self, date):
@@ -119,7 +122,7 @@ class Simulator(object):
         self.lostcut = lostcut
 
     def set_ax(self, ax):
-        ax.set_title('Simulator')
+        ax.set_title('Simulator')  # TODO: show qcode
         df = self.simulate()
         ymin, ymax = ax.get_ylim()
         for action in Action:
@@ -130,6 +133,7 @@ class Simulator(object):
 
     def simulate(self):
         s = self._simulate()
+        return s
         return pd.concat([s, self.series], axis=1)
 
     def _simulate(self):
@@ -154,12 +158,7 @@ class Simulator(object):
         return pd.DataFrame(result, index=dates)
 
 
-class RollingMean(object):
-
-    def __init__(self, series, ratio=10, period=25):
-        self.series = series
-        self.period = period
-        self.ratio = ratio
+class SignalLine(object):
 
     def plot(self, figsize=DEFAULT_FIGSIZE, **kw):
         return self.df.plot(figsize=figsize)
@@ -170,6 +169,30 @@ class RollingMean(object):
         ax.vlines(x=self.buy.index, ymin=ymin, ymax=ymax-1, color='r')
         ax.vlines(x=self.sell.index, ymin=ymin, ymax=ymax-1, color='b')
         return ax
+
+    @property
+    def timing(self):
+        return timing(self.buy, self.sell)
+
+    def simulate(self):
+        return Simulator(self.series, self.timing).simulate()
+
+    def simulate_action(self):
+        df = Simulator(self.series, self.timing).simulate()
+        notnull = df[df.action.notnull()]
+        s = notnull['action'].map(lambda x: None if pd.isnull(x) else Action(x).name)
+        return pd.concat([df.ix[s.index], s], axis=1)
+
+    def simulate_plot(self):
+        return Simulator(self.series, self.timing).set_ax(self.plot())
+
+
+class RollingMean(SignalLine):
+
+    def __init__(self, series, ratio=10, period=25):
+        self.series = series
+        self.period = period
+        self.ratio = ratio
 
     @property
     def df(self):
@@ -196,24 +219,8 @@ class RollingMean(object):
         x = self.iratio
         return x[-self.ratio >= x].map(lambda x: Timing.SELL)
 
-    @property
-    def timing(self):
-        return timing(self.buy, self.sell)
 
-    def simulate(self):
-        return Simulator(self.series, self.timing).simulate()
-
-    def simulate_action(self):
-        df = Simulator(self.series, self.timing).simulate()
-        notnull = df[df.action.notnull()]
-        s = notnull['action'].map(lambda x: None if pd.isnull(x) else Action(x).name)
-        return pd.concat([df.ix[s.index], s], axis=1)
-
-    def simulate_plot(self):
-        return Simulator(self.series, self.timing).set_ax(self.plot())
-
-
-class MACD(object):
+class MACD(SignalLine):
 
     def __init__(self, series, fast=26, slow=12, signal=9):
         self.series = series
@@ -221,6 +228,34 @@ class MACD(object):
         self.slow = slow
         self.signal = signal
 
-    def run(self, df):
-        macd = chart.macd_line(df.closing)
-        signal = chart.macd_signal(df.closing)
+    @property
+    def df(self):
+        # 単位が違うので、別々に表示する必要あり
+        return pd.concat({
+            "series": self.series,
+            "macd": self.macd,
+            "signal": self.signal_line,
+        }, axis=1)
+
+    @property
+    def macd(self):
+        return chart.macd_line(**self.__dict__)
+
+    @property
+    def signal_line(self):
+        return chart.macd_signal(**self.__dict__)
+
+    @property
+    def cross(self):
+        d = self.macd - self.signal_line
+        return d[d * d.shift(1) < 0]
+
+    @property
+    def buy(self):
+        c = self.cross
+        return c[c > 0].map(lambda x: Timing.BUY)
+
+    @property
+    def sell(self):
+        c = self.cross
+        return c[c < 0].map(lambda x: Timing.SELL)
