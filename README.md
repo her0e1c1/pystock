@@ -60,6 +60,18 @@ if your os is freebsd, then do this ::
 
 ## Jupyter
 
+```
+docker exec -it ps_jupyter_1 ipython
+from stock.service.setup import *
+```
+
+### autoreload
+```
+%load_ext autoreload
+%autoreload 2
+%matplotlib inline
+```
+
 ### Esc mode
 j
 k

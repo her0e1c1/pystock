@@ -1,18 +1,34 @@
 import enum
 from collections import OrderedDict
 import pandas as pd
+from stock.service import chart
 
 
-class Timing(enum.Enum):
-    BUY = True
-    SELL = False
+DEFAULT_FIGSIZE = (10, 10)
 
-# class Timing_(enum.Enum):
-#     BUY = "buy"
 
-#     SELL = "sell"
-#     LOSTCUST = "lostcust"
-#     FORCE = "force"
+class LineType(enum.Enum):
+
+    rooling_mean = "rooling_mean"
+
+
+class Action(enum.IntEnum):
+
+    BUY = 1
+    SELL = 2
+    LOSTCUT = 3
+    FORCE = 4
+    NANPIN = 5
+
+    @property
+    def color(self):
+        return dict(zip(Action, "rbgym")).get(self.value, "r")
+
+    @classmethod
+    def xlabel(cls):
+        return 'color : %s' % ", ".join("{0.name} = {0.color}".format(a) for a in cls)
+
+Timing = enum.IntEnum("Timing", "BUY SELL")
 
 
 def increment_ratio(a2, a1):
@@ -20,7 +36,16 @@ def increment_ratio(a2, a1):
 
 
 def timing(*series):
-    return pd.concat(series, axis=1).T.apply(lambda x: x.all())
+    return pd.concat(series, axis=1).T.apply(mapping)
+
+
+def mapping(x):
+    y = x[x.notnull()]
+    y0 = y.ix[0]
+    # if (y0 == y).all():  # error
+    if (y == y0).all():
+        return y0
+    return None
 
 
 class Status(object):
@@ -29,13 +54,13 @@ class Status(object):
         self.simulator = simulator
         self.current = None
         self.accumulation = 0
-        self.status = True
+        self.action = None
 
     def to_dict(self):
         return {
             "current": self.current,
             "accumulation": self.accumulation,
-            "status": self.status
+            "action": self.action,
         }
 
     def is_lostcut(self, date):
@@ -45,33 +70,39 @@ class Status(object):
         return increment_ratio(price, self.current) <= -self.simulator.lostcut
 
     def finish(self):
-        if self.current is None:
-            return
         last = self.simulator.series.last_valid_index()
         self.sell(last)
-        return False
+        self.action = Action.FORCE
 
     def buy(self, date):
         self.current = self.simulator.series[date]
         self.accumulation -= self.simulator.series[date]
-        self.status = False
+        self.action = Action.BUY
 
     def sell(self, date):
+        # TODO: 売買手数料を考慮
         self.current = None
         self.accumulation += self.simulator.series[date]
-        self.status = True
+        self.action = Action.SELL
+
+    def lostcut(self, date):
+        self.sell(date)
+        self.action = Action.LOSTCUT
 
     def is_buy(self, date):
         if date not in self.simulator.timing:
             return False
-        return self.status and self.simulator.timing[date]
+        return (self.action in [None, Action.SELL, Action.LOSTCUT]) and self.simulator.timing[date] == Timing.BUY
 
     def is_sell(self, date):
         if self.current is None:
             return False
         if date not in self.simulator.timing:
             return False
-        return not self.status and not self.simulator.timing[date]
+        return self.action in [Timing.BUY] and self.simulator.timing[date] == Timing.SELL
+
+    def is_finish(self):
+        return self.current is not None
 
 
 class Simulator(object):
@@ -87,24 +118,40 @@ class Simulator(object):
         self.timing = timing
         self.lostcut = lostcut
 
+    def set_ax(self, ax):
+        ax.set_title('Simulator')
+        df = self.simulate()
+        ymin, ymax = ax.get_ylim()
+        for action in Action:
+            signal = df.action[df.action == action]
+            ax.vlines(x=signal.index, ymin=ymin, ymax=ymax - 1, color=action.color)
+        ax.set_xlabel(Action.xlabel())
+        return ax
+
     def simulate(self):
+        s = self._simulate()
+        return pd.concat([s, self.series], axis=1)
+
+    def _simulate(self):
         result = []
+        dates = []
         status = Status(simulator=self)
         for date in OrderedDict(self.series):
-            tag = None
             if status.is_lostcut(date):
-                status.sell(date)
-                tag = "lostcut"
+                status.lostcut(date)
             elif status.is_buy(date):
                 status.buy(date)
             elif status.is_sell(date):
                 status.sell(date)
             else:
                 continue
-            result.append(dict(status.to_dict(), **{"date": date, "tag": tag}))
-        if status.finish() is False:
-            result.append(dict(status.to_dict(), **{"tag": "force"}))
-        return pd.DataFrame(result)
+            result.append(status.to_dict())
+            dates.append(date)
+        if status.is_finish():
+            status.finish()
+            result.append(status.to_dict())
+            dates.append(date)
+        return pd.DataFrame(result, index=dates)
 
 
 class RollingMean(object):
@@ -114,19 +161,66 @@ class RollingMean(object):
         self.period = period
         self.ratio = ratio
 
-    def run(self):
-        mean = self.series.rolling(center=False, window=self.period).mean()
-        return increment_ratio(mean, self.series)
+    def plot(self, figsize=DEFAULT_FIGSIZE, **kw):
+        return self.df.plot(figsize=figsize)
 
+    def set_ax(self, ax):
+        ax.set_title('Rolling Mean')
+        ymin, ymax = ax.get_ylim()
+        ax.vlines(x=self.buy.index, ymin=ymin, ymax=ymax-1, color='r')
+        ax.vlines(x=self.sell.index, ymin=ymin, ymax=ymax-1, color='b')
+        return ax
+
+    @property
+    def df(self):
+        return pd.concat({
+            "series": self.series,
+            "mean": self.mean
+        }, axis=1)
+
+    @property
+    def mean(self):
+        return self.series.rolling(center=False, window=self.period).mean()
+
+    @property
+    def iratio(self):
+        return increment_ratio(self.mean, self.series)
+
+    @property
     def buy(self):
-        x = self.run()
-        return x[x >= self.ratio]
+        x = self.iratio
+        return x[x >= self.ratio].map(lambda x: Timing.BUY)
 
+    @property
     def sell(self):
-        x = self.run()
-        return x[-self.ratio >= x]
+        x = self.iratio
+        return x[-self.ratio >= x].map(lambda x: Timing.SELL)
+
+    @property
+    def timing(self):
+        return timing(self.buy, self.sell)
 
     def simulate(self):
-        buy = self.buy().map(lambda x: True)
-        sell = self.sell().map(lambda x: False)
-        return Simulator(self.series, timing(buy, sell)).simulate()
+        return Simulator(self.series, self.timing).simulate()
+
+    def simulate_action(self):
+        df = Simulator(self.series, self.timing).simulate()
+        notnull = df[df.action.notnull()]
+        s = notnull['action'].map(lambda x: None if pd.isnull(x) else Action(x).name)
+        return pd.concat([df.ix[s.index], s], axis=1)
+
+    def simulate_plot(self):
+        return Simulator(self.series, self.timing).set_ax(self.plot())
+
+
+class MACD(object):
+
+    def __init__(self, series, fast=26, slow=12, signal=9):
+        self.series = series
+        self.fast = fast
+        self.slow = slow
+        self.signal = signal
+
+    def run(self, df):
+        macd = chart.macd_line(df.closing)
+        signal = chart.macd_signal(df.closing)
