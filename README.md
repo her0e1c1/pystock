@@ -70,6 +70,7 @@ from stock.service.setup import *
 %load_ext autoreload
 %autoreload 2
 %matplotlib inline
+from stock.service.table import *
 ```
 
 ### Esc mode

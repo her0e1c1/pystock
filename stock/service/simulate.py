@@ -187,12 +187,20 @@ class SignalLine(object):
         return Simulator(self.series, self.timing).set_ax(self.plot())
 
 
+# ratio = [0, 100] => (1, 25)  # 最大幅以下しか取れない
+# period = 25 or 30 days?  # 短期から長期にかけて計算できるようにする
+
 class RollingMean(SignalLine):
 
     def __init__(self, series, ratio=10, period=25):
         self.series = series
         self.period = period
         self.ratio = ratio
+
+    def __str__(self):
+        return "RollingMean(period={period}, ratio={ratio})".format(**self.__dict__)
+
+    __repr__ = __str__
 
     @property
     def df(self):
@@ -227,6 +235,9 @@ class MACD(SignalLine):
         self.fast = fast
         self.slow = slow
         self.signal = signal
+
+    def __str__(self):
+        return "MACD(fast={fast}, slow={slow}, signal={signal})".format(**self.__dict__)
 
     @property
     def df(self):

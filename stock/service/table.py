@@ -1,3 +1,5 @@
+import datetime
+
 import enum
 import pandas as pd
 import quandl
@@ -10,7 +12,6 @@ from stock.service.simulate import timing
 
 
 DEFAULT_ROLLING_MEAN_RATIO = 5
-
 
 class PriceType(enum.Enum):
     open = "open"
@@ -25,6 +26,41 @@ MAP_TO_COLUMNS = {
     "High Price": "high",
     "Low Price": "low",
 }
+
+# どれを一番良い結果として取るかも、問題となる
+# 3か月売買での平均とかの方がいいかも(長期の計算は、次も当てはまるとは限らない)
+# 最終結果だけでなく、平均的に儲けているものが、良いかも
+
+# start/end dateを加える(index)
+
+DATE_FORMATS = ["%Y/%m/%d", "%Y-%m-%d"]
+def str_to_date(s):
+    for fmt in DATE_FORMATS:
+        try:
+            return datetime.datetime.strptime(s, fmt).date()
+        except:
+            pass
+    else:
+        raise ValueError
+
+
+def s(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, start=None, end=None, **kw):
+    if not isinstance(price_type, enum.Enum):
+        price_type = PriceType(price_type)
+    df = get_from_quandl(qcode, last_date=None)
+    series = getattr(df, price_type.name)
+
+    r = 0
+    df = None
+    # 一番儲けらるもの(パラメータの調節が必要なものもある.) and / or もできるようにしたい
+    lists = [MACD(series)] + [RollingMean(series, i) for i in range(1, 10)]
+    for l in lists:
+        df_result = l.simulate_action()
+        accumulation = df_result.ix[-1].accumulation
+        if r < accumulation:
+            r = max(r, accumulation)
+            df = l
+    return (r, df)
 
 
 def create():
