@@ -54,7 +54,7 @@ services:
     depends_on:
         - mysql
     working_dir: /repo
-    # entrypoint: sh -c "python setup.py develop && bash"
+    entrypoint: sh -c "python setup.py develop && bash"
     tty: true
     stdin_open: true
 
@@ -65,7 +65,7 @@ services:
     ports:
       - 80
     env_file:
-        # define DATABASE_URL
+      # define DATABASE_URL
       - .staging.env
     volumes:
         - ..:/repo

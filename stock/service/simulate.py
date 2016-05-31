@@ -160,6 +160,9 @@ class Simulator(object):
 
 class SignalLine(object):
 
+    def __repr__(self):
+        return self.__str__()
+
     def plot(self, figsize=DEFAULT_FIGSIZE, **kw):
         return self.df.plot(figsize=figsize)
 
@@ -179,6 +182,8 @@ class SignalLine(object):
 
     def simulate_action(self):
         df = Simulator(self.series, self.timing).simulate()
+        if df.empty:
+            return df
         notnull = df[df.action.notnull()]
         s = notnull['action'].map(lambda x: None if pd.isnull(x) else Action(x).name)
         return pd.concat([df.ix[s.index], s], axis=1)

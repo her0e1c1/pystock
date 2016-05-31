@@ -44,11 +44,16 @@ def str_to_date(s):
         raise ValueError
 
 
-def s(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, start=None, end=None, **kw):
+def s(quandl_code="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, start=None, end=None, **kw):
+    if isinstance(start, str):
+        start = str_to_date(start)
+    if isinstance(end, str):
+        end = str_to_date(end)
     if not isinstance(price_type, enum.Enum):
         price_type = PriceType(price_type)
-    df = get_from_quandl(qcode, last_date=None)
+    df = get_from_quandl(quandl_code, last_date=None)
     series = getattr(df, price_type.name)
+    series = series.ix[start:end]
 
     r = 0
     df = None
@@ -56,6 +61,8 @@ def s(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, sta
     lists = [MACD(series)] + [RollingMean(series, i) for i in range(1, 10)]
     for l in lists:
         df_result = l.simulate_action()
+        if df_result.empty:
+            continue
         accumulation = df_result.ix[-1].accumulation
         if r < accumulation:
             r = max(r, accumulation)

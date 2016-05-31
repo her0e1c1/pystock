@@ -203,8 +203,16 @@ def calculate(**kw):
 
 
 @cli.command(help="simulate", name="sm")
-@click.option("--quandle-code", default="NIKKEI/INDEX")
-@click.option("--ratio", default=10, type=float)
+@click.argument('q', '--quandl-code', default="NIKKEI/INDEX")
+@click.option("-p", '--price-type', default="close")
+@click.option("--ratio", type=float)
+@click.option("--lostcut", type=float)
+@click.option("--start")
+@click.option("--end")
 def simulate(**kw):
-    from stock.service.table import show
-    show(kw)
+    from stock.service.table import s
+    s(**kw)
+
+
+if __name__ == "__main__":
+    cli()

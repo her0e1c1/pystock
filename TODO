@@ -74,3 +74,8 @@
 - recovery
  - 平均n日を求めて、それを過ぎたら、BUY
  - トレンドが戻ったら- => + BUY
+
+- https://www.quandl.com/api/v3/databases
+- https://www.quandl.com/api/v3/databases/NIKKEI/codes.json
+- https://www.quandl.com/api/v3/databases/TSE/codes.json
+- https://www.quandl.com/api/v3/datasets/NIKKEI/INDEX/data.csv 

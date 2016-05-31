@@ -36,6 +36,7 @@ class Price(Base):
     close = sql.Column(sql.Float, nullable=False)
     date = sql.Column(sql.Date, nullable=False)
     qcode = sql.Column(sql.String(64), nullable=False, index=True)
+    quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
     volume = sql.Column(sql.Integer, nullable=True)
 
 

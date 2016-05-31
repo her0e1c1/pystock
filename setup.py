@@ -8,7 +8,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='stock',
-    version='0.3',
+    version='0.4',
     author='Hiroyuki Ishii',
     url="http://f1nance.herokuapp.com/",
     py_modules=['stock'],
@@ -18,6 +18,6 @@ setup(
     install_requires=install_requires,
     entry_points='''
         [console_scripts]
-        pystock=stock.cmd:cli
+        stock=stock.cmd:cli
     ''',
 )
