@@ -58,6 +58,25 @@ services:
     tty: true
     stdin_open: true
 
+  local:
+    build:
+      context: ../
+      dockerfile: ./docker/base/Dockerfile
+    ports:
+      - 80
+    environment:
+        DATABASE_URL: "sqlite:///working/db.sqlite3"
+    links:
+      - mysql:db
+    volumes:
+        - ..:/repo
+    depends_on:
+        - mysql
+    working_dir: /working
+    entrypoint: sh -c "python setup.py develop && bash"
+    tty: true
+    stdin_open: true
+
   staging:
     build:
       context: ../
