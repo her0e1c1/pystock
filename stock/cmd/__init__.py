@@ -214,5 +214,15 @@ def simulate(**kw):
     s(**kw)
 
 
+@cli.command()
+def qlist():
+    # need cache in sqlite3.db
+    import requests
+    URL = "https://www.quandl.com/api/v3/databases.json"
+    r1 = requests.get(URL)
+    for d in r1.json()['databases']:
+        print(d['database_code'])
+
+
 if __name__ == "__main__":
     cli()
