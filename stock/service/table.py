@@ -114,41 +114,41 @@ def simulate(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, **kw):
 # TODO: use sqlite3
 def get_from_quandl(qcode, last_date=None, price_type=PriceType.close):
     session = models.Session()
-    data = session.query(models.Price).filter_by(qcode=qcode).first()
+    data = session.query(models.Price).filter_by(quandl_code=qcode).first()
     if data:
-        query = session.query(models.Price).filter_by(qcode=qcode)
+        query = session.query(models.Price).filter_by(quandl_code=qcode)
         return pd.read_sql(query.statement, query.session.bind, index_col="date")
     else:
         mydata = quandl.get(qcode)
         mydata = mydata.rename(columns=MAP_TO_COLUMNS)
         # series = getattr(df, price_type.name)
         mydata = mydata[pd.isnull(mydata.open) == False]
-        mydata['qcode'] = qcode
+        mydata['quandl_code'] = qcode
         mydata.to_sql("price", models.engine, if_exists='append')
         return mydata
 
 
 def show(kw):
     from stock.service.simulate import RollingMean
-    qcode = "NIKKEI/INDEX"
-    s = models.Session()
-    data = s.query(models.Price).filter_by(qcode=qcode).all()
-    if data:
-        query = s.query(models.Price).filter_by(qcode=qcode)
-        mydata = pd.read_sql(query.statement, query.session.bind, index_col="date")
-    else:
-        mydata = quandl.get(qcode)
-        # mydata[mydata.columns[0]]
-        columns = {
-            "Open Price": "open",
-            "Close Price": "close",
-            "High Price": "high",
-            "Low Price": "low",
-        }
-        mydata = mydata.rename(columns=columns)
-        mydata = mydata[pd.isnull(mydata.open) == False]
-        mydata['qcode'] = qcode
-        mydata.to_sql("price", models.engine, if_exists='append')  # not need to commit
+    # qcode = "NIKKEI/INDEX"
+    # s = models.Session()
+    # data = s.query(models.Price).filter_by(qcode=qcode).all()
+    # if data:
+    #     query = s.query(models.Price).filter_by(qcode=qcode)
+    #     mydata = pd.read_sql(query.statement, query.session.bind, index_col="date")
+    # else:
+    #     mydata = quandl.get(qcode)
+    #     # mydata[mydata.columns[0]]
+    #     columns = {
+    #         "Open Price": "open",
+    #         "Close Price": "close",
+    #         "High Price": "high",
+    #         "Low Price": "low",
+    #     }
+    #     mydata = mydata.rename(columns=columns)
+    #     mydata = mydata[pd.isnull(mydata.open) == False]
+    #     mydata['quandl_code'] = qcode
+    #     mydata.to_sql("price", models.engine, if_exists='append')  # not need to commit
 
-    series = mydata.open
-    print(RollingMean(series, ratio=kw.get("ratio")).simulate())
+    # series = mydata.open
+    # print(RollingMean(series, ratio=kw.get("ratio")).simulate())

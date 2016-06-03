@@ -11,6 +11,36 @@ Base = declarative_base(bind=engine)
 Session = sql.orm.sessionmaker(bind=engine)
 
 
+class QuandlDatabase(Base):
+
+    __tablename__ = "quandl_database"
+    __table_args__ = (sql.UniqueConstraint("database_code"), )
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    database_code = sql.Column(sql.String(64), nullable=False)
+
+    def __repr__(self):
+        return "QuandlDatabase({database_code})".format(**self.__dict__)
+
+
+class QuandlCode(Base):
+
+    __tablename__ = "quandl_code"
+    __table_args__ = (sql.UniqueConstraint("quandl_code"), )
+
+    id = sql.Column(sql.Integer, primary_key=True)
+    quandl_code = sql.Column(sql.String(64), nullable=False)
+    database_id = sql.Column(
+        sql.Integer,
+        sql.ForeignKey("quandl_database.id", onupdate="CASCADE", ondelete="CASCADE"),
+        nullable=False
+    )
+    database = sql.orm.relation('QuandlDatabase', backref="quandl_codes")
+
+    def __repr__(self):
+        return "QuandlCode({quandl_code})".format(**self.__dict__)
+
+
 class StockExchange(Base):
 
     __tablename__ = "stock_exchange"
@@ -27,7 +57,7 @@ class StockExchange(Base):
 class Price(Base):
 
     __tablename__ = "price"
-    __table_args__ = (sql.UniqueConstraint('date', 'qcode'), )
+    __table_args__ = (sql.UniqueConstraint('date', 'quandl_code'), )
 
     id = sql.Column(sql.Integer, primary_key=True)
     high = sql.Column(sql.Float, nullable=False)
@@ -35,7 +65,6 @@ class Price(Base):
     open = sql.Column(sql.Float, nullable=False)
     close = sql.Column(sql.Float, nullable=False)
     date = sql.Column(sql.Date, nullable=False)
-    qcode = sql.Column(sql.String(64), nullable=False, index=True)
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
     volume = sql.Column(sql.Integer, nullable=True)
 
@@ -180,3 +209,5 @@ class CompanySearchField(Base):
     @property
     def w(self):
         return wrapper.CompanySearchField(self)
+
+Base.metadata.create_all()

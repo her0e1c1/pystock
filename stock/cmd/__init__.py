@@ -214,14 +214,66 @@ def simulate(**kw):
     s(**kw)
 
 
-@cli.command()
-def qlist():
-    # need cache in sqlite3.db
+@cli.group()
+def quandl():
+    pass
+
+
+@quandl.command(name="list")
+@click.argument('database_code', default="")
+@click.argument('quandl_code', default="")
+@click.option("--no-cache", type=bool)
+@click.option("-U", "--update", type=bool)
+def quandl_list(database_code, quandl_code, no_cache, update):
     import requests
-    URL = "https://www.quandl.com/api/v3/databases.json"
-    r1 = requests.get(URL)
-    for d in r1.json()['databases']:
-        print(d['database_code'])
+    from stock import models 
+    session = models.Session()
+    if not database_code:
+        dbs = session.query(models.QuandlDatabase).all()
+        if not dbs:
+            URL = "https://www.quandl.com/api/v3/databases"
+            r1 = requests.get(URL)
+            dbs = [models.QuandlDatabase(database_code=j['database_code'])
+                   for j in r1.json()['databases']]
+            session.add_all(dbs)
+            session.commit()
+        for db in dbs:
+            print(db.database_code)
+    else:
+        if quandl_code:
+            quandl_code = "{database_code}/{quandl_code}".format(**locals())
+            from stock.service.table import s
+            ret = s(quandl_code=quandl_code)
+            print(ret)
+            return
+        import io
+        import zipfile
+        import csv
+        db = session.query(models.QuandlDatabase).filter_by(database_code=database_code).one()
+        codes = session.query(models.QuandlCode).filter_by(database_id=db.id).all()
+        if not codes:
+            URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
+            r = requests.get(URL)
+            codes = []
+            with zipfile.ZipFile(io.BytesIO(r.content)) as fh:
+                for f in fh.infolist():
+                    csv_fh = io.StringIO(fh.open(f.filename).read().decode())
+                    for row in csv.reader(csv_fh):
+                        codes.append(models.QuandlCode(
+                            quandl_code=row[0],
+                            database=db,
+                        ))
+            session.add_all(codes)
+            session.commit()
+        for c in codes:
+            print(c.quandl_code)
+
+
+@quandl.command(name="line")
+@click.argument('quandl_code', default="")
+def quandl_line(quandl_code):
+    from stock.service.table import get_from_quandl
+    df = get_from_quandl(quandl_code)
 
 
 if __name__ == "__main__":

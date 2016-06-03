@@ -65,14 +65,10 @@ services:
     ports:
       - 80
     environment:
-        DATABASE_URL: "sqlite:///working/db.sqlite3"
-    links:
-      - mysql:db
+        DATABASE_URL: "sqlite:////repo/db.sqlite3"
     volumes:
         - ..:/repo
-    depends_on:
-        - mysql
-    working_dir: /working
+    working_dir: /repo
     entrypoint: sh -c "python setup.py develop && bash"
     tty: true
     stdin_open: true
