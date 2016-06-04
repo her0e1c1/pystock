@@ -31,8 +31,6 @@ services:
     depends_on:
         - mysql
     working_dir: /repo
-
-    # ttyを設定しない場合は直接入るみたい(ttyの設定は必須)
     stdin_open: true
     # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
     entrypoint: sh -c "python setup.py develop && stock setup && stock serve --port 80 --host 0.0.0.0"
@@ -63,7 +61,7 @@ services:
     volumes:
         - .:/repo
     working_dir: /repo
-    # entrypoint: sh -c "python setup.py develop && bash"
+    entrypoint: sh -c "python setup.py develop && bash"
     tty: true
     stdin_open: true
 
@@ -72,8 +70,7 @@ services:
     ports:
       - 80
     env_file:
-      # define DATABASE_URL
-      - .staging.env
+      - .staging.env  # define DATABASE_URL
     volumes:
         - .:/repo
     working_dir: /repo

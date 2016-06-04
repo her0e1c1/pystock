@@ -44,3 +44,8 @@ from stock.service.setup import *
 %matplotlib inline
 from stock.service.table import *
 ```
+
+## Docker
+```
+$ docker build -t stock .
+```
