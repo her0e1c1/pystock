@@ -1,23 +1,20 @@
-# web
-flask
-gunicorn
-apscheduler
-jinja2
-marshmallow
-
 # util
 click
 requests
 python-dateutil
 beautifulsoup4
-xlrd
 Quandl
-
-# sql
+xlrd
 sqlalchemy
-psycopg2
-PyMySQL
 
 # math
+ipython
 pandas
 matplotlib
+scipy
+scikit-learn
+scipy
+jupyter
+
+# for ipython
+setuptools>=18.5
