@@ -8,9 +8,9 @@ services:
   mysql:
     image: mysql:5.7
     volumes:
-        - ./mysql/conf.d:/etc/mysql/conf.d
+        # - ./mysql/conf.d:/etc/mysql/conf.d
         - pystock_volume:/var/lib/mysql
-        - ..:/docker
+        - .:/docker
     working_dir: /docker
     environment:
         MYSQL_ALLOW_EMPTY_PASSWORD: 1
@@ -18,9 +18,7 @@ services:
 
   # this should be always working on local for checking
   test:
-    build:
-      context: ../
-      dockerfile: ./docker/base/Dockerfile
+    image: stock
     ports:
       - 80
     environment:
@@ -29,7 +27,7 @@ services:
     links:
       - mysql:db
     volumes:
-        - ..:/repo
+        - .:/repo
     depends_on:
         - mysql
     working_dir: /repo
@@ -37,12 +35,10 @@ services:
     # ttyを設定しない場合は直接入るみたい(ttyの設定は必須)
     stdin_open: true
     # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
-    entrypoint: sh -c "python setup.py develop && pystock setup && pystock serve --port 80 --host 0.0.0.0"
+    entrypoint: sh -c "python setup.py develop && stock setup && stock serve --port 80 --host 0.0.0.0"
 
   backend:
-    build:
-      context: ../
-      dockerfile: ./docker/base/Dockerfile
+    image: stock
     ports:
       - 80
     environment:
@@ -50,7 +46,7 @@ services:
     links:
       - mysql:db
     volumes:
-        - ..:/repo
+        - .:/repo
     depends_on:
         - mysql
     working_dir: /repo
@@ -59,41 +55,35 @@ services:
     stdin_open: true
 
   local:
-    build:
-      context: ../
-      dockerfile: ./docker/base/Dockerfile
+    image: stock
     ports:
       - 80
     environment:
         DATABASE_URL: "sqlite:////repo/db.sqlite3"
     volumes:
-        - ..:/repo
+        - .:/repo
     working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && bash"
+    # entrypoint: sh -c "python setup.py develop && bash"
     tty: true
     stdin_open: true
 
   staging:
-    build:
-      context: ../
-      dockerfile: ./docker/base/Dockerfile
+    image: stock
     ports:
       - 80
     env_file:
       # define DATABASE_URL
       - .staging.env
     volumes:
-        - ..:/repo
+        - .:/repo
     working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && pystock serve --host 0.0.0.0 --port 80"
+    entrypoint: sh -c "python setup.py develop && stock serve --host 0.0.0.0 --port 80"
 
   jupyter:
-    build:
-      context: ../
-      dockerfile: ./docker/base/Dockerfile
+    image: stock
     ports:
       - 8888
-    entrypoint: sh -c "cd /repo && python setup.py develop && cd /working && pystock db create && jupyter notebook --ip 0.0.0.0 --port 8888"
+    entrypoint: sh -c "cd /repo && python setup.py develop && cd /working && stock db create && jupyter notebook --ip 0.0.0.0 --port 8888"
     volumes:
-        - ..:/repo
+        - .:/repo
     working_dir: /working

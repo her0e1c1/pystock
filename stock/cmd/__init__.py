@@ -233,6 +233,9 @@ def quandl_list(database_code, quandl_code, no_cache, update):
         if not dbs:
             URL = "https://www.quandl.com/api/v3/databases"
             r1 = requests.get(URL)
+            if not r1.ok:
+                print(r1.json()['quandl_error']['message'])
+                return
             dbs = [models.QuandlDatabase(database_code=j['database_code'])
                    for j in r1.json()['databases']]
             session.add_all(dbs)
