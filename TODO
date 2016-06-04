@@ -57,7 +57,7 @@
 - 同じグループにあるにもかかわらず、関連銘柄として、値上がっていないもの
 - client jsで計算(簡単なもの)
 - Java (Play) で置き換える(計算とアプリの分割)
-- 検索窓をつける
+- 検索窓をつける(elastic search)
 - awsに移行
 - https://www.quandl.com/
 - micro service
