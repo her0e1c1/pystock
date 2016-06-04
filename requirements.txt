@@ -20,4 +20,3 @@ PyMySQL
 
 # math
 pandas
-matplotlib
