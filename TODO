@@ -80,5 +80,13 @@
 - https://www.quandl.com/api/v3/databases/NIKKEI/codes.json
 - https://www.quandl.com/api/v3/databases/TSE/codes.json
 - https://www.quandl.com/api/v3/datasets/NIKKEI/INDEX/data.csv
-
+- 複数のグラフを用意すれば、損切りの後のリカバリはいらない(???(次の買いシグナルを見つけられそう。ただし別の指標)
 - sqlite3でのローカル用にまずは作る
+
+- ニュースを学習データにして、高値、安値を判定する
+- quandlから無理やりデータを引っ張ってくるとか. (計算結果をwebに表示?)
+- celeryでローカルでデータを引っ張って正規化しておくとか.(sleep入れる)
+- 正規化したデータをrepoに入れる?
+- 対象となるデータを絞るしかなさそう(管理画面必要じゃん, とりあえずcuiコマンドで)
+- １日だけ(or week)のデータを取得して、それを使う
+- その日を解析するプログラムと、長期売買のプログラムは異なる

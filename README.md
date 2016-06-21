@@ -7,13 +7,10 @@ A commad line tool for stock
 
 	pip install stock
 
+## server
 setup heroku
 
     heroku run --app APP_NAME python -m stock setup
-
-serve
-
-    gunicorn stock.server.main:app
 
 ## how to set japanese companies data
 1. access http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
@@ -35,17 +32,4 @@ you use Shift + Enter instead of Enter, which inputs a new line break
 ```
 docker exec -it ps_jupyter_1 ipython
 from stock.service.setup import *
-```
-
-### autoreload
-```
-%load_ext autoreload
-%autoreload 2
-%matplotlib inline
-from stock.service.table import *
-```
-
-## Docker
-```
-$ docker build -t stock .
 ```
