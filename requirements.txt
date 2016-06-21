@@ -21,6 +21,7 @@ alembic
 
 # math
 pandas
+matplotlib
 
 cffi
 cryptography
