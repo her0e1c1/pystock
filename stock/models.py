@@ -11,21 +11,21 @@ Base = declarative_base(bind=engine)
 Session = sql.orm.sessionmaker(bind=engine)
 
 
-class Contoller(Base):
+# class Contoller(Base):
 
-    __tablename__ = "controller"
+#     __tablename__ = "controller"
 
-    id = sql.Column(sql.Integer, primary_key=True)
-    quandl_code_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("quandl_code", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False
-    )
-    # company_id = sql.Column(
-    #     sql.Integer,
-    #     sql.ForeignKey("company.id", onupdate="CASCADE", ondelete="CASCADE"),
-    #     nullable=False
-    # )
+#     id = sql.Column(sql.Integer, primary_key=True)
+#     quandl_code_id = sql.Column(
+#         sql.Integer,
+#         sql.ForeignKey("quandl_code", onupdate="CASCADE", ondelete="CASCADE"),
+#         nullable=False
+#     )
+#     # company_id = sql.Column(
+#     #     sql.Integer,
+#     #     sql.ForeignKey("company.id", onupdate="CASCADE", ondelete="CASCADE"),
+#     #     nullable=False
+#     # )
 
 
 class QuandlDatabase(Base):
