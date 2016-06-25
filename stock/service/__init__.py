@@ -5,4 +5,7 @@ from . import (  # NOQA
     search_field,
     table,
     util,
+    quandl,
+    charts,
+    simulate,
 )

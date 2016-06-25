@@ -40,12 +40,12 @@
     <dt>RSI</dt><dd>{{ show_signal("closing_rsi_14") }}</dd>
     <dt>MACD</dt><dd>{{ show_signal("closing_macd_minus_signal") }}</dd>
   </dl>
-  <p>現在はもみ合い相場での判定. 今後はもみ合いと上昇・下降相場に応じたシグナルを作成予定<p>
+
 
   <div id="container" style="min-width: 740px; height: 420px; margin: 0 auto"></div>
   <script type="text/javascript">
     $(function(){
-        $.getJSON('/api/{{ company.id }}', function (data) {
+        $.getJSON('/api/quandl/{{ quandl_code.code }}', function (data) {
             $('#container').highcharts('StockChart', {
                 chart: {height: 1000},
                 rangeSelector: {selected: 1},

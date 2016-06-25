@@ -1,5 +1,6 @@
 # coding: utf-8
 import pandas as pd
+# TODO: rename formula
 
 
 def stochastic_k(prices, k):

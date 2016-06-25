@@ -18,6 +18,6 @@ setup(
     install_requires=install_requires,
     entry_points='''
         [console_scripts]
-        stock=stock.cmd:cli
+        stock=stock:cli
     ''',
 )

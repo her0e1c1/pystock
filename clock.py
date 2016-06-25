@@ -1,4 +1,5 @@
 # coding: utf-8
+# TODO: use celery
 from apscheduler.schedulers.blocking import BlockingScheduler
 
 from stock import service
@@ -17,8 +18,8 @@ sched = BlockingScheduler()
 def scheduled_scrape_japan():
     ldate = service.util.last_date()
     logger.info('CRON: Scrape and store stock at %s' % ldate)
-    service.company.update_copmany_list(each=True, ignore=True, last_date=ldate)
-    service.search_field.update_search_fields()
+    # service.company.update_copmany_list(each=True, ignore=True, last_date=ldate)
+    # service.search_field.update_search_fields()
 
 
 logger.info('CRON: Start ...')

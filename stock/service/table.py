@@ -32,29 +32,7 @@ MAP_TO_COLUMNS = {
 # 最終結果だけでなく、平均的に儲けているものが、良いかも
 
 # start/end dateを加える(index)
-
-DATE_FORMATS = ["%Y/%m/%d", "%Y-%m-%d"]
-def str_to_date(s):
-    for fmt in DATE_FORMATS:
-        try:
-            return datetime.datetime.strptime(s, fmt).date()
-        except:
-            pass
-    else:
-        raise ValueError
-
-
 def s(quandl_code="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, start=None, end=None, **kw):
-    if isinstance(start, str):
-        start = str_to_date(start)
-    if isinstance(end, str):
-        end = str_to_date(end)
-    if not isinstance(price_type, enum.Enum):
-        price_type = PriceType(price_type)
-    df = get_from_quandl(quandl_code, last_date=None)
-    series = getattr(df, price_type.name)
-    series = series.ix[start:end]
-
     r = 0
     df = None
     # 一番儲けらるもの(パラメータの調節が必要なものもある.) and / or もできるようにしたい
@@ -92,7 +70,6 @@ def drow(df):
 # PriceFrame(qcode="XXX").open.rolling_mean(25).plot()
 
 
-
 def chart(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=3, **kw):
     if not isinstance(price_type, enum.Enum):
         price_type = PriceType(price_type)
@@ -108,24 +85,6 @@ def simulate(qcode="NIKKEI/INDEX", price_type=PriceType.close, way=None, **kw):
     df = get_from_quandl(qcode, last_date=None)
     series = getattr(df, price_type.name)
     return RollingMean(series, ratio=kw.get("ratio", DEFAULT_ROLLING_MEAN_RATIO)).simulate()
-
-
-
-# TODO: use sqlite3
-def get_from_quandl(qcode, last_date=None, price_type=PriceType.close):
-    session = models.Session()
-    data = session.query(models.Price).filter_by(quandl_code=qcode).first()
-    if data:
-        query = session.query(models.Price).filter_by(quandl_code=qcode)
-        return pd.read_sql(query.statement, query.session.bind, index_col="date")
-    else:
-        mydata = quandl.get(qcode)
-        mydata = mydata.rename(columns=MAP_TO_COLUMNS)
-        # series = getattr(df, price_type.name)
-        mydata = mydata[pd.isnull(mydata.open) == False]
-        mydata['quandl_code'] = qcode
-        mydata.to_sql("price", models.engine, if_exists='append')
-        return mydata
 
 
 def show(kw):

@@ -3,6 +3,7 @@ from flask import Flask, request, jsonify
 from flask import render_template as _render_template
 
 from stock import service
+from stock import util
 from stock import config as C
 
 
@@ -10,8 +11,7 @@ app = Flask(__name__)
 
 
 def render_template(name, **kw):
-    kw["service"] = service
-    kw["C"] = C
+    kw.update({"C": C, "service": service})
     return _render_template(name, **kw)
 
 
@@ -20,6 +20,11 @@ def to_int(key):
         return int(request.args.get(key))
     except:
         return None
+
+
+# @app.route("/", methods=["GET"])
+# def index():
+#     pass
 
 
 @app.route("/", methods=["GET"])
@@ -35,6 +40,30 @@ def index():
     d = {k: to_int(k) for k in field_keys}
     company_list = service.company.get(**d)
     return render_template('index.html', **{"company_list": company_list})
+
+
+@app.route("/quandl/<string:database_code>/<string:quandl_code>", methods=["GET"])
+def get_quandl(database_code, quandl_code):
+    code = "%s/%s" % (database_code, quandl_code)
+    q = service.quandl.first(code)
+    return render_template('quandl_code.html', **{"quandl_code": q})
+
+
+@app.route("/api/quandl/<string:database_code>/<string:quandl_code>", methods=["GET"])
+def api_get_quandl(database_code, quandl_code):
+    code = "%s/%s" % (database_code, quandl_code)
+    series = service.charts.get_series(code)
+    # ratio=kw.get("ratio", C.DEFAULT_ROLLING_MEAN_RATIO)
+    result = service.simulate.RollingMean(series).simulate()
+    # return jsonify({"series": util.df_to_series(result) + util.df_to_series(series)})
+    return jsonify({"series": util.df_to_series(result) + util.df_to_series(series)})
+
+
+@app.route("/api/quandl/<string:database_code>/<string:quandl_code>/rolling_mean", methods=["GET"])
+def rolling_api_get_quandl(database_code, quandl_code):
+    code = "%s/%s" % (database_code, quandl_code)
+    df = service.charts.get_series(code)
+    return jsonify({"series": util.df_to_series(df)})
 
 
 @app.route("/company/<int:id>", methods=["GET"])

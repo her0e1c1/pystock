@@ -163,6 +163,8 @@ class SignalLine(object):
     def __repr__(self):
         return self.__str__()
 
+    # __repr__ = __str__
+
     def plot(self, figsize=DEFAULT_FIGSIZE, **kw):
         return self.df.plot(figsize=figsize)
 
@@ -204,8 +206,6 @@ class RollingMean(SignalLine):
 
     def __str__(self):
         return "RollingMean(period={period}, ratio={ratio})".format(**self.__dict__)
-
-    __repr__ = __str__
 
     @property
     def df(self):

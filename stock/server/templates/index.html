@@ -25,15 +25,6 @@
   <h2>企業一覧</h2>
   <h3>最終更新日 {{ service.util.last_date() }}</h3>
 
-  <table>
-    <tr>
-      <th>企業数</th>
-    </tr>
-    <tr>
-      <td>{{ company_list|length }}</td>
-    </tr>
-  </table>
-
   <form action="{{ url_for('index') }}" method="get">
     {{ radio_group("25日移動平均線", "ratio_closing_minus_rolling_mean_25",
        [("15", "15%以上"),
@@ -77,14 +68,38 @@
         ("1",  "ゴールデンクロス(買い)")]
     ) }}
   </form>
+
   <table>
     <tr>
-      <th>会社名</th>
+      <th>Quandl Code</th>
     </tr>
-    {% for c in company_list %}
+    {% for q in service.quandl.get() %}
     <tr>
-      <td><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}({{ c.code }})</a><td>
+      <td><a href="/quandl/{{ q.code }}">{{ q.code }}</a><td>
     </tr>
     {% endfor %}
   </table>
+
+{#
+
+  <table>
+    <tr>
+      <th>企業数</th>
+    </tr>
+    <tr>
+      <td>{{ company_list|length }}</td>
+    </tr>
+  </table>
+
+   <table>
+      <tr>
+          <th>会社名</th>
+      </tr>
+      {% for c in company_list %}
+      <tr>
+          <td><a href="{{ url_for('company', id=c.id) }}">{{ c.name }}({{ c.code }})</a><td>
+      </tr>
+      {% endfor %}
+  </table>
+#}
 {% endblock %}
