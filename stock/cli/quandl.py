@@ -4,7 +4,7 @@ import requests
 
 from .main import cli
 
-from stock import models 
+from stock import models
 from stock import util
 
 
@@ -13,27 +13,35 @@ def quandl():
     pass
 
 
-@quandl.command(name="db")
-@click.option("-f", "--force", type=bool)
+@quandl.command(name="db", help="Store database code")
+@click.option("-f", "--force", type=bool, default=False, is_flag=True)
 @click.option("--url", default="https://www.quandl.com/api/v3/databases")
 def database(force, url):
+    click.secho("Try to store code from %s" % url, fg="blue")
     session = models.Session()
+    if force:
+        click.secho("Delete QuandlDatabase", fg="red")
+        session.query(models.QuandlDatabase).delete()
+        session.commit()
     dbs = session.query(models.QuandlDatabase).all()
     if not dbs:
         r1 = requests.get(url)
         if not r1.ok:
-            print(r1.json()['quandl_error']['message'])
+            msg = r1.json()['quandl_error']['message']
+            click.secho("ERRRO: %s" % msg, fg="red")
             return
         dbs = [models.QuandlDatabase(code=j['database_code'])
                for j in r1.json()['databases']]
         session.add_all(dbs)
         session.commit()
-    for db in dbs:
-        click.echo(db)
+    else:
+        click.secho("Already stored", fg="blue")
+
+    click.echo(", ".join(sorted([db.code for db in dbs])))
 
 
-@quandl.command()
-@click.argument('database_code', default="")
+@quandl.command(help="TODO")
+@click.argument('database_code', default="")  # avoid key missing error if default=None
 @click.argument('quandl_code', default="")
 @click.option("--no-cache", type=bool)
 @click.option("-U", "--update", type=bool)

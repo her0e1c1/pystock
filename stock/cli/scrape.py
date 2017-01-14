@@ -7,6 +7,7 @@ from .main import cli
 def scrape_():
     pass
 
+
 _decorator = _multiple_decorator([
     click.option("--scraper", default=scrape.YahooJapan),
     click.option("--start"),
@@ -45,4 +46,3 @@ def day_info(code, scraper):
 def current_value(code, scraper):
     value = scraper.current_value(code)
     click.echo(value)
-

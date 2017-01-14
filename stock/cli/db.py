@@ -1,7 +1,4 @@
 # coding: utf-8
-import os
-import subprocess
-
 import click
 
 from . import cli
@@ -31,14 +28,14 @@ def env():
 
 @db.command(help="Create new all tables")
 def create():
-    service.table.create()
+    models.create_all()
 
 
 @db.command(help="Drop all tables")
 @click.option("-y", "yes", is_flag=True, default=False)
 def drop(yes):
     if yes or click.confirm("Drop all tables. Are you sure?"):
-        service.table.drop()
+        models.drop_all()
 
 
 # TODO: delete yesterday

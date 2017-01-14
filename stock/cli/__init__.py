@@ -2,7 +2,7 @@
 
 from .main import cli
 from . import (  # NOQA
-    database,
+    db,
     quandl,
     server,
 )
