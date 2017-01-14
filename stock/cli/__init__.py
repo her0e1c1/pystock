@@ -3,6 +3,7 @@
 from .main import cli
 from . import (  # NOQA
     db,
+    calc,
     quandl,
     server,
 )

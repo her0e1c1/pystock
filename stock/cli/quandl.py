@@ -6,6 +6,7 @@ from .main import cli
 
 from stock import models
 from stock import util
+from stock import constant as C
 
 
 @cli.group()
@@ -71,8 +72,17 @@ def code(database_code, quandl_code, no_cache, update):
             print(c.quandl_code)
 
 
-@quandl.command(name="line")
-@click.argument('quandl_code', default="")
+@quandl.command(name="line", help="Store price")
+@click.argument('quandl_code', default="NIKKEI/INDEX")
 def quandl_line(quandl_code):
-    from stock.service.table import get_from_quandl
-    df = get_from_quandl(quandl_code)
+    session = models.Session()
+    data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
+    if data:
+        click.secho("Already imported")
+        return
+    mydata = quandl.get(quandl_code)
+    mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
+    # series = getattr(df, price_type.name)
+    mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
+    mydata['quandl_code'] = quandl_code
+    mydata.to_sql("price", models.engine, if_exists='append')

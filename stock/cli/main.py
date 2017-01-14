@@ -1,5 +1,6 @@
 # coding: utf-8
 import click
+from stock import util
 
 
 def _multiple_decorator(funcs):

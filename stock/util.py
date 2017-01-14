@@ -10,9 +10,11 @@ from dateutil import relativedelta
 
 from . import config as C
 
+
 def to_ja(date):
     japan = date + datetime.timedelta(hours=9)
     return int(japan.strftime("%s")) * 1000
+
 
 # type = [candlestick, column]
 def series_to_json(series, japan=True):
