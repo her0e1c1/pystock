@@ -34,4 +34,3 @@ def cli():
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help(), color=ctx.color)
         ctx.exit()
-

@@ -34,7 +34,9 @@ docker exec -it ps_jupyter_1 ipython
 from stock.service.setup import *
 ```
 
-## How to use
+## Docker
+> docker build . -t pystock
 
+## How to use
 you can run click functions like this
 > python -m pystock setup
