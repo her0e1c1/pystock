@@ -11,6 +11,14 @@ Base = declarative_base(bind=engine)
 Session = sql.orm.sessionmaker(bind=engine)
 
 
+def create_all():
+    Base.metadata.create_all()
+
+
+def drop_all():
+    Base.metadata.drop_all()
+
+
 class Contoller(Base):
 
     __tablename__ = "controller"
@@ -21,11 +29,6 @@ class Contoller(Base):
         sql.ForeignKey("quandl_code.id", onupdate="CASCADE", ondelete="CASCADE"),
         nullable=False
     )
-    # company_id = sql.Column(
-    #     sql.Integer,
-    #     sql.ForeignKey("company.id", onupdate="CASCADE", ondelete="CASCADE"),
-    #     nullable=False
-    # )
 
 
 class QuandlDatabase(Base):
@@ -37,7 +40,7 @@ class QuandlDatabase(Base):
     code = sql.Column(sql.String(64), nullable=False)
 
     def __repr__(self):
-        return "QuandlDatabase({code})".format(**self.__dict__)
+        return "QuandlDatabase({code})".format(code=self.code)
 
 
 class QuandlCode(Base):
@@ -47,7 +50,6 @@ class QuandlCode(Base):
 
     id = sql.Column(sql.Integer, primary_key=True)
     code = sql.Column(sql.String(64), nullable=False)  # TSE/1234
-    # quandl_code = sql.Column(sql.String(64), nullable=False)  # 1234
     database_id = sql.Column(
         sql.Integer,
         sql.ForeignKey("quandl_database.id", onupdate="CASCADE", ondelete="CASCADE"),

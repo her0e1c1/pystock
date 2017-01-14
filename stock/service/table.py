@@ -48,14 +48,6 @@ def s(quandl_code="NIKKEI/INDEX", price_type=PriceType.close, way=None, lostcut=
     return (r, df)
 
 
-def create():
-    models.Base.metadata.create_all()
-
-
-def drop():
-    models.Base.metadata.drop_all()
-
-
 # 元のグラフも表示した方がわかりやすい
 # or use `df.plot()`
 def drow(df):
