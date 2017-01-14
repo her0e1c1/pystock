@@ -6,7 +6,7 @@ install_requires = [str(ir.req) for ir in parse_requirements("requirements.txt",
 
 setup(
     name='stock',
-    version='0.8',
+    version='1.0',
     author='Hiroyuki Ishii',
     author_email="hiroyuki.ishii.42@gmail.com",
     url="http://f1nance.herokuapp.com/",
@@ -18,6 +18,6 @@ setup(
     install_requires=install_requires,
     entry_points='''
         [console_scripts]
-        stock=stock:cli
+        pystock=stock.cli:cli
     ''',
 )
