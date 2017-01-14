@@ -1,80 +1,18 @@
 version: '2'
 
-volumes:
-  pystock_volume:
-    driver: local
-
 services:
-  mysql:
-    image: mysql:5.7
-    volumes:
-        # - ./mysql/conf.d:/etc/mysql/conf.d
-        - pystock_volume:/var/lib/mysql
-        - .:/docker
-    working_dir: /docker
-    environment:
-        MYSQL_ALLOW_EMPTY_PASSWORD: 1
-        MYSQL_DATABASE: db
-
-  # this should be always working on local for checking
-  test:
-    image: stock
-    ports:
-      - 80
-    environment:
-      DATABASE_URL: "mysql+pymysql://root@db:3306/db?charset=utf8"
-
-    links:
-      - mysql:db
-    volumes:
-        - .:/repo
-    depends_on:
-        - mysql
-    working_dir: /repo
-    stdin_open: true
-    # command: gunicorn -b 0.0.0.0:80 stock.server.main:app --log-file -
-    entrypoint: sh -c "python setup.py develop && stock setup && stock serve --port 80 --host 0.0.0.0"
-
-  backend:
-    image: stock
-    ports:
-      - 80
-    environment:
-        DATABASE_URL: "mysql+pymysql://root@db:3306/db?charset=utf8"
-    links:
-      - mysql:db
-    volumes:
-        - .:/repo
-    depends_on:
-        - mysql
-    working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && bash"
-    tty: true
-    stdin_open: true
-
-  local:
-    image: stock
+  pystock:
+    container_name: pystock
+    image: pystock
     ports:
       - 80
     environment:
         DATABASE_URL: "sqlite:////repo/db.sqlite3"
     volumes:
-        - .:/repo
-    working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && bash"
+        - .:/app
+    working_dir: /app
     tty: true
     stdin_open: true
-
-  staging:
-    image: stock
-    ports:
-      - 80
-    env_file:
-      - .staging.env  # define DATABASE_URL
-    volumes:
-        - .:/repo
-    working_dir: /repo
-    entrypoint: sh -c "python setup.py develop && stock serve --host 0.0.0.0 --port 80"
 
   jupyter:
     image: stock

@@ -33,3 +33,8 @@ you use Shift + Enter instead of Enter, which inputs a new line break
 docker exec -it ps_jupyter_1 ipython
 from stock.service.setup import *
 ```
+
+## How to use
+
+you can run click functions like this
+> python -m pystock setup
