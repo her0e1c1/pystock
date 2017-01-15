@@ -51,3 +51,26 @@ class Reader(object):
             logger.warn("%s" % e)
             return False
         return True
+
+
+def update_copmany_list(start=None, end=None, each=False, ignore=False, last_date=None, limit=None):
+    session = Session(ignore=ignore, each=each)
+    for c in query.Company.all(last_date=last_date, session=session._s, limit=limit):
+        _update_copmany(session, c)
+    session.close()
+
+
+def download_company_list(url=C.COMPANY_XLS_URL):
+    from stock.cmd.import_company import Reader
+    resp = requests.get(url)
+    if resp.ok:
+        return Reader(filepath=io.BytesIO(resp.content))
+
+
+def download_and_store_company_list(url=C.COMPANY_XLS_URL):
+    reader = download_company_list(url)
+    if reader:
+        return reader.store()
+    else:
+        return False
+

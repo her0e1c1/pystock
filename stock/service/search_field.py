@@ -26,30 +26,10 @@ def with_session(f, col_name):
 
 
 def update_search_fields():
-    closing_minus_rolling_mean_25()
-    closing_rsi_14()
     closing_macd_minus_signal()
     low_min()
     closing_stochastic_d_minus_sd()
     ratio_sigma_low_minus_closing()
-
-
-def closing_minus_rolling_mean_25(period=25):
-    """長期移動平均線と現在の株価の差を予め計算"""
-    def f(df):
-        mean = pd.rolling_mean(df.closing, period)
-        return increment(last(df.closing), last(mean))
-
-    with_session(f, "ratio_closing_minus_rolling_mean_25")
-
-
-def closing_rsi_14(period=14):
-    """営業最終日のRSIを求める"""
-    def f(df):
-        rsi = chart.rsi(df.closing, period)
-        if not rsi.empty:
-            return float(rsi[rsi.last_valid_index()])
-    with_session(f, "closing_rsi_14")
 
 
 def closing_macd_minus_signal():
@@ -67,18 +47,6 @@ def closing_macd_minus_signal():
         return f
     with_session(wrap(1), "closing_macd_minus_signal1_26_12_9")
     with_session(wrap(2), "closing_macd_minus_signal2_26_12_9")
-
-
-def low_min():
-    def wrap(index):
-        def f(df):
-            v = float(df.low.tail(index).min())
-            if not pd.isnull(v):
-                return v
-        return f
-    with_session(wrap(25), "low_min_25")
-    with_session(wrap(75), "low_min_75")
-    with_session(wrap(200), "low_min_200")
 
 
 def closing_bollinger_band(period=20):

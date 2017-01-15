@@ -1,13 +1,13 @@
 # coding: utf-8
 import sqlalchemy as sql
 
-from stock import query
+from stock import models
 
 
 class Session(object):
 
     def __init__(self, ignore=False, each=False):
-        self._s = query.models.Session()
+        self._s = models.Session()
 
     def __enter__(self):
         return self

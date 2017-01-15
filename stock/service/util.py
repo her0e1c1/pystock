@@ -15,3 +15,18 @@ def last_date():
     else:
         dt = now - relativedelta.relativedelta(days=1)
     return dt.date()
+
+
+def fix_value(value, split_stock_dates, today=None):
+    """
+    Need to convert by split stock dates
+    """
+    for date in split_stock_dates:
+        if today < date.date:
+            value *= date.from_number / float(date.to_number)
+    return value
+
+
+def js_datetime(date):
+    japan = date + datetime.timedelta(hours=9)
+    return int(japan.strftime("%s")) * 1000

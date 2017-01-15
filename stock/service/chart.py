@@ -33,6 +33,9 @@ def macd_signal(series, fast=26, slow=12, signal=9):
     return pd.ewma(macd_line(series, fast=fast, slow=slow, signal=signal), span=signal)
 
 
+# RSI＝(n日間の値上がり幅の合計) / (n日間の値上がり幅の合計＋n日間の値下がり幅の合計) * 100%
+# 一般的にnは14日を使用
+# RSIが20～30%を下回ったら買い. 70-80%を上回ったら売り
 def rsi(prices, period=14):
     # fill 0 at the first day
     diff = (prices - prices.shift(1)).fillna(0)
@@ -41,6 +44,6 @@ def rsi(prices, period=14):
         gain =  p[p > 0].sum() / period
         loss = -p[p < 0].sum() / period
         rs = gain / loss
-        return 100 - 100/(1+rs)
+        return 100 - 100 / (1 + rs)
 
     return pd.rolling_apply(diff, period, calc)
