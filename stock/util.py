@@ -109,11 +109,11 @@ def str_to_date(s):
         raise ValueError
 
 
-def read_csv_zip(f, content):
+def read_csv_zip(fn, content):
     ls = []
     with zipfile.ZipFile(io.BytesIO(content)) as fh:
         for f in fh.infolist():
             csv_fh = io.StringIO(fh.open(f.filename).read().decode())
             for row in csv.reader(csv_fh):
-                ls.append(f(row))
+                ls.append(fn(row))
     return ls

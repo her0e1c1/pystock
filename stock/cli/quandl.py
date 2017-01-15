@@ -1,4 +1,5 @@
 # coding: utf-8
+import pandas as pd
 import click
 import requests
 
@@ -41,40 +42,30 @@ def database(force, url):
     click.echo(", ".join(sorted([db.code for db in dbs])))
 
 
-@quandl.command(help="TODO")
-@click.argument('database_code', default="")  # avoid key missing error if default=None
-@click.argument('quandl_code', default="")
-@click.option("--no-cache", type=bool)
-@click.option("-U", "--update", type=bool)
-def code(database_code, quandl_code, no_cache, update):
+@quandl.command(name="code", help="Store and show quandl code")
+@click.argument('database_code')
+def code(database_code):
     session = models.Session()
-    if not database_code:
-        database.callback(*database.params)
-    else:
-        if quandl_code:
-            quandl_code = "{database_code}/{quandl_code}".format(**locals())
-            from stock.service.table import s
-            ret = s(quandl_code=quandl_code)
-            print(ret)
-            return
-        db = session.query(models.QuandlDatabase).filter_by(code=database_code).one()
-        codes = session.query(models.QuandlCode).filter_by(database_id=db.id).all()
-        if not codes:
-            URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
-            r = requests.get(URL)
-            # row == [TSE/1111, "name"]
-            session.add_all(util.read_csv_zip(
-                f=lambda row: models.QuandlCode(code=row[0], database=db),
-                content=r.content,
-            ))
-            session.commit()
-        for c in codes:
-            print(c.quandl_code)
+    codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
+    if not codes:
+        URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
+        click.secho("GET %s" % URL, fg="blud")
+        r = requests.get(URL)
+        if not r.ok:
+            return click.secho(r.content, fg="red")
+        # row == [TSE/1111, "name"]
+        session.add_all(util.read_csv_zip(
+            lambda row: models.QuandlCode(code=row[0], database_code=database_code),
+            content=r.content,
+        ))
+        session.commit()
+    click.secho(", ".join(c.quandl_code for c in codes))
 
 
 @quandl.command(name="line", help="Store price")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 def quandl_line(quandl_code):
+    import quandl
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:
@@ -82,7 +73,7 @@ def quandl_line(quandl_code):
         return
     mydata = quandl.get(quandl_code)
     mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
-    # series = getattr(df, price_type.name)
     mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
     mydata['quandl_code'] = quandl_code
     mydata.to_sql("price", models.engine, if_exists='append')
+    click.secho("%s Imported" % quandl_code, fg="green")

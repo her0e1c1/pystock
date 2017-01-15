@@ -66,8 +66,6 @@ class DayInfoQuery(object):
         df = self.df()
         return to_seq(df.date, df.volume)
 
-    def to_series(self):
-
 
 class Wrapper(object):
 

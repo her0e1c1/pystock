@@ -27,7 +27,6 @@ def with_session(f, col_name):
 
 def update_search_fields():
     closing_macd_minus_signal()
-    low_min()
     closing_stochastic_d_minus_sd()
     ratio_sigma_low_minus_closing()
 

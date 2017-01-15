@@ -19,25 +19,11 @@ def drop_all():
     Base.metadata.drop_all()
 
 
-class Contoller(Base):
-
-    __tablename__ = "controller"
-
-    id = sql.Column(sql.Integer, primary_key=True)
-    quandl_code_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("quandl_code.id", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False
-    )
-
-
 class QuandlDatabase(Base):
 
     __tablename__ = "quandl_database"
-    __table_args__ = (sql.UniqueConstraint("code"), )
 
-    id = sql.Column(sql.Integer, primary_key=True)
-    code = sql.Column(sql.String(64), nullable=False)
+    code = sql.Column(sql.String(64), primary_key=True)
 
     def __repr__(self):
         return "QuandlDatabase({code})".format(code=self.code)
@@ -46,14 +32,12 @@ class QuandlDatabase(Base):
 class QuandlCode(Base):
 
     __tablename__ = "quandl_code"
-    __table_args__ = (sql.UniqueConstraint("code"), )
 
-    id = sql.Column(sql.Integer, primary_key=True)
-    code = sql.Column(sql.String(64), nullable=False)  # TSE/1234
-    database_id = sql.Column(
-        sql.Integer,
-        sql.ForeignKey("quandl_database.id", onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=False
+    code = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
+    database_code = sql.Column(
+        sql.String(64),
+        sql.ForeignKey("quandl_database.code", onupdate="SET NULL", ondelete="SET NULL"),
+        nullable=True,
     )
     database = sql.orm.relation('QuandlDatabase', backref="quandl_codes")
 
@@ -164,11 +148,11 @@ class Company(Base):
         sql.ForeignKey('stock_exchange.id', onupdate="CASCADE", ondelete="CASCADE"),
         nullable=True,
     )
-    search_field = sql.orm.relation(
-        "CompanySearchField",
-        uselist=False,
-        back_populates="company"
-    )
+    # search_field = sql.orm.relation(
+    #     "CompanySearchField",
+    #     uselist=False,
+    #     back_populates="company"
+    # )
 
     def __str__(self):
         return "({id}, {name}, {code})".format(**self.__dict__)
@@ -194,42 +178,3 @@ class CurrentValue(Base):
     id = sql.Column(sql.Integer, primary_key=True)
     value = sql.Column(sql.Integer)
     datetime = sql.Column(sql.DateTime, nullable=False)
-
-
-class CompanySearchField(Base):
-
-    __tablename__ = "company_search_field"
-
-    id = sql.Column(sql.Integer, primary_key=True)
-
-    ratio_closing1_minus_closing2 = sql.Column(sql.Float, nullable=True, index=True)
-    ratio_closing_minus_rolling_mean_25 = sql.Column(sql.Float, nullable=True, index=True)
-    closing_rsi_14 = sql.Column(sql.Float, nullable=True, index=True)
-    ratio_1sigma_low_minus_closing = sql.Column(sql.Float, nullable=True, index=True)
-    ratio_2sigma_low_minus_closing = sql.Column(sql.Float, nullable=True, index=True)
-
-    # MACD
-    closing_macd_minus_signal1_26_12_9 = sql.Column(sql.Float, nullable=True, index=True)
-    closing_macd_minus_signal2_26_12_9 = sql.Column(sql.Float, nullable=True, index=True)
-
-    # stochastic
-    closing_stochastic_d_minus_sd1_14_3_3 = sql.Column(sql.Float, nullable=True, index=True)
-    closing_stochastic_d_minus_sd2_14_3_3 = sql.Column(sql.Float, nullable=True, index=True)
-
-    # (0, 1 sigma) => 1, (1 sigma, 2 sigma) => 2 and so on
-    interval_closing_bollinger_band_20 = sql.Column(sql.Integer, nullable=True, index=True)
-
-    low_min_25 = sql.Column(sql.Float, nullable=True, index=True)
-    low_min_75 = sql.Column(sql.Float, nullable=True, index=True)
-    low_min_200 = sql.Column(sql.Float, nullable=True, index=True)
-
-    company_id = sql .Column(
-        sql.Integer,
-        sql.ForeignKey('company.id', onupdate="CASCADE", ondelete="CASCADE"),
-        nullable=True,
-    )
-    company = sql.orm.relation("Company", back_populates="search_field")
-
-    @property
-    def w(self):
-        return wrapper.CompanySearchField(self)
