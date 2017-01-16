@@ -81,3 +81,4 @@ def check_signal(quandl_code, price_type, signal):
     result = method(series=getattr(df, price_type))
     if result:
         click.secho(result)
+        return result  # For now

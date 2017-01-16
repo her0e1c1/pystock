@@ -23,5 +23,8 @@ alembic
 pandas
 matplotlib
 
+# rabbitmq
+pika
+
 cffi
 cryptography

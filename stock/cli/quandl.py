@@ -10,6 +10,8 @@ from stock import util
 from stock import constant as C
 
 
+# 基本的にSTDOUTするので、共通部分は関数にしておくべき(interfaceを定義)
+
 @cli.group()
 def quandl():
     pass
