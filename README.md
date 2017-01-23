@@ -40,3 +40,8 @@ from stock.service.setup import *
 ## How to use
 you can run click functions like this
 > python -m pystock setup
+
+## upload command
+```
+python3 setup.py sdist bdist bdist_egg upload
+```
