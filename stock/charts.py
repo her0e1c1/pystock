@@ -2,18 +2,17 @@
 import pandas as pd
 
 
-def stochastic_k(prices, k):
+def stochastic_k(prices, k=14):
     l = pd.rolling_min(prices, k)
     h = pd.rolling_max(prices, k)
     return 100 * (prices - l) / (h - l)
 
 
-def stochastic_d(prices, k, d):
+def stochastic_d(prices, k=14, d=3):
     return pd.rolling_mean(stochastic_k(prices, k), d)
 
 
-def stochastic_sd(prices, k, d, sd):
-    # (k, d, sd) = (14, 3, 3)
+def stochastic_sd(prices, k=14, d=3, sd=3):
     return pd.rolling_mean(stochastic_d(prices, k, d), sd)
 
 
@@ -31,6 +30,9 @@ def macd_line(series, fast=26, slow=12, signal=9):
 
 
 def macd_signal(series, fast=26, slow=12, signal=9):
+    """
+    signalはmacdをさらに平準化したものなので、必ず長期
+    """
     ml = macd_line(series, fast=fast, slow=slow, signal=signal)
     return ml.ewm(span=signal)
 
