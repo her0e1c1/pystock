@@ -1,6 +1,6 @@
 # coding: utf-8
 import click
-from stock import models, query
+from stock import query
 from .main import cli, AliasedGroup
 
 
@@ -10,5 +10,7 @@ def c():
 
 
 @c.command(help="do")
-def do():
-    pass
+@click.argument('quandl_code')
+def do(**kw):
+    result = query.predict(**kw)
+    click.echo(result)

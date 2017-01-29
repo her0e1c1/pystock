@@ -3,7 +3,7 @@ import pandas as pd
 from stock import models, signals, charts
 
 
-def get(quandl_code, price_type="close", from_date=None, to_date=None, chart=None):
+def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_type=None):
     Price = models.Price
     session = models.Session()
     query = session.query(Price).filter_by(quandl_code=quandl_code)
@@ -13,11 +13,16 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart=Non
         query = query.filter(Price.date <= to_date)
 
     df = pd.read_sql(query.statement, query.session.bind, index_col="date")  # queryの戻り値に出来る?
+
+    if price_type is None:
+        return df
+
     series = getattr(df, price_type)
 
-    if chart:
-        f = getattr(charts, chart)
+    if chart_type:
+        f = getattr(charts, chart_type)
         series = f(series)
+
     return series
 
 
@@ -38,3 +43,8 @@ def signal(signal=None, *args, **kw):
         if buy_or_sell:
             result[buy_or_sell].append(code)
     return result
+
+
+def predict(quandl_code, *args, **kw):
+    df = get(quandl_code, price_type=None, **kw)
+    return signals.predict(df)
