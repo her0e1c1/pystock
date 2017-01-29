@@ -1,4 +1,5 @@
 # coding: utf-8
+import enum
 import os
 import logging
 from collections import OrderedDict
@@ -58,3 +59,17 @@ SHEET_NAME = "Sheet1"
 
 # 今日から株価を取得する期間
 DEFAULT_DAYS_PERIOD = 3 * 30
+
+
+DEFAULT_ROLLING_MEAN_RATIO = 5
+
+
+DATE_FORMATS = ["%Y/%m/%d", "%Y-%m-%d"]
+
+
+MAP_PRICE_COLUMNS = {}
+for v in ["open", "close", "high", "low"]:
+    p = "price"
+    keys = [v, v.title(), "%s %s" % (v, p), "%s %s" % (v.title(), p.title()), "%s%s" % (v.title(), p.title())]
+    for k in keys:
+        MAP_PRICE_COLUMNS[k] = v
