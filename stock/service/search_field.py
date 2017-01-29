@@ -1,35 +1,6 @@
 # coding: utf-8
 import pandas as pd
 
-from .session import Session
-from stock.service import chart
-
-
-def last(series, offset_from_last=0):
-    i = series.last_valid_index()
-    if i is None:
-        return
-    elif i - offset_from_last >= 0:
-        return series[i - offset_from_last]
-
-
-def increment(a, b):
-    if a is None or b is None:
-        return
-    elif a.is_integer() and b.is_integer():
-        return float((a - b) / b) * 100
-
-
-def with_session(f, col_name):
-    with Session() as s:
-        s.with_session(f, col_name)
-
-
-def update_search_fields():
-    closing_macd_minus_signal()
-    closing_stochastic_d_minus_sd()
-    ratio_sigma_low_minus_closing()
-
 
 def closing_macd_minus_signal():
     def wrap(index):

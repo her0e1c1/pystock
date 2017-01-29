@@ -1,9 +1,7 @@
 # coding: utf-8
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
-
 from . import config as C
-from . import wrapper
 
 
 engine = sql.create_engine(C.DATABASE_URL, **C.CREATE_ENGINE)
@@ -104,10 +102,6 @@ class DayInfo(Base):
     def __str__(self):
         return "({company_id}, {opening}, {high}, {low}, {closing})".format(**self.to_dict())
 
-    @property
-    def w(self):
-        return wrapper.DayInfo(self)
-
 
 class SplitStockDate(Base):
 
@@ -148,18 +142,9 @@ class Company(Base):
         sql.ForeignKey('stock_exchange.id', onupdate="CASCADE", ondelete="CASCADE"),
         nullable=True,
     )
-    # search_field = sql.orm.relation(
-    #     "CompanySearchField",
-    #     uselist=False,
-    #     back_populates="company"
-    # )
 
     def __str__(self):
         return "({id}, {name}, {code})".format(**self.__dict__)
-
-    @property
-    def w(self):
-        return wrapper.Company(self)
 
     @sql.orm.validates('scale')
     def validate_scale(self, key, scale):
