@@ -1,13 +1,15 @@
 click
 requests
 python-dateutil
+PyMySQL
+sqlalchemy
+pika
+
 Quandl
 xlrd
-sqlalchemy
-PyMySQL
 pandas
 matplotlib
-pika
+jupyter
 
 # cffi
 # cryptography
