@@ -164,8 +164,6 @@ class SignalLine(object):
     def __repr__(self):
         return self.__str__()
 
-    # __repr__ = __str__
-
     def plot(self, figsize=DEFAULT_FIGSIZE, **kw):
         return self.df.plot(figsize=figsize)
 
