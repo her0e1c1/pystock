@@ -20,23 +20,6 @@ def calc():
     pass
 
 
-def last(series, offset_from_last=0):
-    i = series.last_valid_index()
-    if i is None:
-        return
-    elif offset_from_last == 0:
-        return series[i]
-    elif i - offset_from_last >= 0:  # if index is datetime, then an error
-        return series[i - offset_from_last]
-
-
-def increment(a, b):
-    if a is None or b is None:
-        return
-    # elif a.is_integer() and b.is_integer():  # I got float values here, too
-    return float((a - b) / b) * 100
-
-
 @calc.command(name="do")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 @click.option("-t", "--price-type", default="close")
@@ -74,11 +57,9 @@ def s(quandl_code="NIKKEI/INDEX", price_type="close", way=None, lostcut=3, start
 @click.option("-t", "--price-type", default="close")
 @click.option("-s", "--signal", default="rolling_mean")
 def check_signal(quandl_code, price_type, signal):
+    series = get(quandl_code, price_type)
     method = getattr(signals, signal)
-    session = models.Session()
-    query = session.query(models.Price).filter_by(quandl_code=quandl_code)
-    df = pd.read_sql_query(query.statement, models.engine, index_col="date")
-    result = method(series=getattr(df, price_type))
+    result = method(series=series)
     if result:
         click.secho(result)
         return result  # For now

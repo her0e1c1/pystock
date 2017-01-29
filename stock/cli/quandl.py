@@ -7,7 +7,7 @@ from .main import cli
 
 from stock import models
 from stock import util
-from stock import constant as C
+from stock import config as C
 
 
 # 基本的にSTDOUTするので、共通部分は関数にしておくべき(interfaceを定義)
