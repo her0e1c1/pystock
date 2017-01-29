@@ -1,10 +1,7 @@
 # coding: utf-8
 import click
-from stock import models
+from stock import models, query
 from .main import cli, AliasedGroup
-
-
-session = models.Session()
 
 
 @cli.group(cls=AliasedGroup)
@@ -51,7 +48,6 @@ def import_():
     session.commit()
 
 
-@db.command(name="quandl_code", help="Store and show quandl code")
-def quandl_code():
-    codes = session.query(models.Price.quandl_code).distinct().all()
-    click.secho(", ".join(c[0] for c in codes))
+@db.command(name="quandl_codes", help="Store and show quandl code")
+def quandl_codes():
+    click.secho(", ".join(c for c in query.quandl_codes()))

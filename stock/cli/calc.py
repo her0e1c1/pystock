@@ -3,13 +3,17 @@ import click
 import pandas as pd
 
 from .main import cli, mkdate, AliasedGroup
-from stock import models, signals
-from stock.service.simulate import RollingMean, MACD
+from stock import models, signals, service
 
 
-def get(quandl_code, price_type):
+def get(quandl_code, price_type, from_date=None, to_date=None):
+    Price = models.Price
     session = models.Session()
-    query = session.query(models.Price).filter_by(quandl_code=quandl_code)
+    query = session.query(Price).filter_by(quandl_code=quandl_code)
+    if from_date:
+        query = query.filter(Price.date >= from_date)
+    if to_date:
+        query = query.filter(Price.date <= to_date)
     df = pd.read_sql(query.statement, query.session.bind, index_col="date")
     series = getattr(df, price_type)
     return series
@@ -57,7 +61,7 @@ def s(quandl_code="NIKKEI/INDEX", price_type="close", way=None, lostcut=3, start
 @click.option("-t", "--price-type", default="close")
 @click.option("-s", "--signal", default="rolling_mean")
 def check_signal(quandl_code, price_type, signal):
-    series = get(quandl_code, price_type)
+    series = service.get(quandl_code, price_type)
     method = getattr(signals, signal)
     result = method(series=series)
     if result:

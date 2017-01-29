@@ -1,0 +1,40 @@
+import collections
+import pandas as pd
+from stock import models, signals, charts
+
+
+def get(quandl_code, price_type="close", from_date=None, to_date=None, chart=None):
+    Price = models.Price
+    session = models.Session()
+    query = session.query(Price).filter_by(quandl_code=quandl_code)
+    if from_date:
+        query = query.filter(Price.date >= from_date)
+    if to_date:
+        query = query.filter(Price.date <= to_date)
+
+    df = pd.read_sql(query.statement, query.session.bind, index_col="date")  # queryの戻り値に出来る?
+    series = getattr(df, price_type)
+
+    if chart:
+        f = getattr(charts, chart)
+        series = f(series)
+    return series
+
+
+def quandl_codes():
+    session = models.Session()
+    return [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
+
+
+# TODO: 並列化
+def signal(signal=None, *args, **kw):
+    if signal is None:
+        signal = "rolling_mean"
+    result = collections.defaultdict(list)
+    for code in quandl_codes():
+        series = get(code, **kw)
+        f = getattr(signals, signal)
+        buy_or_sell = f(series, *args)
+        if buy_or_sell:
+            result[buy_or_sell].append(code)
+    return result

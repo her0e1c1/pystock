@@ -5,6 +5,7 @@ from . import (  # NOQA
     db,
     calc,
     quandl,
+    query,
     server,
 )
 
