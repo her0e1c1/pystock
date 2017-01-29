@@ -4,13 +4,10 @@
 A commad line tool for stock
 
 ## install
-
-	pip install stock
+> pip install stock
 
 ## server
-setup heroku
-
-    heroku run --app APP_NAME python -m stock setup
+> heroku run --app APP_NAME python -m stock setup
 
 ## how to set japanese companies data
 1. access http://www.jpx.co.jp/markets/statistics-equities/misc/01.html
@@ -25,29 +22,12 @@ setup heroku
 ## Jupyter
 ```
 jupyter notebook --ip 0.0.0.0
-
+% magic, ?, ??
+openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.key -out mycert.pem
+jupyter notebook --cert=mycert.pem --key=mykey.key --ip=0.0.0.0
 # check token
 docker logs jupyter
 ```
 
-To launch the repl
-    `Files -> New -> Python2`
-
-you use Shift + Enter instead of Enter, which inputs a new line break
-
-```
-docker exec -it ps_jupyter_1 ipython
-from stock.service.setup import *
-```
-
 ## Docker
 > docker build . -t pystock
-
-## How to use
-you can run click functions like this
-> python -m pystock setup
-
-## upload command
-```
-python3 setup.py sdist bdist bdist_egg upload
-```

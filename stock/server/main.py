@@ -1,7 +1,6 @@
 # coding: utf-8
 from flask import Flask, request, jsonify
 
-from stock import service
 from stock import util
 
 
