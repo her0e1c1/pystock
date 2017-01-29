@@ -73,4 +73,3 @@ def download_and_store_company_list(url=C.COMPANY_XLS_URL):
         return reader.store()
     else:
         return False
-

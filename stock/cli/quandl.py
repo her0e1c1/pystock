@@ -3,16 +3,14 @@ import pandas as pd
 import click
 import requests
 
-from .main import cli
+from .main import cli, AliasedGroup
 
 from stock import models
 from stock import util
 from stock import config as C
 
 
-# 基本的にSTDOUTするので、共通部分は関数にしておくべき(interfaceを定義)
-
-@cli.group()
+@cli.group(cls=AliasedGroup)
 def quandl():
     pass
 

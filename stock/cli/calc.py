@@ -2,7 +2,7 @@
 import click
 import pandas as pd
 
-from .main import cli, mkdate
+from .main import cli, mkdate, AliasedGroup
 from stock import models, signals
 from stock.service.simulate import RollingMean, MACD
 
@@ -15,7 +15,7 @@ def get(quandl_code, price_type):
     return series
 
 
-@cli.group()
+@cli.group(cls=AliasedGroup)
 def calc():
     pass
 

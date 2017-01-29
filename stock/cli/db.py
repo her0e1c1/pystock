@@ -1,13 +1,13 @@
 # coding: utf-8
 import click
 from stock import models
-from . import cli
+from .main import cli, AliasedGroup
 
 
 session = models.Session()
 
 
-@cli.group()
+@cli.group(cls=AliasedGroup)
 def db():
     pass
 
@@ -31,7 +31,7 @@ def create():
 
 
 @db.command(help="Drop all tables")
-@click.option("-y", "yes", is_flag=True, default=False)
+@click.option("-y", "--yes", is_flag=True, default=False)
 def drop(yes):
     if yes or click.confirm("Drop all tables. Are you sure?"):
         models.drop_all()
@@ -41,9 +41,13 @@ def drop(yes):
 def import_():
     import datetime
     today = datetime.date.today()
-    for i in range(10):
+    for i in range(100):
         n = today + datetime.timedelta(days=i)
         session.add(models.Price(date=n, close=i, quandl_code="test"))
+    for i in range(100):
+        c = i * (1 if i % 2 == 0 else -1)
+        n = today + datetime.timedelta(days=i)
+        session.add(models.Price(date=n, close=c, quandl_code="test2"))
     session.commit()
 
 
