@@ -6,11 +6,19 @@ from . import charts
 
 
 def get_signals():
-    return ["rolling_mean", "rsi", "min", "macd_signal"]
+    return ["rolling_mean", "rsi", "min_low", "macd_signal"]
 
 
-# TODO: 呼び出し側でのNoneの考慮 + float()でwrapする?
+# TODO: 呼び出し側でのNoneの考慮 + float()でwrapする?, invaid=Trueつける?
 def last(series, offset_from_last=0):
+    return _last(series, offset_from_last)
+
+
+def _last(series, offset_from_last=0):
+    if offset_from_last == 0:
+        return series[-1]
+    elif offset_from_last > 0:
+        return series[-(offset_from_last + 1)]
     i = series.last_valid_index()  # .tail(1)使える?
     if i is None:  # or pd.isnull(i)
         return
@@ -107,7 +115,7 @@ def rsi(series, period=14, buy=30, sell=70):
     return "BUY" if f < buy else "SELL" if f > sell else None
 
 
-def min(series, period=200, ratio=10):  # period in [200, 75, 25]
+def min_low(series, period=200, ratio=10):  # period in [200, 75, 25]
     """指定期間中の最安値に近いたら買い. (底値が支えになって反発する可能性があると考える)"""
     m = float(series.tail(period).min())
     if pd.isnull(m):

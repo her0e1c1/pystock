@@ -2,18 +2,21 @@
 import pandas as pd
 
 
-def stochastic_k(prices, k=14):
-    l = pd.rolling_min(prices, k)
-    h = pd.rolling_max(prices, k)
-    return 100 * (prices - l) / (h - l)
+def stochastic_k(series, k=14):
+    rolling = series.rolling(window=k, center=False)
+    l = rolling.min()
+    h = rolling.max()
+    return 100 * (series - l) / (h - l)
 
 
-def stochastic_d(prices, k=14, d=3):
-    return pd.rolling_mean(stochastic_k(prices, k), d)
+def stochastic_d(series, k=14, d=3):
+    s = stochastic_k(series, k)
+    return s.rolling(window=d, center=False).mean()
 
 
-def stochastic_sd(prices, k=14, d=3, sd=3):
-    return pd.rolling_mean(stochastic_d(prices, k, d), sd)
+def stochastic_sd(series, k=14, d=3, sd=3):
+    s = stochastic_d(series, k, d)
+    return s.rolling(window=sd, center=False).mean()
 
 
 def bollinger_band(prices, period, sigma=1):
@@ -34,7 +37,7 @@ def macd_signal(series, fast=26, slow=12, signal=9):
     signalはmacdをさらに平準化したものなので、必ず長期
     """
     ml = macd_line(series, fast=fast, slow=slow, signal=signal)
-    return ml.ewm(span=signal)
+    return ml.ewm(span=signal).mean()
 
 
 def rsi(series, period=14):

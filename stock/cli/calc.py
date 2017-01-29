@@ -3,7 +3,7 @@ import click
 import pandas as pd
 
 from .main import cli, mkdate, AliasedGroup
-from stock import models, signals, service
+from stock import models, signals
 
 
 def get(quandl_code, price_type, from_date=None, to_date=None):
