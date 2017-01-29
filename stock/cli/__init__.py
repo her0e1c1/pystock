@@ -4,6 +4,7 @@ from .main import cli
 from . import (  # NOQA
     db,
     calc,
+    config,
     quandl,
     query,
     server,

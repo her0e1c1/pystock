@@ -17,7 +17,7 @@ def get(**kw):
 
 
 @c.command()
-@click.option("--signal")
+@click.option("-s", "--signal")
 def signal(**kw):
     result = query.signal(**kw)
     click.echo(result)

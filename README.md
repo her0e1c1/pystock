@@ -23,6 +23,12 @@ setup heroku
        df = xls.parse("Sheet1")
 
 ## Jupyter
+```
+jupyter notebook --ip 0.0.0.0
+
+# check token
+docker logs jupyter
+```
 
 To launch the repl
     `Files -> New -> Python2`

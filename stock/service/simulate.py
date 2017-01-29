@@ -28,6 +28,7 @@ class Action(enum.IntEnum):
     def xlabel(cls):
         return 'color : %s' % ", ".join("{0.name} = {0.color}".format(a) for a in cls)
 
+
 Timing = enum.IntEnum("Timing", "BUY SELL")
 
 

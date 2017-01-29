@@ -1,4 +1,3 @@
-# coding: utf-8
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 from . import config as C
@@ -60,6 +59,7 @@ class StockExchange(Base):
     )
 
 
+# class QuandlPrice(Base):
 class Price(Base):
 
     __tablename__ = "price"

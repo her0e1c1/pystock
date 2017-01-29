@@ -3,6 +3,7 @@ import io
 import zipfile
 import csv
 import time
+import calendar
 import datetime
 
 import pandas as pd
@@ -64,16 +65,6 @@ class DateRange(object):
         self.end = end
         self.start = start
 
-    # def query(self, date_col):
-    #     start, end = self.start, self.end
-    #     if start is None:
-    #         return date_col <= end
-    #     elif end is None:
-    #         return start <= date_col
-    #     else:
-    #         import sqlalchemy as sql
-    #         return sql.and_(start <= date_col, date_col <= end)
-
     def to_dict(self):
         return {"start": str(self.start), "end": str(self.end)}
 
@@ -117,3 +108,25 @@ def read_csv_zip(fn, content):
             for row in csv.reader(csv_fh):
                 ls.append(fn(row))
     return ls
+
+
+def last_date():
+    """株の最後の日を返す"""
+    # for JST
+    now = datetime.datetime.today() + relativedelta.relativedelta(hours=9)
+    weekday = now.weekday()
+    if weekday in [calendar.SUNDAY, calendar.SATURDAY]:
+        dt = now + relativedelta.relativedelta(weekday=relativedelta.FR(-1))
+    else:
+        dt = now - relativedelta.relativedelta(days=1)
+    return dt.date()
+
+
+def fix_value(value, split_stock_dates, today=None):
+    """
+    Need to convert by split stock dates
+    """
+    for date in split_stock_dates:
+        if today < date.date:
+            value *= date.from_number / float(date.to_number)
+    return value

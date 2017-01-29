@@ -1,5 +1,4 @@
 # coding: utf-8
-import enum
 import os
 import logging
 from collections import OrderedDict

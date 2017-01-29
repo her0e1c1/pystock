@@ -98,3 +98,5 @@
 # 最終結果だけでなく、平均的に儲けているものが、良いかも
 
 - cliとmqとhttpのインターフェイスを統一する
+- delete yesterday
+- chat botから、urlをopenするみたいなやつ
