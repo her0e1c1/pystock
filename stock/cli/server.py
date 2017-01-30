@@ -29,7 +29,8 @@ def serve(**kw):
 @click.option("--host", envvar="RABBITMQ_HOST")
 @click.option("--queue", envvar="RABBITMQ_QUEUE", default="queue")
 @click.option("--queue-back", envvar="RABBITMQ_QUEUE_BACK", default="queue_back")
-def rabbitmq(host, queue, queue_back):
+@click.option("-d", "--debug", default=False, is_flag=True)
+def rabbitmq(host, queue, queue_back, debug):
     def callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag=method.delivery_tag)
         click.secho("RECEIVERS: %s" % body, fg="green")
@@ -47,6 +48,8 @@ def rabbitmq(host, queue, queue_back):
                 result = result.to_json()
             else:
                 result = str(result)
+            if debug:
+                click.secho("RESULT: %s" % result)
             try:
                 channel.basic_publish('', queue_back, result)
             except Exception as e:
