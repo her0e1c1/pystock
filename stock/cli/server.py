@@ -1,10 +1,12 @@
 # coding: utf-8
+import json
 import logging
 
 import pika
 import click
 
 from stock import config as C
+from stock import query
 from .main import cli
 
 
@@ -25,33 +27,46 @@ def serve(**kw):
 
 @cli.command(help="Start rabbitmq client")
 @click.option("--host", envvar="RABBITMQ_HOST")
-def rabbitmq(host):
+@click.option("--queue", envvar="RABBITMQ_QUEUE", default="queue")
+@click.option("--queue-back", envvar="RABBITMQ_QUEUE_BACK", default="queue_back")
+def rabbitmq(host, queue, queue_back):
     def callback(ch, method, properties, body):
-        print("START TASK")
-        import json
-        from stock import cli
-        j = json.loads(body.decode())
-        main = getattr(cli, j["main"])
-        sub = getattr(main, j["sub"])
-        defaults = [p.default for p in sub.params]
-        sub.callback(*defaults)
-        # ret = sub.callback(*j["args"])
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        channel.basic_publish('', 'queue_back', "BUY")
+        click.secho("RECEIVERS: %s" % body, fg="green")
+
+        try:
+            payload = json.loads(body.decode())
+            f = getattr(query, payload.get("method", "get"))
+            kwargs = payload.get("kwargs", {})
+            result = f(**kwargs)
+        except Exception as e:
+            click.secho("BAD BODY: %s" % body, fg="red")
+            click.secho(str(e), fg="red")
+        else:
+            if hasattr(result, "to_json"):
+                result = result.to_json()
+            else:
+                result = str(result)
+            try:
+                channel.basic_publish('', queue_back, result)
+            except Exception as e:
+                click.secho("BAD RESULT: %s" % result, fg="red")
+                click.secho(str(e), fg="red")
 
     def listen(channel):
-        channel.queue_declare(queue="queue", durable=True)  # no_ack=False
-        channel.queue_declare(queue="queue_back")
+        channel.queue_declare(queue=queue, durable=False)  # no_ack=False
+        channel.queue_declare(queue=queue_back)
         # channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(callback, queue='queue')
-        click.secho("START CONSUMING ...", fg="blue")
+        channel.basic_consume(callback, queue=queue)
+        click.secho("START CONSUMING ...", fg="green")
         channel.start_consuming()
 
+    click.secho("RABBITMQ CLIENT: '{queue}' and '{queue_back}' to '{host}'".format(**locals()), fg="green")
     params = pika.ConnectionParameters(host=host)
     connection = pika.BlockingConnection(params)
-    channel = connection.channel()
     while True:
         try:
+            channel = connection.channel()
             listen(channel)
         except Exception as e:
             click.secho(str(e), fg="red")

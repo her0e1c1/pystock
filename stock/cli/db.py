@@ -34,8 +34,9 @@ def drop(yes):
         models.drop_all()
 
 
-@db.command(name="import")
-def import_():
+@db.command(name="dummy")
+def dummy():
+    session = models.Session()
     import datetime
     today = datetime.date.today()
     for i in range(100):
