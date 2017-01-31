@@ -49,10 +49,10 @@ def database(force, url):
 @quandl.command(name="code", help="Store and show quandl code")
 @click.argument('database_code')
 def _code(**kw):
-    click.secho(_code(**kw))
+    click.secho(quandl_codes(**kw))
 
 
-def code(database_code):
+def quandl_codes(database_code):
     session = models.Session()
     codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
     if not codes:
