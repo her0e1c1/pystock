@@ -83,7 +83,8 @@ def dict_inverse(dct):
     return {v: k for k, v in dct.items()}
 
 
-def str2date(datestr):
+def str2date(datestr):  # to_date(ANY)
+    # TODO: C.DATE_FORMATS:
     if datestr:
         t = time.strptime(datestr, "%Y-%m-%d")
         return datetime.date.fromtimestamp(time.mktime(t))

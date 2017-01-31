@@ -1,11 +1,16 @@
 import collections
 import pandas as pd
-from stock import models, signals, charts
+from stock import models, signals, charts, util
 
 
 # INTERFACEの統一とapiとしてjsonに変換する関数必要
 def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_type=None):
     quandl_code = quandl_code.upper().strip()
+
+    if from_date:
+        from_date = util.str2date(from_date)
+    if to_date:
+        to_date = util.str2date(to_date)
 
     Price = models.Price
     session = models.Session()
