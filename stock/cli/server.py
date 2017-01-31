@@ -6,7 +6,6 @@ import pika
 import click
 
 from stock import config as C
-from stock import query
 from .main import cli
 
 
@@ -31,13 +30,19 @@ def serve(**kw):
 @click.option("--queue-back", envvar="RABBITMQ_QUEUE_BACK", default="queue_back")
 @click.option("-d", "--debug", default=False, is_flag=True)
 def rabbitmq(host, queue, queue_back, debug):
+    from stock import query
+    from stock.cli import quandl
+    modules = {"query": query, "quandl": quandl}
+
     def callback(ch, method, properties, body):
         ch.basic_ack(delivery_tag=method.delivery_tag)
         click.secho("RECEIVERS: %s" % body, fg="green")
 
         try:
             payload = json.loads(body.decode())
-            f = getattr(query, payload.get("method", "get"))
+            m = getattr(query, payload.get("module", "query"))
+            module = modules[m]
+            f = getattr(module, payload.get("method", "get"))
             kwargs = payload.get("kwargs", {})
             result = f(**kwargs)
         except Exception as e:
