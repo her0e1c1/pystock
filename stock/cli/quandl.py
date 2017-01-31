@@ -57,7 +57,7 @@ def quandl_codes(database_code):
     codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
     if not codes:
         URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
-        click.secho("GET %s" % URL, fg="blud")
+        click.secho("GET %s" % URL, fg="blue")
         r = requests.get(URL)
         if not r.ok:
             return click.secho(r.content, fg="red")
