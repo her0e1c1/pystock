@@ -40,7 +40,7 @@ def rabbitmq(host, queue, queue_back, debug):
 
         try:
             payload = json.loads(body.decode())
-            m = getattr(query, payload.get("module", "query"))
+            m = payload.get("module", "query")
             module = modules[m]
             f = getattr(module, payload.get("method", "get"))
             kwargs = payload.get("kwargs", {})
