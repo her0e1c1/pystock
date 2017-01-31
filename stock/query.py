@@ -5,6 +5,8 @@ from stock import models, signals, charts
 
 # INTERFACEの統一とapiとしてjsonに変換する関数必要
 def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_type=None):
+    quandl_code = quandl_code.upper().strip()
+
     Price = models.Price
     session = models.Session()
     query = session.query(Price).filter_by(quandl_code=quandl_code)
