@@ -82,7 +82,7 @@ def quandl_line(quandl_code):
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:
-        click.secho("Already imported")
+        click.secho("Already imported: %s" % quandl_code)
         return
     mydata = quandl.get(quandl_code)
     mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
@@ -90,3 +90,22 @@ def quandl_line(quandl_code):
     mydata['quandl_code'] = quandl_code
     mydata.to_sql("price", models.engine, if_exists='append')
     return "%s Imported" % quandl_code
+
+
+@quandl.command(name="import", help="import")
+@click.argument('database_code')
+@click.option("-l", "--limit", type=int, default=10)
+def _import_codes(**kw):
+    click.secho(",".join(import_codes(**kw)))
+
+
+def import_codes(database_code, limit):
+    database_code = database_code.upper()
+    session = models.Session()
+    codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
+    codes = session.query(models.Price.quandl_code).filter(models.Price.quandl_code.notin_(codes)).distinct().limit(limit).all()
+    codes = [c[0] for c in codes]
+    click.secho(",".join(codes))
+    for c in codes:
+        quandl_line(c)
+    return codes
