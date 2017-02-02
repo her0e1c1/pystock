@@ -49,7 +49,8 @@ def database(force, url):
 @quandl.command(name="code", help="Store and show quandl code")
 @click.argument('database_code')
 def _code(**kw):
-    click.secho(quandl_codes(**kw))
+    codes = quandl_codes(**kw)
+    click.secho(", ".join(codes))
 
 
 def quandl_codes(database_code):
@@ -67,7 +68,7 @@ def quandl_codes(database_code):
             content=r.content,
         ))
         session.commit()
-    return ", ".join(c.quandl_code for c in codes)
+    return [c.quandl_code for c in codes]
 
 
 @quandl.command(name="line", help="Store price")
