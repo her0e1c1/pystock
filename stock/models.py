@@ -74,6 +74,10 @@ class Price(Base):
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
     volume = sql.Column(sql.Integer, nullable=True)
 
+    @sql.orm.validates('quandl_code')
+    def validate_quandl_code(self, _key, val):
+        return val.upper()
+
 
 class DayInfo(Base):
 
