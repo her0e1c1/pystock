@@ -102,6 +102,8 @@ def _import_codes(**kw):
 
 
 def import_codes(database_code, limit):
+    limit = int(limit)
+
     database_code = database_code.upper()
     session = models.Session()
 
