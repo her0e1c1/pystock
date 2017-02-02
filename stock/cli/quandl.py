@@ -102,10 +102,13 @@ def _import_codes(**kw):
 
 
 def import_codes(database_code, limit):
+
     database_code = database_code.upper()
     session = models.Session()
     codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
-    codes = session.query(models.Price.quandl_code).filter(models.Price.quandl_code.notin_(codes)).distinct().limit(limit).all()
+    codes = session.query(models.Price.quandl_code).filter(models.Price.quandl_code.notin_(
+        [c.quandl_code for c in codes]
+    )).distinct().limit(limit).all()
     codes = [c[0] for c in codes]
     click.secho(",".join(codes))
     for c in codes:
