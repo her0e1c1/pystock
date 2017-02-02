@@ -62,9 +62,11 @@ def quandl_codes(database_code):
         r = requests.get(URL)
         if not r.ok:
             return click.secho(r.content, fg="red")
+        db = models.QuandlDatabase(code=database_code)
+        session.add(db)
         # row == [TSE/1111, "name"]
         session.add_all(util.read_csv_zip(
-            lambda row: models.QuandlCode(code=row[0], database_code=database_code),
+            lambda row: models.QuandlCode(code=row[0], database=db),
             content=r.content,
         ))
         session.commit()
@@ -74,7 +76,7 @@ def quandl_codes(database_code):
 @quandl.command(name="line", help="Store price")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 def _quandl_line(**kw):
-    click.secho(_quandl_line(**kw))
+    click.secho(quandl_line(**kw))
 
 
 def quandl_line(quandl_code):

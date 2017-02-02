@@ -37,6 +37,12 @@ def cli():
         ctx.exit()
 
 
+@cli.command()
+def init():
+    from stock import models
+    models.create_all()
+
+
 # misc
 # show_conf
 @cli.command()
