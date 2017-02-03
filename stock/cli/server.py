@@ -30,6 +30,8 @@ def serve(**kw):
 @click.option("--queue-back", envvar="RABBITMQ_QUEUE_BACK", default="queue_back")
 @click.option("-d", "--debug", default=False, is_flag=True)
 def rabbitmq(host, queue, queue_back, debug):
+    # TODO: mysql connection polling
+
     from stock import query
     from stock.cli import quandl
     modules = {"query": query, "quandl": quandl}
@@ -49,7 +51,7 @@ def rabbitmq(host, queue, queue_back, debug):
             click.secho("BAD BODY: %s" % body, fg="red")
             click.secho(str(e), fg="red")
             # TODO: error_queue
-            channel.basic_publish('', queue_back, {"error": str(e)})
+            channel.basic_publish('', queue_back, json.dumps({"error": str(e)}))
         else:
             if hasattr(result, "to_json"):
                 result = result.to_json()
@@ -63,7 +65,7 @@ def rabbitmq(host, queue, queue_back, debug):
                 click.secho("BAD RESULT: %s" % result, fg="red")
                 click.secho(str(e), fg="red")
                 # TODO: error_queue
-                channel.basic_publish('', queue_back, {"error": str(e)})
+                channel.basic_publish('', queue_back, json.dumps({"error": str(e)}))
 
     def listen(channel):
         channel.queue_declare(queue=queue, durable=False)  # no_ack=False

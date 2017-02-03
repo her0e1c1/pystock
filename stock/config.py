@@ -27,6 +27,7 @@ PORT = int(os.environ.get('PORT', 5000))
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///%s/db.sqlite3" % HERE)
 CREATE_ENGINE = {
     "encoding": 'utf-8',
+    "pool_recycle": 3600,
     "echo": DEBUG,
 }
 
