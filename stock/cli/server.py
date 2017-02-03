@@ -48,6 +48,8 @@ def rabbitmq(host, queue, queue_back, debug):
         except Exception as e:
             click.secho("BAD BODY: %s" % body, fg="red")
             click.secho(str(e), fg="red")
+            # TODO: error_queue
+            channel.basic_publish('', queue_back, {"error": str(e)})
         else:
             if hasattr(result, "to_json"):
                 result = result.to_json()
@@ -60,6 +62,8 @@ def rabbitmq(host, queue, queue_back, debug):
             except Exception as e:
                 click.secho("BAD RESULT: %s" % result, fg="red")
                 click.secho(str(e), fg="red")
+                # TODO: error_queue
+                channel.basic_publish('', queue_back, {"error": str(e)})
 
     def listen(channel):
         channel.queue_declare(queue=queue, durable=False)  # no_ack=False
