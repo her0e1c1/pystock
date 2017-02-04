@@ -42,6 +42,7 @@ def rabbitmq(host, queue, queue_back, debug):
 
         try:
             payload = json.loads(body.decode())
+            ref = payload.pop("ref", None)
             m = payload.get("module", "query")
             module = modules[m]
             f = getattr(module, payload.get("method", "get"))
@@ -57,6 +58,8 @@ def rabbitmq(host, queue, queue_back, debug):
                 result = result.to_json()
             else:
                 result = str(result)
+            if ref:
+                result = str({"result": result, "ref": ref})
             if debug:
                 click.secho("RESULT: %s" % result)
             try:
