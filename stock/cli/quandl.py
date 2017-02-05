@@ -15,13 +15,9 @@ def quandl():
     pass
 
 
-@quandl.command(name="db", help="Store database code")
+@quandl.command(name="db", help="Store database codes")
 @click.option("-f", "--force", type=bool, default=False, is_flag=True)
 @click.option("--url", default="https://www.quandl.com/api/v3/databases")
-def _database(**kw):
-    click.echo(_database(**kw))
-
-
 def database(force, url):
     click.secho("Try to store code from %s" % url, fg="blue")
     session = models.Session()
@@ -43,16 +39,13 @@ def database(force, url):
     else:
         click.secho("Already stored", fg="blue")
 
-    return "".join(sorted([db.code for db in dbs]))
+    db_codes = ", ".join(sorted([db.code for db in dbs]))
+    click.echo(db_codes)
+    return db_codes
 
 
-@quandl.command(name="code", help="Store and show quandl code")
+@quandl.command(name="code", help="Store and show quandl codes of [database_code]")
 @click.argument('database_code')
-def _code(**kw):
-    codes = quandl_codes(**kw)
-    click.secho(", ".join(codes))
-
-
 def quandl_codes(database_code):
     session = models.Session()
     codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
@@ -70,16 +63,14 @@ def quandl_codes(database_code):
             content=r.content,
         ))
         session.commit()
-    return [c.quandl_code for c in codes]
+    quandl_codes = [c.quandl_code for c in codes]
+    click.secho(", ".join(quandl_codes))
+    return quandl_codes
 
 
-@quandl.command(name="line", help="Store price")
+@quandl.command(name="get", help="Store prices by calling quandl API")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
-def _quandl_line(**kw):
-    click.secho(quandl_line(**kw))
-
-
-def quandl_line(quandl_code):
+def get_by_code(quandl_code):
     import quandl
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
@@ -91,22 +82,17 @@ def quandl_line(quandl_code):
     mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
     mydata['quandl_code'] = quandl_code
     mydata.to_sql("price", models.engine, if_exists='append')
-    return "%s Imported" % quandl_code
+    click.secho("Imported: %s" % quandl_code)
 
 
-@quandl.command(name="import", help="import")
+@quandl.command(name="import_codes", help="import")
 @click.argument('database_code')
 @click.option("-l", "--limit", type=int, default=10)
-def _import_codes(**kw):
-    click.secho(",".join(import_codes(**kw)))
-
-
 def import_codes(database_code, limit):
+    database_code = database_code.upper()
     limit = int(limit)
 
-    database_code = database_code.upper()
     session = models.Session()
-
     codes = session.query(models.Price.quandl_code).distinct().all()
     allcodes = session.query(models.QuandlCode).filter_by(database_code=database_code).filter(
         models.QuandlCode.code.notin_([c[0] for c in codes])
@@ -114,5 +100,6 @@ def import_codes(database_code, limit):
     codes = [c.code for c in allcodes][:limit]
     click.secho(",".join(codes))
     for c in codes:
-        quandl_line(c)
+        get_by_code.callback(c)
+
     return codes
