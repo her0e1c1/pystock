@@ -14,3 +14,4 @@ def c():
 def do(**kw):
     result = query.predict(**kw)
     click.echo(result)
+    return result
