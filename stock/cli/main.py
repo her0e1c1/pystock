@@ -34,7 +34,6 @@ def cli():
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help(), color=ctx.color)
-        ctx.exit()
 
 
 @cli.command()

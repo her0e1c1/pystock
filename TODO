@@ -100,3 +100,4 @@
 - cliとmqとhttpのインターフェイスを統一する
 - delete yesterday
 - chat botから、urlをopenするみたいなやつ
+- circle ci + delpy to new versions
