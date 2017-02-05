@@ -90,7 +90,6 @@ def get_by_code(quandl_code):
 @click.option("-l", "--limit", type=int, default=10)
 def import_codes(database_code, limit):
     database_code = database_code.upper()
-    limit = int(limit)
 
     session = models.Session()
     codes = session.query(models.Price.quandl_code).distinct().all()
