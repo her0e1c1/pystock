@@ -1,5 +1,6 @@
 # coding: utf-8
 import pandas as pd
+import quandl
 import click
 import requests
 
@@ -10,12 +11,15 @@ from stock import util
 from stock import config as C
 
 
+quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
+
+
 @cli.group(cls=AliasedGroup)
-def quandl():
+def c():
     pass
 
 
-@quandl.command(name="db", help="Store database codes")
+@c.command(name="db", help="Store database codes")
 @click.option("-f", "--force", type=bool, default=False, is_flag=True)
 @click.option("--url", default="https://www.quandl.com/api/v3/databases")
 def database(force, url):
@@ -44,7 +48,7 @@ def database(force, url):
     return db_codes
 
 
-@quandl.command(name="code", help="Store and show quandl codes of [database_code]")
+@c.command(name="code", help="Store and show quandl codes of [database_code]")
 @click.argument('database_code')
 def quandl_codes(database_code):
     session = models.Session()
@@ -69,7 +73,7 @@ def quandl_codes(database_code):
     return quandl_codes
 
 
-@quandl.command(name="get", help="Store prices by calling quandl API")
+@c.command(name="get", help="Store prices by calling quandl API")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 def get_by_code(quandl_code):
     import quandl
@@ -88,7 +92,7 @@ def get_by_code(quandl_code):
     session.close()
 
 
-@quandl.command(name="import_codes", help="import")
+@c.command(name="import_codes", help="import")
 @click.argument('database_code')
 @click.option("-l", "--limit", type=int, default=10)
 def import_codes(database_code, limit):

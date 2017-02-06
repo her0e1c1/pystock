@@ -31,6 +31,8 @@ CREATE_ENGINE = {
     "echo": DEBUG,
 }
 
+QUANDL_CODE_API_KEY = os.environ.get("QUANDL_CODE_API_KEY")
+
 STATIC_DIR = os.path.join(ROOTDIR, "static")
 
 GRAPH_DIR = os.path.join(STATIC_DIR, "company")
