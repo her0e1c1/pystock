@@ -14,7 +14,7 @@ from stock import config as C
 quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
 
 
-@cli.group(cls=AliasedGroup)
+@cli.group(cls=AliasedGroup, name="quandl")
 def c():
     pass
 
