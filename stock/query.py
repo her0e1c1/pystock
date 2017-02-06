@@ -31,12 +31,15 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
         f = getattr(charts, chart_type)
         series = f(series)
 
+    session.close()
     return series
 
 
 def quandl_codes():
     session = models.Session()
-    return [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
+    codes = [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
+    session.close()
+    return codes
 
 
 # TODO: 並列化

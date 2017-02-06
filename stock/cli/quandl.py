@@ -38,7 +38,7 @@ def database(force, url):
         session.commit()
     else:
         click.secho("Already stored", fg="blue")
-
+    session.close()
     db_codes = ", ".join(sorted([db.code for db in dbs]))
     click.echo(db_codes)
     return db_codes
@@ -63,6 +63,7 @@ def quandl_codes(database_code):
             content=r.content,
         ))
         session.commit()
+    session.close()
     quandl_codes = [c.quandl_code for c in codes]
     click.secho(", ".join(quandl_codes))
     return quandl_codes
@@ -76,6 +77,7 @@ def get_by_code(quandl_code):
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:
         click.secho("Already imported: %s" % quandl_code)
+        session.close()
         return
     mydata = quandl.get(quandl_code)
     mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
@@ -83,6 +85,7 @@ def get_by_code(quandl_code):
     mydata['quandl_code'] = quandl_code
     mydata.to_sql("price", models.engine, if_exists='append')
     click.secho("Imported: %s" % quandl_code)
+    session.close()
 
 
 @quandl.command(name="import_codes", help="import")
@@ -96,6 +99,7 @@ def import_codes(database_code, limit):
     allcodes = session.query(models.QuandlCode).filter_by(database_code=database_code).filter(
         models.QuandlCode.code.notin_([c[0] for c in codes])
     ).all()
+    session.close()
     codes = [c.code for c in allcodes][:limit]
     click.secho(",".join(codes))
     for c in codes:
