@@ -85,6 +85,7 @@ def get_by_code(quandl_code):
         return
     mydata = quandl.get(quandl_code)
     mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
+    mydata = mydata.reindex(mydata.index.rename("date"))  # "TSE/TOPIX" returns "Year" somehow
     mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
     mydata['quandl_code'] = quandl_code
     mydata.to_sql("price", models.engine, if_exists='append')
