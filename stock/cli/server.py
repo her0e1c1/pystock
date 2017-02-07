@@ -79,7 +79,7 @@ def rabbitmq(host, queue, queue_back, debug):
 
         def convert(result):
             import pandas as pd
-            if pd.isnull(result):
+            if result is pd.np.nan:  # can not use `pd.isnull(result)` for DataFrame or Series
                 return None
             else:
                 return result
