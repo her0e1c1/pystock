@@ -76,7 +76,15 @@ def rabbitmq(host, queue, queue_back, debug):
         if debug:
             click.secho(out)
             click.secho(err, fg="red")
-        result = {"result": r, "ref": ref, "stdout": out, "stderr": err}
+
+        def convert(result):
+            import pandas as pd
+            if pd.isnull(result):
+                return None
+            else:
+                return result
+
+        result = {"result": convert(r), "ref": ref, "stdout": out, "stderr": err}
         if debug:
             click.secho("RESULT: %s" % result)
         channel.basic_publish('', queue_back, json.dumps(result))
