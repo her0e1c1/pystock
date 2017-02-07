@@ -11,7 +11,6 @@ def db():
 
 @db.command(help="Show env")
 def env():
-    models.create_all()
     tables = ", ".join(models.engine.table_names())
     summary = """\
 url: {engine.url}
@@ -32,21 +31,6 @@ def create():
 def drop(yes):
     if yes or click.confirm("Drop all tables. Are you sure?"):
         models.drop_all()
-
-
-@db.command(name="dummy")
-def dummy():
-    session = models.Session()
-    import datetime
-    today = datetime.date.today()
-    for i in range(100):
-        n = today + datetime.timedelta(days=i)
-        session.add(models.Price(date=n, close=i, quandl_code="test"))
-    for i in range(100):
-        c = i * (1 if i % 2 == 0 else -1)
-        n = today + datetime.timedelta(days=i)
-        session.add(models.Price(date=n, close=c, quandl_code="test2"))
-    session.commit()
 
 
 @db.command(name="quandl_codes", help="Store and show quandl code")

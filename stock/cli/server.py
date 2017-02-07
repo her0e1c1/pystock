@@ -61,12 +61,14 @@ def rabbitmq(host, queue, queue_back, debug):
         except SystemExit as e:
             if debug:
                 click.secho("SystemExit: %s" % str(e), fg="red")
+                click.secho("BAD BODY: %s" % body, fg="red")
                 click.secho(str(e), fg="red")
             send_error(e)
             return
         except Exception as e:
             if debug:
                 click.secho("BAD RESULT: %s" % str(e), fg="red")
+                click.secho("BAD BODY: %s" % body, fg="red")
                 click.secho(str(e), fg="red")
             send_error(e)
             return
