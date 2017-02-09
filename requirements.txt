@@ -6,11 +6,14 @@ PyMySQL
 sqlalchemy
 pika
 
+# math
 Quandl
 xlrd
 pandas
 matplotlib
 jupyter
 
+# heroku
+apscheduler
 # cffi
 # cryptography
