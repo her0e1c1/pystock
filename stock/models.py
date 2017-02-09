@@ -38,7 +38,6 @@ class Price(Base):  # Daily Price
     __tablename__ = "price"
     __table_args__ = (sql.UniqueConstraint('date', 'quandl_code'), )
 
-    # id = sql.Column(sql.Integer, primary_key=True)
     high = sql.Column(sql.Float, nullable=True)
     low = sql.Column(sql.Float, nullable=True)
     open = sql.Column(sql.Float, nullable=True)
@@ -46,6 +45,9 @@ class Price(Base):  # Daily Price
     date = sql.Column(sql.Date, nullable=False, index=True)
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
     volume = sql.Column(sql.Integer, nullable=True)
+
+    # FIXME:
+    id = sql.Column(sql.Integer, primary_key=True)
 
     @sql.orm.validates('quandl_code')
     def validate_quandl_code(self, _key, val):
@@ -60,6 +62,10 @@ class CurrentPrice(Base):
     value = sql.Column(sql.Integer, nullable=False)
     datetime = sql.Column(sql.DateTime, nullable=False, index=True)
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
+
+    # FIXME:
+    # sqlalchemy.exc.ArgumentError: Mapper Mapper|CurrentPrice|current_price could not assemble any primary key columns for mapped table 'current_price'
+    id = sql.Column(sql.Integer, primary_key=True)
 
 
 # class SplitStockDate(Base):
