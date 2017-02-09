@@ -9,20 +9,15 @@ A commad line tool for stock
 
 ## heroku server
 
-> heroku run --app APP_NAME python -m stock setup
+> heroku run --app f1nance python -m stock init
 
-Need to set `JUPYTER_NOTEBOOK_PASSWORD` or need to check stdout to get token
-
-> heroku config:set JUPYTER_NOTEBOOK_PASSWORD=<your_passwd> -a f1nance
-> heroku config:set JUPYTER_NOTEBOOK_PASSWORD_DISABLED=DangerZone! -a f1nance
-
-## Jupyter
+## jupyter
 
 ```
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.key -out mycert.pem
 jupyter notebook --cert=mycert.pem --key=mykey.key --ip=0.0.0.0
 ```
 
-## Docker
+## docker
 
 > docker build . -t pystock
