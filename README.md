@@ -13,6 +13,9 @@ A commad line tool for stock
 
 Need to set `JUPYTER_NOTEBOOK_PASSWORD`
 
+> heroku config:set JUPYTER_NOTEBOOK_PASSWORD=<your_passwd> -a f1nance
+> heroku config:set JUPYTER_NOTEBOOK_PASSWORD_DISABLED=1 -a f1nance
+
 ## Jupyter
 
 ```
