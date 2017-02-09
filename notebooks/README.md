@@ -8,6 +8,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import imp
 from stock import jupyter as j
+j.show(quandl_code="NIKKEI/INDEX")
 ```
 
 ## Key binds frequently
