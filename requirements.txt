@@ -1,6 +1,7 @@
 click
 requests
 python-dateutil
+
 PyMySQL
 sqlalchemy
 pika
