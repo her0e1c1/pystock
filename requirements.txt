@@ -2,6 +2,7 @@ click
 requests
 python-dateutil
 
+psycopg2  # used on heroku
 PyMySQL
 sqlalchemy
 pika
@@ -13,7 +14,7 @@ pandas
 matplotlib
 jupyter
 
-# heroku
-apscheduler
+apscheduler  # heroku
+
 # cffi
 # cryptography
