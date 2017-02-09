@@ -1,2 +1,2 @@
 #!/usr/bin/env bash
-jupyter notebook --no-browser --no-mathjax --ip=* --port $PORT
+jupyter notebook --no-browser --no-mathjax --ip=* --port $PORT notebooks
