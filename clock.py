@@ -2,7 +2,7 @@
 # TODO: use celery
 from apscheduler.schedulers.blocking import BlockingScheduler
 
-from stock import service
+# from stock import service
 
 import logging
 logging.basicConfig(level=logging.INFO)
@@ -16,8 +16,9 @@ sched = BlockingScheduler()
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=15, minute=10)  # 0:10 (JST)
 @sched.scheduled_job('cron', day_of_week='mon-fri', hour=19, minute=0)
 def scheduled_scrape_japan():
-    ldate = service.util.last_date()
-    logger.info('CRON: Scrape and store stock at %s' % ldate)
+    # ldate = service.util.last_date()
+    logger.info('CRON: Scrape and store stock at ...')
+    # logger.info('CRON: Scrape and store stock at %s' % ldate)
     # service.company.update_copmany_list(each=True, ignore=True, last_date=ldate)
     # service.search_field.update_search_fields()
 
