@@ -75,8 +75,8 @@ def quandl_codes(database_code):
 
 @c.command(name="get", help="Store prices by calling quandl API")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
-def get_by_code(quandl_code):
-    import quandl
+@click.option("-l", "--limit", type=int, default=None, help="For heroku db limitation")
+def get_by_code(quandl_code, limit):
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:
@@ -88,6 +88,8 @@ def get_by_code(quandl_code):
     mydata = mydata.reindex(mydata.index.rename("date"))  # "TSE/TOPIX" returns "Year" somehow
     mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
     mydata['quandl_code'] = quandl_code
+    if limit:
+        mydata.reindex(reversed(mydata.index))[:limit]
     mydata.to_sql("price", models.engine, if_exists='append')
     click.secho("Imported: %s" % quandl_code)
     session.close()
