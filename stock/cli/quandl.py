@@ -89,7 +89,7 @@ def get_by_code(quandl_code, limit):
     mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
     mydata['quandl_code'] = quandl_code
     if limit:
-        mydata.reindex(reversed(mydata.index))[:limit]
+        mydata = mydata.reindex(reversed(mydata.index))[:limit]
     mydata.to_sql("price", models.engine, if_exists='append')
     click.secho("Imported: %s" % quandl_code)
     session.close()
