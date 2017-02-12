@@ -8,6 +8,7 @@ from .main import cli, AliasedGroup
 
 from stock import models
 from stock import util
+from stock import config as C
 
 
 @cli.group(cls=AliasedGroup, name="quandl")
