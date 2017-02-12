@@ -6,7 +6,7 @@ install_requires = [str(ir.req) for ir in parse_requirements("requirements.txt",
 
 setup(
     name='stock',
-    version='1.1',
+    version='2.0',
     author='Hiroyuki Ishii',
     author_email="hiroyuki.ishii.42@gmail.com",
     url="http://f1nance.herokuapp.com/",
