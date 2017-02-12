@@ -23,11 +23,16 @@ class QuandlCode(Base):
 
     code = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
 
-    # @property
-    # database_code = sql.Column(
-    #     sql.String(64),
-    #     nullable=True,
-    # )
+    # TODO: @property
+    database_code = sql.Column(
+        sql.String(64),
+        nullable=True,
+    )
+
+    # TODO: rm
+    @property
+    def quandl_code(self):
+        return self.code
 
     def __repr__(self):
         return "QuandlCode({code})".format(**self.__dict__)
