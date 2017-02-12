@@ -15,8 +15,10 @@ quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
 
 
 @cli.group(cls=AliasedGroup, name="quandl")
-def c():
-    pass
+@click.option("-k", "--key")
+def c(key):
+    if key:
+        quandl.ApiConfig.api_key = key
 
 
 @c.command(name="db", help="Store database codes")
