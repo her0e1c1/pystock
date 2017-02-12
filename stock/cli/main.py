@@ -1,6 +1,8 @@
 # coding: utf-8
 import click
+import quandl
 from stock import util
+from stock import config as C
 
 
 def _multiple_decorator(funcs):
@@ -30,10 +32,15 @@ class AliasedGroup(click.Group):
 
 
 @click.group(cls=AliasedGroup, invoke_without_command=True)
-def cli():
+@click.option("-k", "--key")
+def cli(key):
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help(), color=ctx.color)
+    if key:
+        quandl.ApiConfig.api_key = key
+    else:
+        quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
 
 
 @cli.command()

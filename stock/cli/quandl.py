@@ -8,17 +8,11 @@ from .main import cli, AliasedGroup
 
 from stock import models
 from stock import util
-from stock import config as C
-
-
-quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
 
 
 @cli.group(cls=AliasedGroup, name="quandl")
-@click.option("-k", "--key")
-def c(key):
-    if key:
-        quandl.ApiConfig.api_key = key
+def c():
+    pass
 
 
 @c.command(name="db", help="Store database codes")
