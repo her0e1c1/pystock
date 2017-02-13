@@ -16,5 +16,13 @@ env:
   - TOX_ENV=coverage
   - TOX_ENV=pep8
 
+cache:
+  pip: true
+  directories:
+    - .tox
+
 script:
   - tox -e $TOX_ENV
+
+after_success:
+  - codecov

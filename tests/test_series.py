@@ -1,12 +1,12 @@
 import pandas as pd
 
-from stock.service import chart
+from stock import charts
 
 
 def test_rsi():
     def f(series, period=10):
         series = list(series)
-        seq = chart.rsi(pd.Series(series), period=period)
+        seq = charts.rsi(pd.Series(series), period=period)
         return seq[period]
 
     # 10日のデータには、差分を取るのに11日必要
