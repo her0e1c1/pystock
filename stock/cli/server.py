@@ -3,6 +3,7 @@ import io
 import json
 import contextlib
 
+import quandl
 import pika
 import click
 
@@ -39,6 +40,7 @@ def rabbitmq(host, queue, queue_back, debug):
         err = io.StringIO()
         r = None
         try:
+            args = ["-k", quandl.ApiConfig.api_key] + args
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
                 r = cli.main(args, standalone_mode=False)
         except SystemExit as e:
@@ -85,7 +87,6 @@ def rabbitmq(host, queue, queue_back, debug):
 
     click.secho("RABBITMQ CLIENT: '{queue}' and '{queue_back}' to '{host}'".format(**locals()), fg="green")
     if debug:
-        import quandl
         click.secho("QUANDL_API_KEY: {}".format(quandl.ApiConfig.api_key), fg="green")
     params = pika.ConnectionParameters(host=host)
     connection = pika.BlockingConnection(params)
