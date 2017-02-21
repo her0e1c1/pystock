@@ -73,13 +73,18 @@ def quandl_codes(database_code):
 @c.command(name="get", help="Store prices by calling quandl API")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 @click.option("-l", "--limit", type=int, default=None, help="For heroku db limitation")
-def get_by_code(quandl_code, limit):
+@click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
+def get_by_code(quandl_code, limit, force):
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:
         click.secho("Already imported: %s" % quandl_code)
+        if not force:
+            return
+        session.query(models.Price).filter_by(quandl_code=quandl_code).delete()
+        session.commit()
         session.close()
-        return
+    click.secho("TRY TO GET `%s`" % quandl_code)
     mydata = quandl.get(quandl_code)
     mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
     mydata = mydata.reindex(mydata.index.rename("date"))  # "TSE/TOPIX" returns "Year" somehow
@@ -87,7 +92,7 @@ def get_by_code(quandl_code, limit):
     mydata['quandl_code'] = quandl_code
     if limit:
         mydata = mydata.reindex(reversed(mydata.index))[:limit]
-    mydata.to_sql("price", models.engine, if_exists='append')
+    mydata.to_sql("price", models.engine, if_exists='append')  # auto commit
     click.secho("Imported: %s" % quandl_code)
     session.close()
 
