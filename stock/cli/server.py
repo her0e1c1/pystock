@@ -84,6 +84,9 @@ def rabbitmq(host, queue, queue_back, debug):
         channel.start_consuming()
 
     click.secho("RABBITMQ CLIENT: '{queue}' and '{queue_back}' to '{host}'".format(**locals()), fg="green")
+    if debug:
+        import quandl
+        click.secho("QUANDL_API_KEY: {}".format(quandl.ApiConfig.api_key), fg="green")
     params = pika.ConnectionParameters(host=host)
     connection = pika.BlockingConnection(params)
     while True:
