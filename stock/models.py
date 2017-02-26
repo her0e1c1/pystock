@@ -1,5 +1,6 @@
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.ext.hybrid import hybrid_property
 from . import config as C
 
 
@@ -22,18 +23,18 @@ class QuandlCode(Base):
     __tablename__ = "quandl_code"
 
     code = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
-
-    @property
-    def database_code(self):
-        splited = self.code.splite("/", 2)
-        if len(splited) == 2:
-            db, _ = splited
-            return db
-        else:
-            return None
+    database_code = sql.Column(sql.String(64))  # TSE
 
     def __repr__(self):
         return "QuandlCode({code})".format(**self.__dict__)
+
+
+@sql.event.listens_for(QuandlCode, 'before_insert')
+def broker_before_insert(mapper, connection, qcode):
+    splited = qcode.code.split("/", 2)
+    if len(splited) == 2:
+        db, _ = splited
+        qcode.database_code = db
 
 
 class Price(Base):  # Daily Price

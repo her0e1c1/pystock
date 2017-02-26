@@ -40,8 +40,13 @@ def cli(key):
         click.echo(ctx.get_help(), color=ctx.color)
     if not models.engine.table_names():
         click.secho("No tables. So initiaize tables")
-        models.create_all()
     if key:
         quandl.ApiConfig.api_key = key
     else:
         quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
+
+
+@cli.command()
+def init():
+    models.drop_all()
+    models.create_all()
