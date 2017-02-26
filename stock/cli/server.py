@@ -40,9 +40,9 @@ def rabbitmq(host, queue, queue_back, debug):
         err = io.StringIO()
         r = None
         try:
-            args = ["-k", quandl.ApiConfig.api_key] + args
+            args2 = ["-k", quandl.ApiConfig.api_key] + args
             with contextlib.redirect_stdout(out), contextlib.redirect_stderr(err):
-                r = cli.main(args, standalone_mode=False)
+                r = cli.main(args2, standalone_mode=False)
         except SystemExit as e:
             if debug:
                 click.secho("SystemExit: %s" % str(e), fg="red")
@@ -71,7 +71,7 @@ def rabbitmq(host, queue, queue_back, debug):
             else:
                 return result
 
-        result = {"result": convert(r), "ref": ref, "stdout": out, "stderr": err}
+        result = {"result": convert(r), "ref": ref, "stdout": out, "stderr": err, "args": args}
         if debug:
             click.secho("RESULT: %s" % result)
         channel.basic_publish('', queue_back, json.dumps(result))
