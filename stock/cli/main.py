@@ -2,6 +2,7 @@
 import click
 import quandl
 from stock import util
+from stock import models
 from stock import config as C
 
 
@@ -37,13 +38,10 @@ def cli(key):
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help(), color=ctx.color)
+    if not models.engine.table_names():
+        click.secho("No tables. So initiaize tables")
+        models.create_all()
     if key:
         quandl.ApiConfig.api_key = key
     else:
         quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
-
-
-@cli.command()
-def init():
-    from stock import models
-    models.create_all()
