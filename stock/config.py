@@ -4,12 +4,6 @@ import logging
 from collections import OrderedDict
 
 
-def set(**kw):
-    g = globals()
-    for k, v in kw.items():
-        g[k.upper()] = v  # raise KeyError if the key does not exist
-
-
 # Heroku can't import path (I don't know the reason)
 # import path
 # ROOTDIR = path.Path(__file__).parent.parent
@@ -19,9 +13,6 @@ HERE = os.path.dirname(__file__)
 
 DEBUG = False
 LOG_LEVEL = logging.INFO
-
-HOST = "localhost"
-PORT = int(os.environ.get('PORT', 5000))
 
 # sqlalchemy
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///%s/db.sqlite3" % HERE)
@@ -33,12 +24,7 @@ CREATE_ENGINE = {
 
 QUANDL_CODE_API_KEY = os.environ.get("QUANDL_CODE_API_KEY")
 
-STATIC_DIR = os.path.join(ROOTDIR, "static")
-
-GRAPH_DIR = os.path.join(STATIC_DIR, "company")
-
 FORMAT = {
-    "image_dir": os.path.join(GRAPH_DIR, "{code}"),
     "month": "{code}/{year}_{month}",
 }
 
