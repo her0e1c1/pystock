@@ -38,8 +38,6 @@ def cli(key):
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
         click.echo(ctx.get_help(), color=ctx.color)
-    if not models.engine.table_names():
-        click.secho("No tables. So initiaize tables")
     if key:
         quandl.ApiConfig.api_key = key
     else:

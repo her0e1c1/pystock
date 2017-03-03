@@ -53,7 +53,7 @@ def quandl_codes(database_code):
     if not codes:
         URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
         click.secho("GET %s" % URL, fg="blue")
-        r = requests.get(URL)
+        r = requests.get(URL + "?" + quandl.quandl.ApiConfig.api_key)
         if not r.ok:
             return click.secho(r.text, fg="red")
         session.add_all(util.read_csv_zip(
