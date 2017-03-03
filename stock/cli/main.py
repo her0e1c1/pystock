@@ -33,7 +33,7 @@ class AliasedGroup(click.Group):
 
 
 @click.group(cls=AliasedGroup, invoke_without_command=True)
-@click.option("-k", "--key")
+@click.option("-k", "--key", envvar='QUANDL_CODE_API_KEY')
 def cli(key):
     ctx = click.get_current_context()
     if ctx.invoked_subcommand is None:
