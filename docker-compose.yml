@@ -23,4 +23,4 @@ services:
     container_name: jupyter
     ports:
       - 12388:8888
-    entrypoint: sh -c "cd /app && python setup.py develop && pystock db create && jupyter notebook --ip 0.0.0.0 --port 8888"
+    entrypoint: sh -c "cd /app && python setup.py develop && pystock db create && jupyter notebook --ip 0.0.0.0 --port 8888 --NotebookApp.token=''"

@@ -17,7 +17,3 @@ A commad line tool for stock
 openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout mykey.key -out mycert.pem
 jupyter notebook --cert=mycert.pem --key=mykey.key --ip=0.0.0.0
 ```
-
-## docker
-
-> docker build . -t pystock
