@@ -75,6 +75,7 @@ def quandl_codes(database_code):
 @click.option("-l", "--limit", type=int, default=None, help="For heroku db limitation")
 @click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
 def get_by_code(quandl_code, limit, force):
+    quandl_code = quandl_code.upper()  # FIXME
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
     if data:

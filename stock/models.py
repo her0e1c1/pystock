@@ -25,6 +25,10 @@ class QuandlCode(Base):
     code = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
     database_code = sql.Column(sql.String(64))  # TSE
 
+    @sql.orm.validates('code', 'database_code')
+    def validate_code(self, _key, val):
+        return val.upper()
+
     def __repr__(self):
         return "QuandlCode({code})".format(**self.__dict__)
 
