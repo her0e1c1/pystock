@@ -58,12 +58,11 @@ def quandl_codes(database_code):
         r = requests.get(URL)
         if not r.ok:
             return click.secho(r.text, fg="red")
-        session.add_all(util.read_csv_zip(
-            # row == [TSE/1111, "name"]
-            lambda row: models.QuandlCode(code=row[0]),
-            content=r.content,
-        ))
+        # row == [TSE/1111, "name"]
+        codes = util.read_csv_zip(lambda row: row[0], content=r.content)
+        session.add_all([models.QuandlCode(code=c) for c in codes])
         session.commit()
+
     session.close()
     quandl_codes = [c.code for c in codes]
     click.secho(", ".join(quandl_codes))
