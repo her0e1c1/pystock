@@ -62,8 +62,6 @@ def quandl_codes(database_code):
         codes = util.read_csv_zip(lambda row: models.QuandlCode(code=row[0]), content=r.content)
         session.add_all(codes)
         session.commit()
-
-    session.close()
     quandl_codes = [c.code for c in codes]
     click.secho(", ".join(quandl_codes))
     return quandl_codes
