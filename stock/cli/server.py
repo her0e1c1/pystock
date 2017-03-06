@@ -20,7 +20,7 @@ def rabbitmq(host, queue, queue_back, debug):
     def callback(ch, method, properties, body):
         def send_error(e):
             # TODO: error_queue
-            channel.basic_publish('', queue_back, json.dumps({"error": u"%s: %s" % (unicode(e), body)}))
+            channel.basic_publish('', queue_back, json.dumps({"error": "%s: %s" % (e, body)}))
 
         ch.basic_ack(delivery_tag=method.delivery_tag)
         if debug:
