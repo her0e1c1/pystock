@@ -17,11 +17,11 @@ from .main import cli
 @click.option("-d", "--debug", default=False, is_flag=True)
 def rabbitmq(host, queue, queue_back, debug):
 
-    def send_error(e):
-        # TODO: error_queue
-        channel.basic_publish('', queue_back, json.dumps({"error": str(e)}))
-
     def callback(ch, method, properties, body):
+        def send_error(e):
+            # TODO: error_queue
+            channel.basic_publish('', queue_back, json.dumps({"error": u"%s: %s" % (unicode(e), body)}))
+
         ch.basic_ack(delivery_tag=method.delivery_tag)
         if debug:
             click.secho("RECEIVERS: %s" % body, fg="green")
