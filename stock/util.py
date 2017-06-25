@@ -35,12 +35,6 @@ def df_to_series(df, color=None, type=None):
         })
     return series
 
-    # {title: {text: 'OHLC'}, height: '60%'},
-    # {title: {text: 'Volume'}, height: '10%', top: '60%'},
-    # {title: {text: 'RSI'}, height: '10%', top: '80%'},
-    # {title: {text: 'MACD'}, height: '10%', top: '90%'},
-    # {title: {text: 'stochastic'}, height: '10%', top: '70%'},
-
 
 def df_to_json(df):
     d = {}

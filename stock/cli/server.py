@@ -1,12 +1,14 @@
 import io
 import json
 import contextlib
+import tornado
 
 import quandl
 import pika
 import click
 
 from .main import cli
+from stock.server import websocket
 
 
 @cli.command(help="Start rabbitmq client")
@@ -96,3 +98,16 @@ def rabbitmq(host, queue, queue_back, debug):
         except Exception as e:
             click.secho(str(e), fg="red")
             channel.close()
+
+
+def make_app():
+    return tornado.web.Application([(r"/", websocket.MainHandler)])
+
+
+@cli.command(name="tornado", help="Start tornado server")
+@click.option("--port", default="8080", envvar="TORNADO_PORT")
+def start_tornado(port):
+    click.secho(f"Start tornado at {port}")
+    app = make_app()
+    app.listen(port)
+    tornado.ioloop.IOLoop.current().start()
