@@ -1,6 +1,5 @@
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.ext.hybrid import hybrid_property
 from . import config as C
 
 
@@ -67,13 +66,10 @@ class CurrentPrice(Base):
     __tablename__ = "current_price"
     __table_args__ = (sql.UniqueConstraint('datetime', 'quandl_code'), )
 
+    id = sql.Column(sql.Integer, primary_key=True)
     value = sql.Column(sql.Integer, nullable=False)
     datetime = sql.Column(sql.DateTime, nullable=False, index=True)
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
-
-    # FIXME:
-    # sqlalchemy.exc.ArgumentError: Mapper Mapper|CurrentPrice|current_price could not assemble any primary key columns for mapped table 'current_price'
-    id = sql.Column(sql.Integer, primary_key=True)
 
 
 # class SplitStockDate(Base):

@@ -1,4 +1,3 @@
-# coding: utf-8
 import os
 import logging
 from collections import OrderedDict
@@ -14,7 +13,6 @@ HERE = os.path.dirname(__file__)
 DEBUG = False
 LOG_LEVEL = logging.INFO
 
-# sqlalchemy
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///%s/db.sqlite3" % HERE)
 CREATE_ENGINE = {
     "encoding": 'utf-8',

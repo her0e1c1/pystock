@@ -1,26 +1,17 @@
 version: '2'
 
 services:
-  base:
+  pystock:
     image: pystock
-    environment:
-        DATABASE_URL: "sqlite:////app/db.sqlite3"
+    build:
+      context: ./
+    container_name: pystock
+    ports:
+      - 12380:80
+    env_file: .env
     volumes:
         - .:/app
     working_dir: /app
     tty: true
     stdin_open: true
-    
-  pystock:
-    extends: base
-    container_name: pystock
-    ports:
-      - 12380:80
     entrypoint: sh -c "python setup.py develop && bash"
-
-  jupyter:
-    extends: base
-    container_name: jupyter
-    ports:
-      - 12388:8888
-    entrypoint: sh -c "cd /app && python setup.py develop && pystock db create && jupyter notebook --ip 0.0.0.0 --port 8888 --NotebookApp.token=''"
