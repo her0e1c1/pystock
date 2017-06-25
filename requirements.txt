@@ -17,3 +17,8 @@ jupyter
 
 apscheduler  # heroku
 scrapy
+
+# dev
+ipython
+pytest
+pdbpp
