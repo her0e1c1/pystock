@@ -1,4 +1,3 @@
-# coding: utf-8
 import click
 from stock import models, query
 from .main import cli, AliasedGroup

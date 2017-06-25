@@ -9,6 +9,7 @@ from . import (  # NOQA
     quandl,
     query,
     server,
+    show,
 )
 
 

@@ -82,11 +82,26 @@ def dict_inverse(dct):
     return {v: k for k, v in dct.items()}
 
 
-def str2date(datestr):  # to_date(ANY)
-    # TODO: C.DATE_FORMATS:
-    if datestr:
-        t = time.strptime(datestr, "%Y-%m-%d")
-        return datetime.date.fromtimestamp(time.mktime(t))
+def str2date(s):
+    # t = time.strptime(s, "%Y-%m-%d")
+    # return datetime.date.fromtimestamp(time.mktime(t))
+    if not s:
+        raise ValueError("Invaid Format")
+    if "/" in s:
+        ss = s.split("/")
+    elif "-" in s:
+        ss = s.split("-")
+    elif len(s) in [4, 6]:  # YYYYMM or YYYYMMDD
+        ss = [s[: 4], s[4: 6], s[6: 8]]
+        ss = [s for s in ss if s]
+    else:
+        raise ValueError("Invaid Format")
+    if len(ss) == 1:
+        return datetime.date(int(ss[0]), 1, 1)
+    elif len(ss) == 2:
+        return datetime.date(int(ss[0]), int(ss[1]), 1)
+    else:
+        return datetime.date(int(ss[0]), int(ss[1]), int(ss[2]))
 
 
 def str_to_date(s):
