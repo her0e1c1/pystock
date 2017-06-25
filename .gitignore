@@ -5,6 +5,7 @@ __pycache__/
 *.sqlite3
 *.swp
 *.env
+*.html
 .tox/
 stock.egg-info/
 dist/
