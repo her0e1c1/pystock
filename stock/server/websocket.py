@@ -16,6 +16,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
 
     def on_message(self, message):
         try:
+            print(message)
             j = to_json(message)
         except ValueError:
             return
