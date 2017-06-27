@@ -1,13 +1,6 @@
-import pandas as pd
-import quandl
 import click
-import requests
-
 from .main import cli, AliasedGroup
-
-from stock import models
-from stock import util
-from stock import config as C
+from stock import query, api, error
 
 
 @cli.group(cls=AliasedGroup, name="quandl")
@@ -16,83 +9,41 @@ def c():
 
 
 @c.command(name="db", help="Store database codes")
-@click.option("--url", default="https://www.quandl.com/api/v3/databases")
-def database(url):
-    click.secho("Try to store code from %s" % url, fg="blue")
-    r = requests.get(url)
-    if not r.ok:
-        msg = r.json()['quandl_error']['message']
-        click.secho("ERRRO: %s" % msg, fg="red")
-        return
-    codes = [j['database_code'] for j in r.json()['databases']]
-    s = ", ".join(sorted([c for c in codes]))
-    click.echo(s)
-    return s
+def database():
+    click.secho("Try to get database coe", fg="blue")
+    try:
+        codes = api.quandl.database()
+    except error.QuandlError as e:
+        click.secho(e, fg="red")
+    else:
+        click.echo(", ".join(sorted([c for c in codes])))
 
 
 @c.command(name="code", help="Store and show quandl codes of [database_code] such as TSE, NIKKEI")
 @click.argument('database_code')
 def quandl_codes(database_code):
-    session = models.Session()
-    codes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
-    if not codes:
-        URL = "https://www.quandl.com/api/v3/databases/{}/codes.json".format(database_code)
-        click.secho("GET %s" % URL, fg="blue")
-        if quandl.ApiConfig.api_key:
-            URL += "?api_key=" + quandl.ApiConfig.api_key
-        r = requests.get(URL)
-        if not r.ok:
-            return click.secho(r.text, fg="red")
-        # row == [TSE/1111, "name"]
-        codes = util.read_csv_zip(lambda row: models.QuandlCode(code=row[0]), content=r.content)
-        session.add_all(codes)
-        session.commit()
-    quandl_codes = sorted([c.code for c in codes])
-    click.secho(", ".join(quandl_codes))
-    return quandl_codes
+    qcodes = query.create_quandl_codes_if_needed(database_code)
+    click.secho(", ".join(sorted([c.code for c in qcodes])))
 
 
 @c.command(name="get", help="Store prices by calling quandl API")
 @click.argument('quandl_code', default="NIKKEI/INDEX")
 @click.option("-l", "--limit", type=int, default=None, help="For heroku db limitation")
 @click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
-def get_by_code(quandl_code, limit, force):
-    quandl_code = quandl_code.upper()  # FIXME
-    session = models.Session()
-    data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
-    if data:
-        click.secho("Already imported: %s" % quandl_code)
-        if not force:
-            return
-        session.query(models.Price).filter_by(quandl_code=quandl_code).delete()
-        session.commit()
-        session.close()
-    click.secho("TRY TO GET `%s`" % quandl_code)
-    mydata = quandl.get(quandl_code)
-    mydata = mydata.rename(columns=C.MAP_PRICE_COLUMNS)
-    mydata = mydata.reindex(mydata.index.rename("date"))  # "TSE/TOPIX" returns "Year" somehow
-    mydata = mydata[pd.isnull(mydata.close) == False]  # NOQA
-    mydata['quandl_code'] = quandl_code
-    if limit:
-        mydata = mydata.reindex(reversed(mydata.index))[:limit]
-    mydata.to_sql("price", models.engine, if_exists='append')  # auto commit
-    click.secho("Imported: %s" % quandl_code)
-    session.close()
+def get_by_code(**kw):
+    code = kw["quandl_code"]
+    click.secho("TRY TO GET `%s`" % code)
+    if query.store_prices(**kw):
+        click.secho("Imported: %s" % code)
+    else:
+        click.secho("Already imported: %s" % code)
 
 
 @c.command(name="import_codes", help="import")
 @click.argument('database_code')
 @click.option("-l", "--limit", type=int, default=10)
 def import_codes(database_code, limit):
-    database_code = database_code.upper()
-    session = models.Session()
-    codes = session.query(models.Price.quandl_code).distinct().all()
-    allcodes = session.query(models.QuandlCode).filter_by(database_code=database_code).filter(
-        models.QuandlCode.code.notin_([c[0] for c in codes])
-    ).all()
-    session.close()
-    codes = [c.code for c in allcodes][:limit]
-    click.secho(",".join(codes))
+    codes = query.non_imported_quandl_codes()[:limit]
+    click.secho(", ".join(codes))
     for c in codes:
         get_by_code.callback(c)
-    return codes
