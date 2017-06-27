@@ -1,6 +1,7 @@
 import io
 import zipfile
 import csv
+import json
 import time
 import calendar
 import datetime
@@ -11,6 +12,7 @@ from dateutil import relativedelta
 from . import config as C
 
 
+# for front end
 def to_ja(date):
     japan = date + datetime.timedelta(hours=9)
     return int(japan.strftime("%s")) * 1000
@@ -23,25 +25,21 @@ def series_to_json(series, japan=True):
                 if not pd.isnull(b))
 
 
-def df_to_series(df, color=None, type=None):
-    series = []
-    if isinstance(df, pd.core.series.Series):
-        return [{"name": df.name, "data": series_to_json(df)}]
-    for index, (name, data) in enumerate(df_to_json(df).items()):
-        series.append({
-            "name": name,
-            "data": data,
-            # "yAxis": index,
-        })
-    return series
+# don't use pandas to_json
+def to_json(o):
+    if isinstance(o, pd.Series):
+        return to_json(series_to_json(o))  # key is `o.name`
+    elif isinstance(o, pd.DataFrame):
+        d = {}
+        # NOTE: val is a list of numpy.int64 (Not JSON serializable)
+        for key, val in o.items():
+            d[key] = series_to_json(val)
+            return to_json(d)
+    return o
 
 
-def df_to_json(df):
-    d = {}
-    # NOTE: val is a list of numpy.int64 (Not JSON serializable)
-    for key, val in df.items():
-        d[key] = series_to_json(val)
-    return d
+def json_dumps(o):
+    return json.dumps(to_json(o))
 
 
 class DateRange(object):
