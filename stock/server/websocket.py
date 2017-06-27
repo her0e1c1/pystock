@@ -16,15 +16,22 @@ class MainHandler(tornado.websocket.WebSocketHandler):
     def on_message(self, message):
         print(message)
         try:
-            j = to_json(message)
+            js = to_json(message)
         except ValueError:
             return
-        t = j.pop("type", None)
-        if t == "query":
-            series = query.get(**j)
-            self.write_message(util.json_dumps(series))
-        else:
-            print(f"No type: {t}")
+        if not isinstance(js, list):
+            js = [js]
+        for j in js:
+            t = j.pop("type", None)
+            if t == "query":
+                series = query.get(**j)
+                self.write_message(util.json_dumps(series))
+            elif t == "get":
+                query.store_prices(j.get("quandl_code", "NIKKEI/INDEX"))
+                series = query.get(**j)
+                self.write_message(util.json_dumps(series))
+            else:
+                print(f"No type: {t}")
 
     def on_close(self):
         print("WebSocket closed")

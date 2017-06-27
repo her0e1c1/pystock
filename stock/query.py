@@ -21,7 +21,7 @@ def non_imported_quandl_codes(database_code):
     return allcodes
 
 
-def store_prices(quandl_code, limit, force):
+def store_prices(quandl_code, limit=None, force=False):
     quandl_code = quandl_code.upper()  # FIXME
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()

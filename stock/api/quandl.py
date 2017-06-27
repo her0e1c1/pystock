@@ -1,6 +1,7 @@
+import pandas as pd
 import quandl
 import requests
-from .import error, util
+from stock import error, util
 
 
 def database():
@@ -38,6 +39,7 @@ def get_by_code(quandl_code):
     data = quandl.get(quandl_code)
     data = data.rename(columns=MAP_PRICE_COLUMNS)
     data = data.reindex(data.index.rename("date"))  # "TSE/TOPIX" returns "Year" somehow
+    # closeがNaNの場合は、不正データとみなし登録しない
     data = data[pd.isnull(data.close) == False]  # NOQA
     data['quandl_code'] = quandl_code
     return data
