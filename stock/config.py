@@ -8,12 +8,10 @@ from collections import OrderedDict
 # ROOTDIR = path.Path(__file__).parent.parent
 ROOTDIR = "/".join(os.path.abspath(__file__).split("/")[:-2])
 
-HERE = os.path.dirname(__file__)
-
 DEBUG = False
 LOG_LEVEL = logging.INFO
 
-DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite:///%s/db.sqlite3" % HERE)
+DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite://")
 CREATE_ENGINE = {
     "encoding": 'utf-8',
     "pool_recycle": 3600,

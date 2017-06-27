@@ -7,7 +7,6 @@ from . import (  # NOQA
     config,
     predict,
     quandl,
-    query,
     server,
     show,
 )
