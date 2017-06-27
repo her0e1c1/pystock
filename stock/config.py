@@ -20,13 +20,6 @@ CREATE_ENGINE = {
     "echo": DEBUG,
 }
 
-QUANDL_CODE_API_KEY = os.environ.get("QUANDL_CODE_API_KEY")
-
-FORMAT = {
-    "month": "{code}/{year}_{month}",
-}
-
-
 # frequently changed
 COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 EXCEL_COMPANY_HEADER = OrderedDict([
@@ -51,11 +44,3 @@ DEFAULT_ROLLING_MEAN_RATIO = 5
 
 
 DATE_FORMATS = ["%Y/%m/%d", "%Y-%m-%d"]
-
-
-MAP_PRICE_COLUMNS = {}
-for v in ["open", "close", "high", "low"]:
-    p = "price"
-    keys = [v, v.title(), "%s %s" % (v, p), "%s %s" % (v.title(), p.title()), "%s%s" % (v.title(), p.title())]
-    for k in keys:
-        MAP_PRICE_COLUMNS[k] = v

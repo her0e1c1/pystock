@@ -1,9 +1,7 @@
 # coding: utf-8
 import click
 import quandl
-from stock import util
-from stock import models
-from stock import config as C
+from stock import util, models
 
 
 def _multiple_decorator(funcs):
@@ -40,8 +38,6 @@ def cli(key):
         click.echo(ctx.get_help(), color=ctx.color)
     if key:
         quandl.ApiConfig.api_key = key
-    else:
-        quandl.ApiConfig.api_key = C.QUANDL_CODE_API_KEY
 
 
 @cli.command()
