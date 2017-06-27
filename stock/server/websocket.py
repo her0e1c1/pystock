@@ -1,5 +1,5 @@
 import tornado.websocket
-from stock import query, util, cli
+from stock import query, util
 
 
 def to_json(m):
@@ -22,16 +22,15 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         if not isinstance(js, list):
             js = [js]
         for j in js:
-            t = j.pop("type", None)
-            if t == "query":
-                series = query.get(**j)
-                self.write_message(util.json_dumps(series))
-            elif t == "get":
-                query.store_prices(j.get("quandl_code", "NIKKEI/INDEX"))
-                series = query.get(**j)
-                self.write_message(util.json_dumps(series))
-            else:
-                print(f"No type: {t}")
+            query.store_prices_if_needed(j.get("quandl_code", "NIKKEI/INDEX"))
+            s = query.get(**j)
+            self.write_message(util.json_dumps(dict(series=s, **j)))
+
+            s = query.get(price_type=None, **j)
+            self.write_message(util.json_dumps(dict(j, **util.to_json(s))))
+
+            s = query.predict(**j)
+            self.write_message(util.json_dumps(dict(name="predict", series=s, **j)))
 
     def on_close(self):
         print("WebSocket closed")

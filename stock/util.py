@@ -2,7 +2,6 @@ import io
 import zipfile
 import csv
 import json
-import time
 import calendar
 import datetime
 
@@ -12,29 +11,33 @@ from dateutil import relativedelta
 from . import config as C
 
 
-# for front end
-def to_ja(date):
-    japan = date + datetime.timedelta(hours=9)
-    return int(japan.strftime("%s")) * 1000
-
-
 # type = [candlestick, column]
 def series_to_json(series, japan=True):
     # WARN: nan can not JSON Serializable
-    return list([to_ja(a), b] for a, b in zip(series.index.values.tolist(), series.values.tolist())
+    def to_sec(x):
+        return int(x.strftime("%s"))
+    return list([to_sec(a), b] for a, b in
+                zip(series.index.values.tolist(), series.values.tolist())
                 if not pd.isnull(b))
 
 
 # don't use pandas to_json
 def to_json(o):
-    if isinstance(o, pd.Series):
+    if isinstance(o, dict):
+        d = {}
+        for k, v in o.items():
+            d[k] = to_json(v)
+        return d
+    elif isinstance(o, list):
+        return [to_json(x) for x in o]
+    elif isinstance(o, pd.Series):
         return to_json(series_to_json(o))  # key is `o.name`
     elif isinstance(o, pd.DataFrame):
         d = {}
         # NOTE: val is a list of numpy.int64 (Not JSON serializable)
-        for key, val in o.items():
-            d[key] = series_to_json(val)
-            return to_json(d)
+        for k, v in o.items():
+            d[k] = to_json(v)
+        return d
     return o
 
 
@@ -94,17 +97,6 @@ def str2date(s):
         return datetime.date(int(ss[0]), int(ss[1]), 1)
     else:
         return datetime.date(int(ss[0]), int(ss[1]), int(ss[2]))
-
-
-def str_to_date(s):
-    import datetime
-    for fmt in C.DATE_FORMATS:
-        try:
-            return datetime.datetime.strptime(s, fmt).date()
-        except:
-            pass
-    else:
-        raise ValueError
 
 
 def read_csv_zip(fn, content):

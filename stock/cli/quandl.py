@@ -33,7 +33,7 @@ def quandl_codes(database_code):
 def get_by_code(**kw):
     code = kw["quandl_code"]
     click.secho("TRY TO GET `%s`" % code)
-    if query.store_prices(**kw):
+    if query.store_prices_if_needed(**kw):
         click.secho("Imported: %s" % code)
     else:
         click.secho("Already imported: %s" % code)

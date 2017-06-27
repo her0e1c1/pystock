@@ -21,7 +21,7 @@ def non_imported_quandl_codes(database_code):
     return allcodes
 
 
-def store_prices(quandl_code, limit=None, force=False):
+def store_prices_if_needed(quandl_code, limit=None, force=False):
     quandl_code = quandl_code.upper()  # FIXME
     session = models.Session()
     data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
@@ -51,6 +51,7 @@ def create_quandl_codes_if_needed(database_code):
 
 
 # INTERFACEの統一とapiとしてjsonに変換する関数必要
+# if price_type is None, return a DataFrame object instead of Series
 def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_type=None):
     quandl_code = quandl_code.upper().strip()
 
