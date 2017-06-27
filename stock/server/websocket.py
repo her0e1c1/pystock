@@ -1,6 +1,5 @@
-
 import tornado.websocket
-from stock import query, util
+from stock import query, util, cli
 
 
 def to_json(m):
@@ -15,13 +14,17 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         print("WebSocket opened")
 
     def on_message(self, message):
+        print(message)
         try:
-            print(message)
             j = to_json(message)
         except ValueError:
             return
-        series = query.get(**j)
-        self.write_message(str(util.series_to_json(series)))
+        t = j.pop("type", None)
+        if t == "query":
+            series = query.get(**j)
+            self.write_message(util.json_dumps(series))
+        else:
+            print(f"No type: {t}")
 
     def on_close(self):
         print("WebSocket closed")
