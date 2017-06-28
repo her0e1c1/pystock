@@ -1,6 +1,6 @@
 import collections
 import pandas as pd
-from stock import models, signals, charts, util, api
+from stock import models, signals, charts, util, api, charts_params
 
 
 def quandl_codes():
@@ -69,6 +69,7 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
         query = query.filter(Price.date <= to_date)
 
     df = pd.read_sql(query.statement, query.session.bind, index_col="date")  # queryの戻り値に出来る?
+    session.close()
 
     if price_type is None:
         return df
@@ -76,10 +77,9 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
     series = getattr(df, price_type)
 
     if chart_type:
-        f = getattr(charts, chart_type)
+        f = charts_params.get_charts()[chart_type]
         series = f(series)
 
-    session.close()
     return series
 
 
