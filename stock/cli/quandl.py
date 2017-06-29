@@ -22,7 +22,8 @@ def database():
 
 @c.command(name="code", help="Store and show quandl codes of [database_code] such as TSE, NIKKEI")
 @click.argument('database_code')
-def quandl_codes(database_code):
+@click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
+def quandl_codes(database_code, force):
     qcodes = query.create_quandl_codes_if_needed(database_code)
     click.secho(", ".join(sorted([c.code for c in qcodes])))
 
@@ -48,5 +49,5 @@ def import_codes(database_code, force, sleep):
     util.send_to_slack(f"START TO STORE {database_code} evey {sleep} second")
     codes = query.create_quandl_codes_if_needed(database_code)
     for c in codes:
-        get_by_code.callback(quandl_code=c, force=force)
+        get_by_code.callback(quandl_code=c.code, force=force)
         time.sleep(sleep)
