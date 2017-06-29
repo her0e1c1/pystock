@@ -18,6 +18,13 @@
       name: import-all-codes
       job: "docker exec pystock pystock quandl import-all-codes TSE | 2>&1 | logger -t pystock -p local0.info"
 
+  - cron:
+      cron_file: pystock
+      user: docker
+      minute: 0
+      name: predict
+      job: "docker exec pystock pystock predict | 2>&1 | logger -t pystock -p local0.info"
+
   - copy:
       src: ../.env
       dest: ~/pystock
