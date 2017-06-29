@@ -1,3 +1,4 @@
+from contextlib import contextmanager
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 from . import config as C
@@ -15,6 +16,18 @@ def create_all():
 def drop_all():
     Base.metadata.drop_all()
 
+
+# http://docs.sqlalchemy.org/en/rel_0_9/orm/session_basics.html#session-frequently-asked-questions
+@contextmanager
+def session_scope():
+    s = Session()
+    try:
+        yield s
+        s.commit()
+    except:
+        s.rollback()
+    finally:
+        s.close()
 
 # Database code should be stored in key-value store
 class QuandlCode(Base):
