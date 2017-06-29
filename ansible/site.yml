@@ -11,6 +11,12 @@
       force: yes
       accept_hostkey: True
 
+  - cron:
+      job: "pystock quandl import-all-codes TSE | 2>&1 | logger -t pystock -p local0.info"
+      user: docker
+      hour: 0
+      cron_file: pystock
+
   - copy:
       src: ../.env
       dest: ~/pystock

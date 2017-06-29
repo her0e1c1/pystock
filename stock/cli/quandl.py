@@ -1,7 +1,7 @@
 import time
 import click
 from .main import cli, AliasedGroup
-from stock import query, api, error
+from stock import query, api, error, util
 
 
 @cli.group(cls=AliasedGroup, name="quandl")
@@ -40,12 +40,13 @@ def get_by_code(**kw):
         click.secho("Already imported: %s" % code)
 
 
-@c.command(name="import_codes", help="import")
+@c.command(name="import-all-codes", help="import")
 @click.argument('database_code')
 @click.option("-s", "--sleep", type=int, default=60)
 @click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
 def import_codes(database_code, force, sleep):
-    codes = query.get_quandl_codes()
+    util.send_to_slack(f"START TO STORE {database_code} evey {sleep} second")
+    codes = query.create_quandl_codes_if_needed(database_code)
     for c in codes:
         get_by_code.callback(c, force=force)
         time.sleep(sleep)
