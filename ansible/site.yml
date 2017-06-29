@@ -1,0 +1,28 @@
+---
+
+- hosts: server
+  remote_user: root  # TODO: ubuntu
+  gather_facts: no
+  tasks:
+  - git:
+      repo: git@github.com:her0e1c1/pystock.git
+      dest: ~/pystock
+      update: yes
+      force: yes
+      accept_hostkey: True
+
+  - copy:
+      src: ../.env
+      dest: ~/pystock
+      mode: 0644
+
+  - docker_image:
+      path: ~/pystock
+      name: pystock
+
+  - docker_service:
+      files:
+        - docker-compose.yml
+      project_src: ~/pystock
+      build: yes
+      restarted: yes

@@ -17,3 +17,6 @@ venv34
 .ipynb_checkpoints/
 Untitled.ipynb
 
+# ansible
+hosts
+site.retry

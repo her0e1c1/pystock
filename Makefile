@@ -6,3 +6,6 @@ py:
 
 jp:
 	docker exec -it pystock ./start_jupyter --allow-root
+
+deploy:
+	cd ansible && ansible-playbook site.yml
