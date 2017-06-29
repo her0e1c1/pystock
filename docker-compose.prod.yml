@@ -1,8 +1,9 @@
 version: '2'
 
-tornado:
-  extends: pystock
-  container_name: tornado
-  ports:
-    - 10002:8080
-  entrypoint: pystock tornado
+services:
+  tornado:
+    extends: pystock
+    container_name: tornado
+    ports:
+      - 10002:8080
+    entrypoint: pystock tornado
