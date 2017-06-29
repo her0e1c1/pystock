@@ -6,4 +6,4 @@ services:
     container_name: tornado
     ports:
       - 10002:8080
-    entrypoint: pystock tornado
+    entrypoint: sh -c "python setup.py develop && pystock tornado"
