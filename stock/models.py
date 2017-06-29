@@ -29,6 +29,7 @@ def session_scope():
     finally:
         s.close()
 
+
 # Database code should be stored in key-value store
 class QuandlCode(Base):
 

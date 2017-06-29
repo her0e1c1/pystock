@@ -1,3 +1,4 @@
+import time
 import click
 from .main import cli, AliasedGroup
 from stock import query, api, error
@@ -41,9 +42,10 @@ def get_by_code(**kw):
 
 @c.command(name="import_codes", help="import")
 @click.argument('database_code')
-@click.option("-l", "--limit", type=int, default=10)
-def import_codes(database_code, limit):
-    codes = query.non_imported_quandl_codes()[:limit]
-    click.secho(", ".join(codes))
+@click.option("-s", "--sleep", type=int, default=60)
+@click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
+def import_codes(database_code, force, sleep):
+    codes = query.get_quandl_codes()
     for c in codes:
-        get_by_code.callback(c)
+        get_by_code.callback(c, force=force)
+        time.sleep(sleep)

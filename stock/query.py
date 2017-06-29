@@ -8,6 +8,12 @@ def get_prices_by_code():
     return [(c, get(quandl_code=c)) for c in codes]
 
 
+def get_quandl_codes():
+    with models.session_scope() as s:
+        codes = [p.code for p in s.query(models.QuandlCode).all()]
+    return codes
+
+
 def quandl_codes():
     session = models.Session()
     codes = [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
