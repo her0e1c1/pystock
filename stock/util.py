@@ -4,11 +4,32 @@ import csv
 import json
 import calendar
 import datetime
+import logging
 
 import pandas as pd
+import requests
 from dateutil import relativedelta
 
 from . import config as C
+
+logger = logging.getLogger(__name__)
+
+
+def send_to_slack(text, channel="#general"):
+    if not C.SLACK_URL:
+        logger.warn("NO SLACK URL")
+        return
+    payload = {
+        "text": text,
+        "channel": channel
+    }
+    resp = requests.post(
+        C.SLACK_URL,
+        json.dumps(payload),
+        headers={'content-type': 'application/json'}
+    )
+    if not resp.ok:
+        logger.warn("SOMETHING WRONG ABOUT SLACK")
 
 
 # type = [candlestick, column]

@@ -18,6 +18,9 @@ CREATE_ENGINE = {
     "echo": DEBUG,
 }
 
+SLACK_URL = os.environ.get("SLACK_URL")
+
+
 # frequently changed
 COMPANY_XLS_URL = "http://www.jpx.co.jp/markets/statistics-equities/misc/tvdivq0000001vg2-att/data_j.xls"
 EXCEL_COMPANY_HEADER = OrderedDict([
