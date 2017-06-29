@@ -1,17 +1,22 @@
-# coding: utf-8
+import time
 import click
-from stock import query
+from stock import signals, query, util
 from .main import cli, AliasedGroup
 
 
-@cli.group(cls=AliasedGroup, name="predict")
-def c():
-    pass
+# @cli.group(cls=AliasedGroup, name="predict")
+# def c():
+#     pass
 
 
-@c.command(help="do")
-@click.argument('quandl_code')
-def do(**kw):
-    result = query.predict(**kw)
-    click.echo(result)
-    return result
+@cli.command(help="Predict prices")
+@click.option("-s", "--sleep", type=int, default=60)
+def predict(sleep):
+    for (code, prices) in query.get_prices_by_code():
+        buy_or_sell = signals.rolling_mean(prices)
+        click.echo(buy_or_sell)
+        if buy_or_sell in ["BUY", "SELL"]:
+            msg = f"You should {buy_or_sell} {code}"
+            click.echo(msg)
+            util.send_to_slack(msg)
+        time.sleep(sleep)

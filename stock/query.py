@@ -3,6 +3,11 @@ import pandas as pd
 from stock import models, signals, charts, util, api, charts_params
 
 
+def get_prices_by_code():
+    codes = quandl_codes()
+    return [(c, get(quandl_code=c)) for c in codes]
+
+
 def quandl_codes():
     session = models.Session()
     codes = [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
