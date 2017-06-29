@@ -12,10 +12,10 @@
       accept_hostkey: True
 
   - cron:
-      job: "pystock quandl import-all-codes TSE | 2>&1 | logger -t pystock -p local0.info"
+      cron_file: pystock
       user: docker
       hour: 0
-      cron_file: pystock
+      job: "pystock quandl import-all-codes TSE | 2>&1 | logger -t pystock -p local0.info"
 
   - copy:
       src: ../.env
@@ -29,6 +29,7 @@
   - docker_service:
       files:
         - docker-compose.yml
+        - docker-compose.prod.yml
       project_src: ~/pystock
       build: yes
       restarted: yes
