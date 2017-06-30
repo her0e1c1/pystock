@@ -7,8 +7,11 @@ py:
 jp:
 	docker exec -it pystock ./start_jupyter --allow-root
 
+prod:
+	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+
 deploy:
 	cd ansible && ansible-playbook site.yml
 
-prod:
-	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
+deploy-service:
+	cd ansible && ansible-playbook site.yml --start-at-task=docker_service
