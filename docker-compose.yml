@@ -10,8 +10,6 @@ services:
     volumes:
         - .:/app
     working_dir: /app
-    ports:
-      - 10002:8080
     tty: true
     stdin_open: true
     entrypoint: sh -c "python setup.py develop && bash"
