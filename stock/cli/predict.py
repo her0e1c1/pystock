@@ -15,6 +15,4 @@ def predict():
         util.send_to_slack(f"Predict {code}", "#logs")
         buy_or_sell = signals.rolling_mean(prices)
         if buy_or_sell in ["BUY", "SELL"]:
-            msg = f"You should {buy_or_sell} {code}"
-            click.echo(msg)
-            util.send_to_slack(msg)
+            util.send_to_slack(f"You should {buy_or_sell} {code}")

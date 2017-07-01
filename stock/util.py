@@ -19,6 +19,7 @@ def send_to_slack(text, channel="#pystock"):
     if not C.SLACK_URL:
         logger.warn("NO SLACK URL")
         return
+    logger.debug(text)
     payload = {
         "text": text,
         "channel": channel
