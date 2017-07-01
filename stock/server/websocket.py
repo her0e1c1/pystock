@@ -16,7 +16,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         return True
 
     def open(self):
-        print("WebSocket opened")
+        self.write_message(util.json_dumps(dict(event="set_codes", codes=query.imported_quandl_codes())))
 
     def on_message(self, message):
         print(message)
@@ -27,23 +27,17 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         if not isinstance(js, list):
             js = [js]
         for j in js:
-            if "quandl_code" not in j:
-                j["quandl_code"] = "NIKKEI/INDEX"
-
+            j["quandl_code"] = j.pop("code") if "code" in j else "NIKKEI/INDEX"
             query.store_prices_if_needed(j["quandl_code"])
-
-            s = query.get(price_type="close", **j)
-            self.write_message(util.json_dumps(dict(series=s, **j)))
-
-            for (c, _f) in list(charts_params.get_charts().items())[:5]:
-            # for (c, _f) in charts_params.get_charts().items():
-                p = dict(price_type="close", chart_type=c, **j)
-                s = query.get(**p)
-                self.write_message(util.json_dumps(dict(series=s, **p)))
 
             # OHLC
             s = query.get(price_type=None, **j)
             self.write_message(util.json_dumps(dict(j, **util.to_json(s))))
+
+            for (c, f) in charts_params.get_charts().items():
+                p = dict(price_type="close", chart_type=c, **j)
+                ss = f(s["close"])
+                self.write_message(util.json_dumps(dict(series=ss, **p)))
 
             # PREDICT
             s = query.predict(**j)

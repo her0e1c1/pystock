@@ -17,9 +17,15 @@ def get_charts():
     funcs = {}
     for (f_name, f) in inspect.getmembers(charts, inspect.isfunction):
         vals = params[f_name]
-        if len(vals) == 1:
-            funcs[f_name] = lambda x: f(x, *vs)
+        # if len(vals) == 1
+        #     funcs[f_name] = lambda x: f(x, *vs)
         for vs in vals:
             name = f_name + "_" + "_".join(str(v) for v in vs)
-            funcs[name] = lambda x: f(x, *vs)
+
+            def g(f, vs):
+                def h(x):
+                    # import pdb; pdb.set_trace()
+                    return f(x, *vs)
+                return h
+            funcs[name] = g(f, vs)
     return funcs

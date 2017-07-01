@@ -4,7 +4,7 @@ from stock import models, signals, charts, util, api, charts_params
 
 
 def get_prices_by_code():
-    codes = quandl_codes()
+    codes = imported_quandl_codes()
     return [(c, get(quandl_code=c)) for c in codes]
 
 
@@ -14,16 +14,15 @@ def get_quandl_codes():
     return codes
 
 
-def quandl_codes():
-    session = models.Session()
-    codes = [p[0] for p in session.query(models.Price.quandl_code).distinct().all()]
-    session.close()
+def imported_quandl_codes():
+    with models.session_scope() as s:
+        codes = [p[0] for p in s.query(models.Price.quandl_code).distinct().all()]
     return codes
 
 
 def non_imported_quandl_codes(database_code):
     database_code = database_code.upper()  # FIXME
-    codes = quandl_codes()
+    codes = imported_quandl_codes()
     session = models.Session()
     allcodes = session.query(models.QuandlCode).filter_by(database_code=database_code).filter(
         models.QuandlCode.code.notin_([c.code for c in codes])
@@ -95,17 +94,17 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
 
 
 # TODO: 並列化
-def signal(signal=None, *args, **kw):
-    if signal is None:
-        signal = "rolling_mean"
-    result = collections.defaultdict(list)
-    for code in quandl_codes():
-        series = get(code, **kw)
-        f = getattr(signals, signal)
-        buy_or_sell = f(series, *args)
-        if buy_or_sell:
-            result[buy_or_sell].append(code)
-    return result
+# def signal(signal=None, *args, **kw):
+#     if signal is None:
+#         signal = "rolling_mean"
+#     result = collections.defaultdict(list)
+#     for code in quandl_codes():
+#         series = get(code, **kw)
+#         f = getattr(signals, signal)
+#         buy_or_sell = f(series, *args)
+#         if buy_or_sell:
+#             result[buy_or_sell].append(code)
+#     return result
 
 
 def predict(quandl_code, *args, **kw):
