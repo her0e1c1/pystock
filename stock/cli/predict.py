@@ -27,4 +27,4 @@ def predict(signal_name):
         buy_or_sell = f(prices)
         if buy_or_sell in ["BUY", "SELL"]:
             url = get_url(code)
-            util.send_to_slack(f"You should {buy_or_sell} {code} at {url}")
+            util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
