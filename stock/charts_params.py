@@ -27,7 +27,9 @@ def get_charts():
             name = f_name + "_" + "_".join(str(v) for v in vs)
 
             def g(f, vs):
-                return lambda x: f(x, *vs)
+                def h(x):
+                    return f(x, *vs)
+                return h
             funcs[name] = g(f, vs)
             # NO, cuz f and vs becomes different from next loop
             # funcs[name] = lambda x: f(x, *vs)
