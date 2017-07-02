@@ -24,7 +24,8 @@ def session_scope():
     try:
         yield s
         s.commit()
-    except:
+    except Exception as e:
+        print(e)  # for debug
         s.rollback()
     finally:
         s.close()
@@ -73,6 +74,9 @@ class Price(Base):  # Daily Price
     @sql.orm.validates('quandl_code')
     def validate_quandl_code(self, _key, val):
         return val.upper()
+
+    def __repr__(self):
+        return f"Price({self.quandl_code}, {self.date})"
 
 
 class CurrentPrice(Base):
