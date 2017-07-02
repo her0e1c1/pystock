@@ -17,11 +17,11 @@ def get_charts():
     funcs = {}
     for (f_name, f) in inspect.getmembers(charts, inspect.isfunction):
         vals = params[f_name]
-        if len(vals) == 1:
+        # if len(vals) == 1:
 
-            def g(f, vs):
-                return lambda x: f(f, *vs)
-            funcs[f_name] = g(f, vals[0])
+        #     def g(f, vs):
+        #         return lambda x: f(f, *vs)
+        #     funcs[f_name] = g(f, vals[0])
 
         for vs in vals:
             name = f_name + "_" + "_".join(str(v) for v in vs)
