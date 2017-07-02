@@ -67,7 +67,7 @@ class Price(Base):  # Daily Price
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
     volume = sql.Column(sql.Integer, nullable=True)
 
-    # FIXME:
+    # FIXME: Remove ID
     id = sql.Column(sql.Integer, primary_key=True)
 
     @sql.orm.validates('quandl_code')

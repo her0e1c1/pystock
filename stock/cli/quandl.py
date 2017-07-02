@@ -37,8 +37,10 @@ def get_by_code(**kw):
     click.secho("TRY TO GET `%s`" % code)
     if query.store_prices_if_needed(**kw):
         click.secho("Imported: %s" % code)
+        return True
     else:
         click.secho("Already imported: %s" % code)
+        return False
 
 
 @c.command(name="import-all-codes", help="import")
@@ -50,5 +52,5 @@ def import_codes(database_code, force, sleep):
     codes = query.create_quandl_codes_if_needed(database_code)
     for c in codes:
         util.send_to_slack(f"TRY TO STORE {c}", "#logs")
-        get_by_code.callback(quandl_code=c.code, force=force)
-        time.sleep(sleep)
+        if get_by_code.callback(quandl_code=c.code, force=force):
+            time.sleep(sleep)
