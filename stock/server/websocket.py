@@ -18,11 +18,21 @@ class MainHandler(tornado.websocket.WebSocketHandler):
     def open(self):
         self.write_message(util.json_dumps(dict(event="set_codes", codes=query.imported_quandl_codes())))
 
+    def event_favorites(self, data):
+        df = query.latest_prices_by_codes(data["codes"])
+        d = {i: dict(df.ix[i]) for i in df.index}
+        self.write_message(util.json_dumps(dict(data, event="favorites", **util.to_json(d))))
+
     def on_message(self, message):
         print(message)
         try:
             js = to_json(message)
         except ValueError:
+            return
+        if isinstance(js, dict) and "event" in js:
+            f = getattr(self, "event_" + js["event"], None)
+            if f:
+                f(js)
             return
         if not isinstance(js, list):
             js = [js]
