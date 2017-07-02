@@ -6,6 +6,7 @@ import calendar
 import datetime
 import logging
 
+import numpy as np
 import pandas as pd
 import requests
 from dateutil import relativedelta
@@ -34,13 +35,30 @@ def send_to_slack(text, channel="#pystock"):
 
 
 # type = [candlestick, column]
-def series_to_json(series, japan=True):
+def series_to_json(series):
     # WARN: nan can not JSON Serializable
-    def to_sec(x):
-        return int(x.strftime("%s"))
-    return list([to_sec(a), b] for a, b in
+    def to_sec(x):  # date convertor
+        if isinstance(x, (datetime.date, datetime.datetime)):
+            return int(x.strftime("%s"))
+        return x
+    return list([to_sec(a), to_sec(b)] for a, b in
                 zip(series.index.values.tolist(), series.values.tolist())
                 if not pd.isnull(b))
+
+
+class JsonEncoder(json.JSONEncoder):
+
+    def default(self, o):
+        if isinstance(o, np.integer):
+            return int(o)
+        elif isinstance(o, np.floating):
+            return float(o)
+        elif isinstance(o, np.ndarray):
+            return o.tolist()
+        elif isinstance(o, (datetime.date, datetime.datetime)):
+            return int(o.strftime("%s"))
+        else:
+            return super(JsonEncoder, self).default(o)
 
 
 # don't use pandas to_json
@@ -56,7 +74,6 @@ def to_json(o):
         return to_json(series_to_json(o))  # key is `o.name`
     elif isinstance(o, pd.DataFrame):
         d = {}
-        # NOTE: val is a list of numpy.int64 (Not JSON serializable)
         for k, v in o.items():
             d[k] = to_json(v)
         return d
@@ -64,7 +81,7 @@ def to_json(o):
 
 
 def json_dumps(o):
-    return json.dumps(to_json(o))
+    return json.dumps(to_json(o), cls=JsonEncoder)
 
 
 class DateRange(object):
