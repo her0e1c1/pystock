@@ -1,4 +1,12 @@
-- slack通知(cron???)
+# 要件
+
+- 各銘柄の線を引く(OHLC, 25日移動平均線, volume, RSI, bollinger band, MACD, stochastic)
+- 売買シグナルの銘柄を通知(cron + slack)
+- シグナルランキング(各シグナルに重み付け)
+- お気に入り銘柄/ポートフォリオ
+
+# TODO
+
 - redisに計算結果を反映(ランキング)
 - トレンドラインを引く
     - どこの２点を取るか決めるのが難しい
@@ -103,3 +111,5 @@
 - delete yesterday
 - chat botから、urlをopenするみたいなやつ
 - circle ci + delpy to new versions
+
+- 実際の要件は不明確なので、Pythonみたいなスクリプト言語の方が実装速い. あとでgolang?
