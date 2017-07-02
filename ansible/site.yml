@@ -16,7 +16,7 @@
       user: root
       hour: 0
       name: import-all-codes
-      job: "docker exec pystock pystock quandl import-all-codes TSE 2>&1 | logger -t pystock -p local0.info"
+      job: "docker exec pystock pystock quandl import-all-codes -f TSE 2>&1 | logger -t pystock -p local0.info"
 
   - cron:
       cron_file: pystock
