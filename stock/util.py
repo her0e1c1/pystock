@@ -51,7 +51,7 @@ class JsonEncoder(json.JSONEncoder):
     def default(self, o):
         if isinstance(o, np.integer):
             return int(o)
-        elif o is not None and np.isnan(o):
+        elif pd.isnull(o):
             return None
         elif isinstance(o, np.floating):
             return float(o)
