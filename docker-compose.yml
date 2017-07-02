@@ -13,3 +13,10 @@ services:
     tty: true
     stdin_open: true
     entrypoint: sh -c "python setup.py develop && bash"
+
+  tornado:
+    extends: pystock
+    container_name: tornado
+    ports:
+      - 10002:8080
+    entrypoint: sh -c "python setup.py develop && bash"
