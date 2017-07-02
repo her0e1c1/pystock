@@ -15,6 +15,8 @@ from . import config as C
 
 logger = logging.getLogger(__name__)
 
+# TODO: last, increment, sigma
+
 
 def send_to_slack(text, channel="#pystock"):
     if not C.SLACK_URL:

@@ -16,10 +16,15 @@ def get_url(code):
 
 
 @cli.command(help="Predict prices")
-def predict():
+@click.option("-s", "--signal-name", default="rolling_mean")
+def predict(signal_name):
+    if signal_name not in signals.get_signals():
+        click.echo("No signal: " + signal_name)
+        return
+    f = getattr(signals, signal_name)
     for (code, prices) in query.get_prices_by_code():
         util.send_to_slack(f"Predict {code}", "#logs")
-        buy_or_sell = signals.rolling_mean(prices)
+        buy_or_sell = f(prices)
         if buy_or_sell in ["BUY", "SELL"]:
             url = get_url(code)
             util.send_to_slack(f"You should {buy_or_sell} {code} at {url}")

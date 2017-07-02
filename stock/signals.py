@@ -2,11 +2,8 @@ import pandas as pd
 from . import charts
 
 
-# return pd.DataFrame.from_records([{}])
-
-
 def get_signals():
-    return ["rolling_mean", "rsi", "min_low", "macd_signal"]
+    return ["rolling_mean", "rsi", "min_low", "macd_signal", "rolling_mean_ratio", "increment_ratio"]
 
 
 # TODO: 呼び出し側でのNoneの考慮 + float()でwrapする?, invaid=Trueつける?
@@ -150,6 +147,7 @@ def bollinger_band(series, period=20, ratio=3):
     return "BUY" if s <= -ratio else "SELL" if s >= ratio else None
 
 
+# 値段予測(predict)
 def predict(df, period=20, sigma=2):
     """
     ボリンジャーバンドの考え方を応用し、次の日の安値を予測する。
