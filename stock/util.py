@@ -65,8 +65,6 @@ class JsonEncoder(json.JSONEncoder):
 
 # don't use pandas to_json
 def to_json(o):
-    if pd.isnull(o):  # HOTFIX
-        return None
     if isinstance(o, dict):
         d = {}
         for k, v in o.items():
@@ -81,6 +79,8 @@ def to_json(o):
         for k, v in o.items():
             d[k] = to_json(v)
         return d
+    if pd.isnull(o):  # HOTFIX
+        return None
     return o
 
 
