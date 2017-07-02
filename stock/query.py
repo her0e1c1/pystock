@@ -1,4 +1,3 @@
-import collections
 import sqlalchemy as sql
 import pandas as pd
 from stock import models, signals, charts, util, api, charts_params
@@ -23,19 +22,19 @@ def imported_quandl_codes():
 
 # NOTE: if codes == [], it takes a lot of time
 def latest_prices_by_codes(codes=[]):
-    # codes = ["TSE/1301"]
     p1 = models.Price
     p2 = sql.alias(models.Price)
     with models.session_scope() as s:
-        prices = s.query(p1).outerjoin(p2, sql.and_(
+        query = s.query(p1).outerjoin(p2, sql.and_(
             p1.quandl_code == p2.c.quandl_code,
             p1.date < p2.c.date,
         )).filter(
             p1.quandl_code.in_(codes) if codes else True,
             p2.c.date.is_(None),
-        ).all()
-        s.expunge_all()
-    return prices
+        )
+        df = pd.read_sql(query.statement, query.session.bind, index_col="quandl_code")
+        # s.expunge_all()  # need when you returns Price objects directly after closing a session
+    return df
 
 
 def non_imported_quandl_codes(database_code):

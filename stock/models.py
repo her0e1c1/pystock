@@ -58,14 +58,14 @@ def broker_before_insert(mapper, connection, qcode):
 class Price(Base):  # Daily Price
 
     __tablename__ = "price"
-    __table_args__ = (sql.UniqueConstraint('date', 'quandl_code'), )
+    __table_args__ = (sql.UniqueConstraint('quandl_code', "date"),)
 
     high = sql.Column(sql.Float, nullable=True)
     low = sql.Column(sql.Float, nullable=True)
     open = sql.Column(sql.Float, nullable=True)
     close = sql.Column(sql.Float, nullable=True)
-    date = sql.Column(sql.Date, nullable=False, index=True)
-    quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
+    date = sql.Column(sql.Date, nullable=False)
+    quandl_code = sql.Column(sql.String(64), nullable=False)
     volume = sql.Column(sql.Integer, nullable=True)
 
     # FIXME: Remove ID
