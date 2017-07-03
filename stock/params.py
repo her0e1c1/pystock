@@ -17,11 +17,12 @@ def get_charts():
     funcs = {}
     for (f_name, f) in inspect.getmembers(charts, inspect.isfunction):
         vals = params[f_name]
-        # if len(vals) == 1:
-
-        #     def g(f, vs):
-        #         return lambda x: f(f, *vs)
-        #     funcs[f_name] = g(f, vals[0])
+        if len(vals) == 1:
+            def g(f, vs):
+                def h(x):
+                    return f(x, *vs)
+                return h
+            funcs[f_name] = g(f, vals[0])
 
         for vs in vals:
             name = f_name + "_" + "_".join(str(v) for v in vs)
@@ -36,8 +37,33 @@ def get_charts():
     return funcs
 
 
+params2 = {
+    "rolling_mean": [[25]],
+    "rolling_mean_ratio": [[25, 25]],
+    "rsi": [[14, 30, 70]],
+    "stochastic": [[14, 3, 3]],
+    "macd_signal": [[26, 12, 9]],
+}
+
+
 def get_signals():
     funcs = {}
     for (f_name, f) in inspect.getmembers(signals, inspect.isfunction):
-        funcs[f_name] = f
+        vals = params2.get(f_name, [])
+
+        if len(vals) == 1:
+            def g(f, vs):
+                def h(x):
+                    return f(x, *vs)
+                return h
+            funcs[f_name] = g(f, vals[0])
+
+        for vs in vals:
+            name = f_name + "_" + "_".join(str(v) for v in vs)
+
+            def g(f, vs):
+                def h(x):
+                    return f(x, *vs)
+                return h
+            funcs[name] = g(f, vs)
     return funcs

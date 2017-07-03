@@ -2,13 +2,13 @@ import pandas as pd
 from . import charts, util
 
 
-def rolling_mean(series, period=25):
+def rolling_mean(series, period):
     """現在の株価(短期)と長期移動平均線(長期)のクロス"""
     slow = series.rolling(window=period, center=False).mean()
     return util.cross(series, slow)
 
 
-def rolling_mean_ratio(series, period=25, ratio=25):
+def rolling_mean_ratio(series, period, ratio):
     """長期移動平均線と現在の株価の最終日の差がratio乖離したら売買シグナル"""
     mean = series.rolling(window=period, center=False).mean()
     r = util.increment(util.last(series), util.last(mean))
@@ -23,7 +23,7 @@ def increment_ratio(series, ratio=25):
     return "BUY" if r < -ratio else "SELL" if r > ratio else None
 
 
-def rsi(series, period=14, buy=30, sell=70):
+def rsi(series, period, buy, sell):
     """RSIは基本的に30%以下で売られ過ぎ, 70%で買われ過ぎ"""
     rsi = charts.rsi(series, period)
     if rsi.empty:
@@ -41,14 +41,14 @@ def min_low(series, period=200, ratio=10):  # period in [200, 75, 25]
     return "BUY" if util.increment(last, m) < ratio else None
 
 
-def macd_signal(series, **kw):
+def macd_signal(series, fast, slow, signal):
     """macd(短期)とsignal(長期)のクロス"""
-    fast = charts.macd_line(series, **kw)
-    slow = charts.macd_signal(series, **kw)
-    return util.cross(fast, slow)
+    f = charts.macd_line(series, fast, slow, signal)
+    s = charts.macd_signal(series, fast, slow, signal)
+    return util.cross(f, s)
 
 
-def stochastic(series, k=14, d=3, sd=3):
+def stochastic(series, k, d, sd):
     """
     macd(短期)とsignal(長期)のクロス
     一般的に次の値を利用する (k, d, sd) = (14, 3, 3)

@@ -92,8 +92,6 @@ def cross(fast, slow):
         return "SELL"
 
 
-
-
 def send_to_slack(text, channel="#pystock"):
     if not C.SLACK_URL:
         logger.warn("NO SLACK URL")
