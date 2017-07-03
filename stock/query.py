@@ -33,7 +33,6 @@ def latest_prices_by_codes(codes=[]):
             p2.c.date.is_(None),
         )
         df = pd.read_sql(query.statement, query.session.bind, index_col="quandl_code")
-        # s.expunge_all()  # need when you returns Price objects directly after closing a session
     return df
 
 
@@ -50,14 +49,11 @@ def non_imported_quandl_codes(database_code):
 
 def store_prices_if_needed(quandl_code, limit=None, force=False):
     quandl_code = quandl_code.upper()  # FIXME
-    session = models.Session()
-    data = session.query(models.Price).filter_by(quandl_code=quandl_code).first()
-    if data:
-        if not force:
+    with models.session_scope() as s:
+        data = s.query(models.Price).filter_by(quandl_code=quandl_code).first()
+        if data and not force:
             return False
-        session.query(models.Price).filter_by(quandl_code=quandl_code).delete()
-        session.commit()
-        session.close()
+        s.query(models.Price).filter_by(quandl_code=quandl_code).delete()
     data = api.quandl.get_by_code(quandl_code)
     if limit:
         data = data.reindex(reversed(data.index))[:limit]
@@ -67,13 +63,13 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
 
 def create_quandl_codes_if_needed(database_code):
     database_code = database_code.upper()  # FIXME
-    session = models.Session()
-    qcodes = session.query(models.QuandlCode).filter_by(database_code=database_code).all()
-    if not qcodes:
-        codes = api.quandl.quandl_codes(database_code)
-        qcodes = [models.QuandlCode(code=c) for c in codes]
-        session.add_all(qcodes)
-        session.commit()
+    with models.session_scope() as s:
+        qcodes = s.query(models.QuandlCode).filter_by(database_code=database_code).all()
+        if not qcodes:
+            codes = api.quandl.quandl_codes(database_code)
+            qcodes = [models.QuandlCode(code=c) for c in codes]
+            s.add_all(qcodes)
+        s.expunge_all()  # need when you returns Model objects directly after closing a session
     return qcodes
 
 
