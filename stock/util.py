@@ -15,7 +15,83 @@ from . import config as C
 
 logger = logging.getLogger(__name__)
 
-# TODO: last, increment, sigma
+
+# TODO: 呼び出し側でのNoneの考慮 + float()でwrapする?, invaid=Trueつける?
+def last(series, offset_from_last=0):
+    return _last(series, offset_from_last)
+
+
+def _last(series, offset_from_last=0):
+    if offset_from_last == 0:
+        return series[-1]
+    elif offset_from_last > 0:
+        return series[-(offset_from_last + 1)]
+    i = series.last_valid_index()  # .tail(1)使える?
+    if i is None:  # or pd.isnull(i)
+        return
+    elif offset_from_last == 0:
+        return series[i]
+    elif i - offset_from_last >= 0:  # if index is datetime, then an error
+        return series[i - offset_from_last]
+
+
+def increment(a, b):
+    if a is None or b is None:
+        return None
+    return float((a - b) / b) * 100
+
+
+def sigma(series, period):
+    """
+    [-4, 4] or Noneを返す。
+    つまり、
+    現在値と平均が同じ => 0
+    (0, 1] => 1
+    (1, 2] => 2
+    (2, 3] => 3
+    (4,  ] => 4 (4sigma以上)
+    また、負の方向はマイナスをつけるだけ
+    """
+    if series.empty:  # 他の関数にも書いたほうがいいかも(呼び出し側で気をつける?)
+        return
+    rolling = series.rolling(window=period, center=False)
+    mean = last(rolling.mean())
+    std = last(rolling.std())
+    curr = last(series)
+    if any([x is None for x in [curr, mean, std]]):
+        return
+    if curr == mean:
+        return 0
+    sign = 1 if curr > mean else -1
+    for sigma in [1, 2, 3]:
+        m1 = mean + sign * std * (sigma - 1)
+        m2 = mean + sign * std * sigma
+        if min(m1, m2) < curr <= max(m1, m2):  # fix import
+            return sign * sigma
+    else:
+        return 4 * sign
+
+
+# Return "BUY", "SELL", NONE
+def cross(fast, slow):
+    """
+    golden cross: 短期が長期を下から上に抜けた場合(BUY)
+    dead cross  : 短期が長期を上から下に抜けた場合(SELL)
+    """
+    f0 = last(fast)
+    f1 = last(fast, offset_from_last=1)
+    s0 = last(slow)
+    s1 = last(slow, offset_from_last=1)
+    if any([x is None for x in [f0, f1, s0, s1]]):
+        return
+    d0 = float(f0 - s0)
+    d1 = float(f1 - s1)
+    if d1 < 0 and d0 > 0:
+        return "BUY"
+    elif d1 > 0 and d0 < 0:
+        return "SELL"
+
+
 
 
 def send_to_slack(text, channel="#pystock"):

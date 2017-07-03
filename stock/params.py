@@ -1,5 +1,5 @@
 import inspect
-from stock import charts
+from stock import charts, signals
 
 params = {
     "rolling_mean": [[25], [50], [100]],
@@ -33,4 +33,11 @@ def get_charts():
             funcs[name] = g(f, vs)
             # NO, cuz f and vs becomes different from next loop
             # funcs[name] = lambda x: f(x, *vs)
+    return funcs
+
+
+def get_signals():
+    funcs = {}
+    for (f_name, f) in inspect.getmembers(signals, inspect.isfunction):
+        funcs[f_name] = f
     return funcs

@@ -1,6 +1,6 @@
 import sqlalchemy as sql
 import pandas as pd
-from stock import models, signals, charts, util, api, params
+from stock import models, signals, charts, util, api, params, predict as pp
 
 
 def get_prices_by_code():
@@ -105,4 +105,4 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
 
 def predict(quandl_code, *args, **kw):
     df = get(quandl_code, price_type=None, **kw)
-    return signals.predict(df)
+    return pp.predict(df)
