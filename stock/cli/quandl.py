@@ -52,5 +52,8 @@ def import_codes(database_code, force, sleep):
     codes = query.create_quandl_codes_if_needed(database_code)
     for c in codes:
         util.send_to_slack(f"TRY TO STORE {c}", "#logs")
-        if get_by_code.callback(quandl_code=c.code, force=force):
-            time.sleep(sleep)
+        try:
+            if get_by_code.callback(quandl_code=c.code, force=force):
+                time.sleep(sleep)
+        except Exception as e:
+            util.send_to_slack(f"Error: Import {c}: {e}")

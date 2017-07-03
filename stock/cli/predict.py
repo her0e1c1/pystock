@@ -25,10 +25,13 @@ def predict(signal_name):
     f = funcs[signal_name]
     for (code, prices) in query.get_prices_by_code():
         # util.send_to_slack(f"Predict {code}", "#logs")
-        buy_or_sell = f(prices)
-        if buy_or_sell in ["BUY", "SELL"]:
-            url = get_url(code)
-            util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
+        try:
+            buy_or_sell = f(prices)
+            if buy_or_sell in ["BUY", "SELL"]:
+                url = get_url(code)
+                util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
+        except Exception as e:
+            util.send_to_slack(f"Error: Predict {code}({signal_name}): {e}")
 
 
 @cli.command(help="Predict prices")
