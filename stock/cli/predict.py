@@ -24,7 +24,7 @@ def predict(signal_name):
         return
     f = funcs[signal_name]
     for (code, prices) in query.get_prices_by_code():
-        # util.send_to_slack(f"Predict {code}", "#logs")
+        util.send_to_slack(f"Predict {code}", "#logs")
         try:
             buy_or_sell = f(prices)
             if buy_or_sell in ["BUY", "SELL"]:
