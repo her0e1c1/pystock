@@ -14,7 +14,7 @@
   - cron:
       cron_file: pystock
       user: root
-      hour: 0
+      hour: 16  # at 12 in jp 
       name: import-all-codes
       job: "docker exec pystock pystock quandl import-all-codes -f TSE 2>&1 | logger -t pystock -p local0.info"
 
