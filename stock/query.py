@@ -3,20 +3,28 @@ import pandas as pd
 from stock import models, signals, charts, util, api, params, predict as pp
 
 
+def set_signals(signal, **kw):
+    pass
+
+
 def get_prices_by_code():
-    codes = imported_quandl_codes()
-    return [(c, get(quandl_code=c)) for c in codes]
+    qcodes = get_quandl_codes()
+    return [(c, get(quandl_code=c.code)) for c in qcodes]
 
 
 def get_quandl_codes():
     with models.session_scope() as s:
-        codes = [p.code for p in s.query(models.QuandlCode).all()]
+        codes = [c for c in s.query(models.QuandlCode).all()]
+        # need when you returns Model objects directly after closing a session
+        # but this removes all from session (no commits anymore)
+        s.expunge_all()
     return codes
 
 
 def imported_quandl_codes():
     with models.session_scope() as s:
         codes = [p[0] for p in s.query(models.Price.quandl_code).distinct().all()]
+        # p[0] is string, so no need to expunge_all
     return codes
 
 
@@ -63,13 +71,13 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
 
 def create_quandl_codes_if_needed(database_code):
     database_code = database_code.upper()  # FIXME
-    with models.session_scope() as s:
+    with models.session_scope(expire_on_commit=False) as s:
         qcodes = s.query(models.QuandlCode).filter_by(database_code=database_code).all()
         if not qcodes:
             codes = api.quandl.quandl_codes(database_code)
             qcodes = [models.QuandlCode(code=c) for c in codes]
             s.add_all(qcodes)
-        s.expunge_all()  # need when you returns Model objects directly after closing a session
+
     return qcodes
 
 

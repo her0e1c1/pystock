@@ -1,7 +1,14 @@
+import enum
+import datetime
 from contextlib import contextmanager
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
 from . import config as C
+
+
+class Signal(enum.Enum):
+    BUY = "BUY"
+    SELL = "SELL"
 
 
 engine = sql.create_engine(C.DATABASE_URL, **C.CREATE_ENGINE)
@@ -19,8 +26,8 @@ def drop_all():
 
 # http://docs.sqlalchemy.org/en/rel_0_9/orm/session_basics.html#session-frequently-asked-questions
 @contextmanager
-def session_scope():
-    s = Session()
+def session_scope(**kw):
+    s = Session(**kw)
     try:
         yield s
         s.commit()
@@ -48,11 +55,17 @@ class QuandlCode(Base):
 
 
 @sql.event.listens_for(QuandlCode, 'before_insert')
-def broker_before_insert(mapper, connection, qcode):
+def code_before_insert(mapper, connection, qcode):
+    s = sql.inspect(qcode).session
     splited = qcode.code.split("/", 2)
     if len(splited) == 2:
         db, _ = splited
         qcode.database_code = db
+
+        # before_insert is called after before_flush and before_commit :(
+        @sql.event.listens_for(s, 'after_flush', once=True)
+        def f(session, flush_context):
+            qcode.signal = Signal()
 
 
 class Price(Base):  # Daily Price
@@ -88,6 +101,25 @@ class CurrentPrice(Base):
     value = sql.Column(sql.Integer, nullable=False)
     datetime = sql.Column(sql.DateTime, nullable=False, index=True)
     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
+
+
+class Signal(Base):
+
+    __tablename__ = "signal"
+
+    # one to one
+    quandle_code = sql.Column(sql.String(64), sql.ForeignKey('quandl_code.code', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, primary_key=True)
+    updated_at = sql.Column(sql.DateTime, onupdate=datetime.datetime.utcnow, default=datetime.datetime.utcnow, nullable=False)
+    created_at = sql.Column(sql.DateTime, default=datetime.datetime.utcnow, nullable=False)
+
+    # expect index merge on mysql :D
+    macd_signal = sql.Column(sql.Enum(Signal), index=True)
+    rsi = sql.Column(sql.Enum(Signal), index=True)
+    stochastic = sql.Column(sql.Enum(Signal), index=True)
+    bollinger_band = sql.Column(sql.Enum(Signal), index=True)
+    rolling_mean = sql.Column(sql.Enum(Signal), index=True)
+
+    code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
 
 
 # class SplitStockDate(Base):

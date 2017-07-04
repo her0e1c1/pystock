@@ -23,7 +23,8 @@ def predict(signal_name):
         click.echo("No signal: " + signal_name)
         return
     f = funcs[signal_name]
-    for (code, prices) in query.get_prices_by_code():
+    for (qcode, prices) in query.get_prices_by_code():
+        code = q.code
         util.send_to_slack(f"Predict {code}", "#logs")
         try:
             buy_or_sell = f(prices)
