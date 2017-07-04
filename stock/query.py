@@ -10,11 +10,6 @@ def set_signals(qcode, **kw):
         s.add(qcode)
 
 
-def get_prices_by_code():
-    qcodes = get_quandl_codes()
-    return [(c, get(quandl_code=c.code)) for c in qcodes]
-
-
 def get_quandl_codes():
     with models.session_scope() as s:
         codes = [c for c in s.query(models.QuandlCode).all()]

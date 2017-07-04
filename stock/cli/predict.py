@@ -23,15 +23,16 @@ def predict(signal_name):
         click.echo("No signal: " + signal_name)
         return
     f = funcs[signal_name]
-    for (qcode, prices) in query.get_prices_by_code():
-        code = q.code
-        util.send_to_slack(f"Predict {code}", "#logs")
+    for qcode in query.get_quandl_codes():
+        code = qcode.code
+        query.store_prices_if_needed(code)
         try:
+            prices = query.get(code)
             buy_or_sell = f(prices)
             if buy_or_sell in ["BUY", "SELL"]:
                 url = get_url(code)
                 util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
-        query.set_signals(qcode, signal_name=buy_or_sell or None)
+            query.set_signals(qcode, signal_name=buy_or_sell)
         except Exception as e:
             util.send_to_slack(f"Error: Predict {code}({signal_name}): {e}")
 
