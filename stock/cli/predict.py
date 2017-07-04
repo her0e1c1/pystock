@@ -31,6 +31,7 @@ def predict(signal_name):
             if buy_or_sell in ["BUY", "SELL"]:
                 url = get_url(code)
                 util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
+        query.set_signals(qcode, signal_name=buy_or_sell or None)
         except Exception as e:
             util.send_to_slack(f"Error: Predict {code}({signal_name}): {e}")
 

@@ -3,8 +3,11 @@ import pandas as pd
 from stock import models, signals, charts, util, api, params, predict as pp
 
 
-def set_signals(signal, **kw):
-    pass
+def set_signals(qcode, **kw):
+    with models.session_scope() as s:
+        for k, v in kw.items():
+            setattr(qcode, k, v)
+        s.add(qcode)
 
 
 def get_prices_by_code():
@@ -77,7 +80,6 @@ def create_quandl_codes_if_needed(database_code):
             codes = api.quandl.quandl_codes(database_code)
             qcodes = [models.QuandlCode(code=c) for c in codes]
             s.add_all(qcodes)
-
     return qcodes
 
 
