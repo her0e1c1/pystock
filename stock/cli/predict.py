@@ -39,4 +39,4 @@ def predict(signal_name):
 
 @cli.command(help="Predict prices")
 def hoge():
-    print(util.json_dumps(query.get("TSE/1301")))
+    print(util.json_dumps(query.get_quandl_code("TSE/1301")))

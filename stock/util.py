@@ -5,14 +5,13 @@ import json
 import calendar
 import datetime
 import logging
-import collections
 
 import numpy as np
 import pandas as pd
 import requests
 from dateutil import relativedelta
 
-from . import config as C
+from . import models, config as C
 
 logger = logging.getLogger(__name__)
 
@@ -139,6 +138,8 @@ def to_json(o):
         return None
     elif isinstance(o, list):
         return [to_json(x) for x in o]
+    elif isinstance(o, models.Base):
+        return {k: getattr(o, k) for k in o.__table__.columns.keys()}
     return o
 
 

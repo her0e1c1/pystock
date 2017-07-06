@@ -10,6 +10,11 @@ def set_signals(qcode, **kw):
         s.add(qcode)
 
 
+def get_quandl_code(code):
+    with models.session_scope(expire_on_commit=False) as s:
+        return s.query(models.QuandlCode).filter_by(code=code).first()
+
+
 def get_quandl_codes():
     with models.session_scope() as s:
         codes = [c for c in s.query(models.QuandlCode).all()]
