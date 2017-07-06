@@ -5,6 +5,7 @@ import json
 import calendar
 import datetime
 import logging
+import collections
 
 import numpy as np
 import pandas as pd
@@ -110,58 +111,39 @@ def send_to_slack(text, channel="#pystock"):
         logger.warn("SOMETHING WRONG ABOUT SLACK")
 
 
-# type = [candlestick, column]
+# don't use pandas to_json
 def series_to_json(series):
-    # WARN: nan can not JSON Serializable
-    def to_sec(x):  # date convertor
-        if isinstance(x, (datetime.date, datetime.datetime)):
-            return int(x.strftime("%s"))
-        return x
-    return list([to_sec(a), to_sec(b)] for a, b in
+    return list([a, b] for a, b in
                 zip(series.index.values.tolist(), series.values.tolist())
                 if not pd.isnull(b))
 
 
-class JsonEncoder(json.JSONEncoder):
-
-    def default(self, o):
-        if isinstance(o, np.integer):
-            return int(o)
-        elif pd.isnull(o):
-            return None
-        elif isinstance(o, np.floating):
-            return float(o)
-        elif isinstance(o, np.ndarray):
-            return o.tolist()
-        elif isinstance(o, (datetime.date, datetime.datetime)):
-            return int(o.strftime("%s"))
-        else:
-            return super(JsonEncoder, self).default(o)
-
-
-# don't use pandas to_json
 def to_json(o):
-    if isinstance(o, dict):
-        d = {}
-        for k, v in o.items():
-            d[k] = to_json(v)
-        return d
-    elif isinstance(o, list):
-        return [to_json(x) for x in o]
+    if isinstance(o, np.integer):
+        return int(o)
+    elif isinstance(o, np.floating):
+        return float(o)
+    elif isinstance(o, np.ndarray):
+        return o.tolist()
+    elif isinstance(o, (datetime.date, datetime.datetime)):
+        return int(o.strftime("%s"))
     elif isinstance(o, pd.Series):
-        return to_json(series_to_json(o))  # key is `o.name`
-    elif isinstance(o, pd.DataFrame):
+        return to_json(series_to_json(o))
+    elif isinstance(o, (pd.DataFrame, dict)):
         d = {}
         for k, v in o.items():
-            d[k] = to_json(v)
-        return d
-    if pd.isnull(o):  # HOTFIX
+            d[k] = v
+        return to_json(d)
+    n = pd.isnull(o)
+    if not hasattr(n, "all") and n:
         return None
+    elif isinstance(o, collections.Iterable):  # maybe []
+        return [to_json(x) for x in o]
     return o
 
 
 def json_dumps(o):
-    return json.dumps(to_json(o), cls=JsonEncoder)
+    return json.dumps(to_json(o))
 
 
 class DateRange(object):
