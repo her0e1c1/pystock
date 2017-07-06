@@ -1,10 +1,5 @@
-import inspect
 import tornado.websocket
-from stock import query, util, charts, params
-
-
-def get_charts():
-    return inspect.getmembers(charts, inspect.isfunction)
+from stock import query, util, params
 
 
 def to_json(m):
