@@ -132,12 +132,12 @@ def to_json(o):
     elif isinstance(o, (pd.DataFrame, dict)):
         d = {}
         for k, v in o.items():
-            d[k] = v
-        return to_json(d)
+            d[k] = to_json(v)
+        return d
     n = pd.isnull(o)
     if not hasattr(n, "all") and n:
         return None
-    elif isinstance(o, collections.Iterable):  # maybe []
+    elif isinstance(o, list):
         return [to_json(x) for x in o]
     return o
 
