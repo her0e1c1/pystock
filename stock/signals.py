@@ -1,5 +1,5 @@
 import pandas as pd
-from . import charts, util
+from . import line, util
 
 
 def rolling_mean(series, period):
@@ -25,7 +25,7 @@ def increment_ratio(series, ratio=25):
 
 def rsi(series, period, buy, sell):
     """RSIは基本的に30%以下で売られ過ぎ, 70%で買われ過ぎ"""
-    rsi = charts.rsi(series, period)
+    rsi = line.rsi(series, period)
     if rsi.empty:
         return None
     f = float(rsi[rsi.last_valid_index()])
@@ -43,8 +43,8 @@ def min_low(series, period=200, ratio=10):  # period in [200, 75, 25]
 
 def macd_signal(series, fast, slow, signal):
     """macd(短期)とsignal(長期)のクロス"""
-    f = charts.macd_line(series, fast, slow, signal)
-    s = charts.macd_signal(series, fast, slow, signal)
+    f = line.macd_line(series, fast, slow, signal)
+    s = line.macd_signal(series, fast, slow, signal)
     return util.cross(f, s)
 
 
@@ -53,8 +53,8 @@ def stochastic(series, k, d, sd):
     macd(短期)とsignal(長期)のクロス
     一般的に次の値を利用する (k, d, sd) = (14, 3, 3)
     """
-    fast = charts.stochastic_d(series, k=k, d=d)
-    slow = charts.stochastic_sd(series, k=k, d=d, sd=sd)
+    fast = line.stochastic_d(series, k=k, d=d)
+    slow = line.stochastic_sd(series, k=k, d=d, sd=sd)
     return util.cross(fast, slow)
 
 

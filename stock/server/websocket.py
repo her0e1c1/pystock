@@ -39,7 +39,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
             s = query.get(price_type=None, **j)
             self.write_message(util.json_dumps(dict(j, **util.to_json(s))))
 
-            for (c, f) in params.get_charts().items():
+            for (c, f) in params.get_lines().items():
                 p = dict(price_type="close", chart_type=c, **j)
                 ss = f(s["close"])
                 self.write_message(util.json_dumps(dict(series=ss, **p)))

@@ -1,6 +1,6 @@
 import sqlalchemy as sql
 import pandas as pd
-from stock import models, signals, charts, util, api, params, predict as pp
+from stock import models, signals, line, util, api, params, predict as pp
 
 
 def set_signals(qcode, **kw):
@@ -102,7 +102,7 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
     series = getattr(df, price_type)
 
     if chart_type:
-        f = params.get_charts()[chart_type]
+        f = params.get_lines()[chart_type]
         series = f(series)
 
     return series

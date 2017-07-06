@@ -1,5 +1,5 @@
 import inspect
-from stock import charts, signals
+from stock import line, signals
 
 params = {
     "rolling_mean": [[25], [50], [100]],
@@ -13,9 +13,9 @@ params = {
 }
 
 
-def get_charts():
+def get_lines():
     funcs = {}
-    for (f_name, f) in inspect.getmembers(charts, inspect.isfunction):
+    for (f_name, f) in inspect.getmembers(line, inspect.isfunction):
         vals = params[f_name]
         if len(vals) == 1:
             def g(f, vs):
