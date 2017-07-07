@@ -1,5 +1,3 @@
-import pandas as pd
-
 
 def rolling_mean(series, period):
     return series.rolling(window=period, center=False).mean()
@@ -23,9 +21,8 @@ def stochastic_sd(series, k, d, sd):
 
 
 def bollinger_band(prices, period, sigma):
-    mean = pd.rolling_mean(prices, period)
-    std = pd.rolling_std(prices, period)
-    return mean + sigma * std
+    r = prices.rolling(window=period, center=False)
+    return r.mean() + sigma * r.std()
 
 
 def macd_line(series, fast, slow, signal):

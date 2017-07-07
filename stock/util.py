@@ -139,7 +139,7 @@ def to_json(o):
     elif isinstance(o, list):
         return [to_json(x) for x in o]
     elif isinstance(o, models.Base):
-        return {k: getattr(o, k) for k in o.__table__.columns.keys()}
+        return {k: to_json(getattr(o, k)) for k in o.__table__.columns.keys()}
     return o
 
 

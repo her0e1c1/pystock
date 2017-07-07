@@ -11,8 +11,9 @@ def set_signals(qcode, **kw):
 
 
 def get_quandl_code(code):
+    q = models.QuandlCode
     with models.session_scope(expire_on_commit=False) as s:
-        return s.query(models.QuandlCode).filter_by(code=code).first()
+        return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
 def get_quandl_codes():

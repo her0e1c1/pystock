@@ -8,7 +8,7 @@ from collections import OrderedDict
 # ROOTDIR = path.Path(__file__).parent.parent
 ROOTDIR = "/".join(os.path.abspath(__file__).split("/")[:-2])
 
-DEBUG = True
+DEBUG = os.environ.get("DEBUG", True)
 LOG_LEVEL = logging.INFO
 
 DATABASE_URL = os.environ.get("DATABASE_URL", "sqlite://")
