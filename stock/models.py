@@ -108,7 +108,7 @@ class Signal(Base):
     __tablename__ = "signal"
 
     # one to one
-    quandle_code = sql.Column(sql.String(64), sql.ForeignKey('quandl_code.code', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, primary_key=True)
+    quandl_code = sql.Column(sql.String(64), sql.ForeignKey('quandl_code.code', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, primary_key=True)
     updated_at = sql.Column(sql.DateTime, onupdate=datetime.datetime.utcnow, default=datetime.datetime.utcnow, nullable=False)
     created_at = sql.Column(sql.DateTime, default=datetime.datetime.utcnow, nullable=False)
 

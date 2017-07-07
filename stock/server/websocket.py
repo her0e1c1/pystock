@@ -43,7 +43,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
             qcode = query.get_quandl_code(j["quandl_code"])
             if not qcode:
                 continue
-            self.write_message(util.json_dumps(qcode.signal))
+            self.__write(event="signal", signal=qcode.signal)
 
             # OHLC
             s = query.get(price_type=None, **j)

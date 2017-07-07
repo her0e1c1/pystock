@@ -164,16 +164,6 @@ class DateRange(object):
     def to_dict(self):
         return {"start": str(self.start), "end": str(self.end)}
 
-    def to_short_dict(self):
-        return {
-            "sy": self.start.year,
-            "sm": self.start.month,
-            "sd": self.start.day,
-            "ey": self.end.year,
-            "em": self.end.month,
-            "ed": self.end.day,
-        }
-
 
 def dict_inverse(dct):
     return {v: k for k, v in dct.items()}
