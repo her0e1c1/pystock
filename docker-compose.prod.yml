@@ -7,3 +7,4 @@ services:
     ports:
       - 10002:8080
     entrypoint: sh -c "python setup.py develop && pystock tornado"
+    restart: always
