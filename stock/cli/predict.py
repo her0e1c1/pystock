@@ -12,7 +12,7 @@ from .main import cli, AliasedGroup
 
 def get_url(code):
     u = os.environ.get("CHART_URL")
-    return f"{u}?path=/chart&code={code}"
+    return f"{u}?path=chart&code={code}"
 
 
 @cli.command(help="Predict prices")

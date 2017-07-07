@@ -39,7 +39,6 @@ class MainHandler(tornado.websocket.WebSocketHandler):
 
             j["quandl_code"] = j.pop("code") if "code" in j else "NIKKEI/INDEX"
             query.store_prices_if_needed(j["quandl_code"])
-
             qcode = query.get_quandl_code(j["quandl_code"])
             if not qcode:
                 continue
