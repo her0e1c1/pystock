@@ -20,7 +20,12 @@ class MainHandler(tornado.websocket.WebSocketHandler):
     def event_favorites(self, data):
         df = query.latest_prices_by_codes(data["codes"])
         d = {i: dict(df.ix[i]) for i in df.index}
-        self.__write(dict(data, event="favorites", **util.to_json(d)))
+        self.__write(**dict(data, event="favorites", **util.to_json(d)))
+
+    def event_list(self, data):
+        qcodes = query.get_quandl_codes()
+        j = [dict(util.to_json(q), signal=q.signal) for q in qcodes]
+        self.__write(**dict(data, codes=j))
 
     def on_message(self, message):
         print(message)
@@ -31,10 +36,10 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         if not isinstance(js, list):
             js = [js]
         for j in js:
-            if isinstance(js, dict) and "event" in js:
-                f = getattr(self, "event_" + js["event"], None)
+            if "event" in j:
+                f = getattr(self, "event_" + j["event"], None)
                 if f:
-                    f(js)
+                    f(j)
                 return
 
             j["quandl_code"] = j.pop("code") if "code" in j else "NIKKEI/INDEX"

@@ -27,7 +27,7 @@ def quandl_codes(database_code):
 
 
 MAP_PRICE_COLUMNS = {}
-for v in ["open", "close", "high", "low"]:
+for v in ["open", "close", "high", "low", "volume"]:
     p = "price"
     keys = [v, v.title(), "%s %s" % (v, p), "%s %s" % (v.title(), p.title()), "%s%s" % (v.title(), p.title())]
     for k in keys:

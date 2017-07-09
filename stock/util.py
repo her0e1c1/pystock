@@ -1,4 +1,5 @@
 import io
+import enum
 import zipfile
 import csv
 import json
@@ -136,6 +137,8 @@ def to_json(o):
     n = pd.isnull(o)
     if not hasattr(n, "all") and n:
         return None
+    elif isinstance(o, enum.Enum):
+        return o.value
     elif isinstance(o, list):
         return [to_json(x) for x in o]
     elif isinstance(o, models.Base):

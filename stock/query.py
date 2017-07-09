@@ -17,8 +17,9 @@ def get_quandl_code(code):
 
 
 def get_quandl_codes():
+    q = models.QuandlCode
     with models.session_scope() as s:
-        codes = [c for c in s.query(models.QuandlCode).all()]
+        codes = s.query(q).options(sql.orm.joinedload(q.signal)).all()
         # need when you returns Model objects directly after closing a session
         # but this removes all from session (no commits anymore)
         s.expunge_all()
@@ -69,7 +70,13 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
     data = api.quandl.get_by_code(quandl_code)
     if limit:
         data = data.reindex(reversed(data.index))[:limit]
-    data.to_sql("price", models.engine, if_exists='append')  # auto commit
+
+    # Not to fire ORM events :(
+    # data.to_sql("price", models.engine, if_exists='append')  # auto commit
+
+    with models.session_scope() as s:
+        prices = [models.Price(**dict({data.index.name: i}, **data.ix[i].to_dict())) for i in data.index]  # FIXME :(
+        s.add_all(prices)
     return True
 
 
