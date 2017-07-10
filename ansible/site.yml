@@ -21,21 +21,21 @@
   - cron:
       cron_file: pystock
       user: root
-      hour: "0,6,12,18"
+      hour: "18"
       name: predict
       job: "docker exec pystock pystock predict 2>&1 | logger -t pystock -p local0.info"
 
   - cron:
       cron_file: pystock
       user: root
-      hour: "1,7,13,19"
+      hour: "19"
       name: predict-rsi
       job: "docker exec pystock pystock predict -s rsi 2>&1 | logger -t pystock -p local0.info"
 
   - cron:
       cron_file: pystock
       user: root
-      hour: "2,8,14,20"
+      hour: "20"
       name: predict-macd
       job: "docker exec pystock pystock predict -s macd_signal 2>&1 | logger -t pystock -p local0.info"
 
