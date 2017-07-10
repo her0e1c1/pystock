@@ -71,12 +71,13 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
     if limit:
         data = data.reindex(reversed(data.index))[:limit]
 
-    # Not to fire ORM events :(
-    # data.to_sql("price", models.engine, if_exists='append')  # auto commit
-
+    data.to_sql("price", models.engine, if_exists='append')  # auto commit
     with models.session_scope() as s:
-        prices = [models.Price(**dict({data.index.name: i}, **data.ix[i].to_dict())) for i in data.index]  # FIXME :(
-        s.add_all(prices)
+        price = s.query(models.Price).filter_by(quandl_code=quandl_code).order_by(models.Price.date.desc()).first()
+        s.query(models.Signal).filter_by(quandl_code=quandl_code).update({
+            "price_id": price.id
+        })
+
     return True
 
 

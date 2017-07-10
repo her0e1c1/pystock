@@ -126,6 +126,8 @@ def code_before_insert(mapper, connection, qcode):
             qcode.signal = Signal()
 
 
+# Not to fire ORM events but insert is very slow :(
+# data.to_sql("price", models.engine, if_exists='append')  # auto commit
 # @sql.event.listens_for(Price, 'before_insert')
 # def price_before_insert(mapper, connection, price):
 #     s = sql.inspect(price).session
@@ -133,11 +135,10 @@ def code_before_insert(mapper, connection, qcode):
 #         signal = s.query(Signal).filter_by(quandl_code=price.quandl_code).one()
 #     else:
 #         signal = price.code.signal
-
-    # latest = signal.price
-    # with s.begin_nested() as st:
-    #     if not latest or latest.date < price.date:
-    #         sql.orm.attributes.set_committed_value(signal, "price", price)
+#     latest = signal.price
+#     with s.begin_nested() as st:
+#         if not latest or latest.date < price.date:
+#             sql.orm.attributes.set_committed_value(signal, "price", price)
 
 
 # class SplitStockDate(Base):
