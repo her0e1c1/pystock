@@ -27,6 +27,17 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         j = [dict(util.to_json(q), signal=q.signal) for q in qcodes]
         self.__write(**dict(data, codes=j))
 
+    def event_code(self, data):
+        event = data.pop("event")
+        data["quandl_code"] = data.pop("code") if "code" in data else "NIKKEI/INDEX"
+        query.store_prices_if_needed(data["quandl_code"])
+        qcode = query.get_quandl_code(data["quandl_code"])
+        if not qcode:
+            return
+        ohlc = query.get(price_type=None, **data)
+        ohlc["date"] = ohlc.index
+        self.__write(**dict(data, ohlc=ohlc, event=event))
+
     def on_message(self, message):
         print(message)
         try:
@@ -42,25 +53,14 @@ class MainHandler(tornado.websocket.WebSocketHandler):
                     f(j)
                 return
 
-            j["quandl_code"] = j.pop("code") if "code" in j else "NIKKEI/INDEX"
-            query.store_prices_if_needed(j["quandl_code"])
-            qcode = query.get_quandl_code(j["quandl_code"])
-            if not qcode:
-                continue
-            self.__write(event="signal", signal=qcode.signal)
+            # for (c, f) in params.get_lines().items():
+            #     p = dict(price_type="close", chart_type=c, **j)
+            #     ss = f(s["close"])
+            #     self.write_message(util.json_dumps(dict(series=ss, **p)))
 
-            # OHLC
-            s = query.get(price_type=None, **j)
-            self.write_message(util.json_dumps(dict(j, **util.to_json(s))))
-
-            for (c, f) in params.get_lines().items():
-                p = dict(price_type="close", chart_type=c, **j)
-                ss = f(s["close"])
-                self.write_message(util.json_dumps(dict(series=ss, **p)))
-
-            # PREDICT
-            s = query.predict(**j)
-            self.write_message(util.json_dumps(dict(name="predict", series=s, **j)))
+            # # PREDICT
+            # s = query.predict(**j)
+            # self.write_message(util.json_dumps(dict(name="predict", series=s, **j)))
 
     def on_close(self):
         print("WebSocket closed")
