@@ -129,7 +129,12 @@ def to_json(o):
         return int(o.strftime("%s"))
     elif isinstance(o, pd.Series):
         return to_json(series_to_json(o))
-    elif isinstance(o, (pd.DataFrame, dict)):
+    elif isinstance(o, pd.DataFrame):
+        records = o.to_dict("records")
+        for (i, index) in enumerate(o.index):
+            records[i][o.index.name] = index
+        return to_json(records)
+    elif isinstance(o, dict):
         d = {}
         for k, v in o.items():
             d[k] = to_json(v)
