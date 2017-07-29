@@ -40,5 +40,4 @@ def predict(signal_name):
 @cli.command(help="Predict prices")
 def hoge():
     df = query.get("TSE/1301", price_type=None)
-    import pdb; pdb.set_trace()
     print(df)

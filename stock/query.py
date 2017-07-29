@@ -1,6 +1,6 @@
 import sqlalchemy as sql
 import pandas as pd
-from stock import models, signals, line, util, api, params, predict as pp
+from stock import models, util, api, params, predict as pp
 
 
 def set_signals(qcode, **kw):
