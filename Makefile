@@ -1,6 +1,9 @@
 sh:
 	docker exec -it pystock /bin/bash
 
+db:
+	sqlite3 db.sqlite3
+
 py:
 	docker exec -it pystock ipython
 
