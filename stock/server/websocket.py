@@ -1,10 +1,14 @@
 import tornado.websocket
 from stock import query, util, params
+from stock.models import QuandlCode, Price, Signal
+
+s = util.schema
+event_list_schema = [s(QuandlCode, signal=s(Signal, price=Price))]
 
 
 class MainHandler(tornado.websocket.WebSocketHandler):
     def __write(self, **kw):
-        self.write_message(util.json_dumps(dict(kw)))
+        self.write_message(util.json_dumps(kw))
 
     def check_origin(self, origin):
         return True
@@ -14,8 +18,8 @@ class MainHandler(tornado.websocket.WebSocketHandler):
 
     def event_list(self, data):
         qcodes = query.get_quandl_codes()
-        j = [dict(util.to_json(q), signal=q.signal) for q in qcodes]
-        self.__write(**dict(data, codes=j))
+        codes = util.schema_to_json(event_list_schema, qcodes)
+        self.__write(**dict(data, codes=codes))
 
     def event_code(self, data):
         event = data.pop("event")

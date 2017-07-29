@@ -118,6 +118,26 @@ def series_to_json(series):
                 if not pd.isnull(b))
 
 
+def schema(model, **kw):
+    d = {k: getattr(model, k) for k in model.__table__.columns.keys()}
+    for k, v in kw.items():
+        d[k] = v
+    return d
+
+
+def schema_to_json(schema, o):
+    if type(schema) == list:
+        return [schema_to_json(schema[0], a) for a in o]
+    elif type(schema) == dict:
+        s = dict()
+        for k, v in schema.items():
+            v2 = o.get(k) if isinstance(o, dict) else getattr(o, k, None)
+            s[k] = schema_to_json(v, v2)
+        return s
+    else:
+        return o
+
+
 def to_json(o):
     if isinstance(o, np.integer):
         return int(o)
