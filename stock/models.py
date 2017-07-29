@@ -32,8 +32,8 @@ def session_scope(**kw):
         yield s
         s.commit()
     except Exception as e:
-        print(e)  # for debug
         s.rollback()
+        raise e
     finally:
         s.close()
 
