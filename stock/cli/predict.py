@@ -27,7 +27,7 @@ def predict(signal_name):
             if buy_or_sell in ["BUY", "SELL"]:
                 result[buy_or_sell].append(code)
         except Exception as e:
-            util.send_to_slack(f"Error: predict {code} ({signal_name}): {e}")
+            util.send_to_slack(f"ERROR: predict {code} ({signal_name}): {e}")
     for buy_or_sell, codes in result.items():
         if codes:
             query.set_signals(codes, **{signal_name: buy_or_sell})
