@@ -23,14 +23,15 @@ def get_quandl_code(code):
         return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
-def get_quandl_codes():
+def get_quandl_codes(page=0, per_page=20):
     q = models.QuandlCode
     with models.session_scope() as s:
-        codes = s.query(q).options(sql.orm.joinedload(q.signal).joinedload(models.Signal.price)).all()
+        q = s.query(q).options(sql.orm.joinedload(q.signal).joinedload(models.Signal.price))
+        codes = q.offset(page * per_page).limit(per_page)
         # need when you returns Model objects directly after closing a session
         # but this removes all from session (no commits anymore)
         s.expunge_all()
-    return codes
+        return codes
 
 
 def imported_quandl_codes():

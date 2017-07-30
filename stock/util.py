@@ -184,7 +184,7 @@ def str2date(s):
     # t = time.strptime(s, "%Y-%m-%d")
     # return datetime.date.fromtimestamp(time.mktime(t))
     if not s:
-        raise None
+        return None
     if isinstance(s, (datetime.date, datetime.datetime)):
         return s
     if "/" in s:
@@ -195,7 +195,7 @@ def str2date(s):
         ss = [s[: 4], s[4: 6], s[6: 8]]
         ss = [s for s in ss if s]
     else:
-        raise None
+        return None
     if len(ss) == 1:
         return datetime.date(int(ss[0]), 1, 1)
     elif len(ss) == 2:

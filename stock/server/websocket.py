@@ -17,12 +17,17 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         print("WebSocket open")
 
     def event_list(self, data):
-        qcodes = query.get_quandl_codes()
+        page = data.pop("page", 0)
+        per_page = data.pop("per_page", 20)
+        qcodes = query.get_quandl_codes(page, per_page)
         codes = util.schema_to_json(event_list_schema, qcodes)
         self.__write(**dict(data, codes=codes))
 
     def event_code(self, data):
         event = data.pop("event")
+        line_names = data.pop("line", [])
+        if not isinstance(line_names, list):
+            line_names = [line_names]
         data["quandl_code"] = data.pop("code") if "code" in data else "NIKKEI/INDEX"
         query.store_prices_if_needed(data["quandl_code"])
         qcode = query.get_quandl_code(data["quandl_code"])
@@ -31,7 +36,8 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         ohlc = query.get(price_type=None, **data)
         lines = {}
         for (c, f) in params.get_lines().items():
-            lines[c] = f(ohlc.close)
+            if "all" in line_names or any([c.startswith(n) for n in line_names]):
+                lines[c] = f(ohlc.close)
         self.__write(**dict(data, ohlc=ohlc, event=event, **lines))
 
         # # PREDICT
