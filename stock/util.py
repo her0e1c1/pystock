@@ -13,7 +13,7 @@ import pandas as pd
 import requests
 from dateutil import relativedelta
 
-from . import models, config as C
+from . import models
 
 logger = logging.getLogger(__name__)
 
@@ -95,7 +95,8 @@ def cross(fast, slow):
 
 
 def send_to_slack(text, channel="#pystock"):
-    if not C.SLACK_URL:
+    url = os.environ.get("SLACK_URL")
+    if not url:
         logger.warn("NO SLACK URL")
         return
     logger.debug(text)
@@ -104,7 +105,7 @@ def send_to_slack(text, channel="#pystock"):
         "channel": channel
     }
     resp = requests.post(
-        os.environ.get("SLACK_URL"),
+        url,
         json.dumps(payload),
         headers={'content-type': 'application/json'}
     )

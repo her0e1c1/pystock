@@ -1,3 +1,4 @@
+import os
 import enum
 import datetime
 from contextlib import contextmanager
@@ -15,7 +16,7 @@ engine = sql.create_engine(
     **{
         "encoding": 'utf-8',
         "pool_recycle": 3600,
-        "echo": os.environ.get("DEBUG", False),
+        "echo": bool(os.environ.get("DEBUG", False)),
     }
 )
 Base = declarative_base(bind=engine)
