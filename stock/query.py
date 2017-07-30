@@ -3,11 +3,18 @@ import pandas as pd
 from stock import models, util, api, params, predict as pp
 
 
-def set_signals(qcode, **kw):
+def set_signals(codes, **kw):
+    if not isinstance(codes, list):
+        codes = [codes]
+    filtered = {k: v for k, v in kw.items() if hasattr(models.Price, k)}
+    if not filtered:
+        return
     with models.session_scope() as s:
-        for k, v in kw.items():
-            setattr(qcode, k, v)
-        s.add(qcode)
+        for c in codes:
+            s.query(models.Price).filter_by(quandl_code=c).update(
+                filtered,
+                synchronize_session=False,
+            )
 
 
 def get_quandl_code(code):
@@ -96,11 +103,8 @@ def create_quandl_codes_if_needed(database_code):
 # if price_type is None, return a DataFrame object instead of Series
 def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_type=None):
     quandl_code = quandl_code.upper().strip()
-
-    if from_date:
-        from_date = util.str2date(from_date)
-    if to_date:
-        to_date = util.str2date(to_date)
+    from_date = util.str2date(from_date)
+    to_date = util.str2date(to_date)
 
     with models.session_scope() as s:
         query = s.query(models.Price).filter_by(quandl_code=quandl_code)
@@ -125,3 +129,14 @@ def get(quandl_code, price_type="close", from_date=None, to_date=None, chart_typ
 def predict(quandl_code, *args, **kw):
     df = get(quandl_code, price_type=None, **kw)
     return pp.predict(df)
+
+
+def get_all(from_date=None, to_date=None):
+    with models.session_scope() as s:
+        q = s.query(models.Price)
+        if from_date:
+            q = q.filter(models.Price.date >= from_date)
+        if to_date:
+            q = q.filter(models.Price.date <= to_date)
+        df = pd.read_sql(q.statement, q.session.bind, index_col=["quandl_code", "date"])
+        return df

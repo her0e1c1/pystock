@@ -94,6 +94,7 @@ def cross(fast, slow):
         return "SELL"
 
 
+# VERY SLOW
 def send_to_slack(text, channel="#pystock"):
     url = os.environ.get("SLACK_URL")
     if not url:
@@ -177,33 +178,13 @@ def json_dumps(o):
     return json.dumps(to_json(o))
 
 
-class DateRange(object):
-
-    def __init__(self, start=None, end=None):
-        if isinstance(end, str):
-            end = str2date(start)
-        if isinstance(start, str):
-            start = str2date(start)
-        if end is None:
-            end = datetime.date.today()
-        if start is None:
-            start = end - relativedelta.relativedelta(days=C.DEFAULT_DAYS_PERIOD)
-        self.end = end
-        self.start = start
-
-    def to_dict(self):
-        return {"start": str(self.start), "end": str(self.end)}
-
-
-def dict_inverse(dct):
-    return {v: k for k, v in dct.items()}
-
-
 def str2date(s):
     # t = time.strptime(s, "%Y-%m-%d")
     # return datetime.date.fromtimestamp(time.mktime(t))
     if not s:
-        raise ValueError("Invaid Format")
+        raise None
+    if isinstance(s, (datetime.date, datetime.datetime)):
+        return s
     if "/" in s:
         ss = s.split("/")
     elif "-" in s:
@@ -212,7 +193,7 @@ def str2date(s):
         ss = [s[: 4], s[4: 6], s[6: 8]]
         ss = [s for s in ss if s]
     else:
-        raise ValueError("Invaid Format")
+        raise None
     if len(ss) == 1:
         return datetime.date(int(ss[0]), 1, 1)
     elif len(ss) == 2:

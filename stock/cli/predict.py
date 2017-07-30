@@ -1,6 +1,7 @@
 import os
-import time
+import datetime
 import click
+from dateutil.relativedelta import relativedelta
 from stock import query, util, params
 from .main import cli, AliasedGroup
 
@@ -17,16 +18,17 @@ def predict(signal_name):
     if signal_name not in funcs:
         click.echo("No signal: " + signal_name)
         return
+    result = {"BUY": [], "SELL": []}
     f = funcs[signal_name]
-    for qcode in query.get_quandl_codes():
-        code = qcode.code
-        query.store_prices_if_needed(code)
+    kw = {"from_date": datetime.date.today() - relativedelta(months=3)}
+    for code, df in query.get_all(**kw).groupby(level=0):
         try:
-            prices = query.get(code)
-            buy_or_sell = f(prices)
+            buy_or_sell = f(df.close)
             if buy_or_sell in ["BUY", "SELL"]:
-                url = get_url(code)
-                util.send_to_slack(f"You should {buy_or_sell} {code} at {url} ({signal_name})")
-            query.set_signals(qcode, **{signal_name: buy_or_sell})
+                result[buy_or_sell].append(code)
         except Exception as e:
-            util.send_to_slack(f"Error: Predict {code}({signal_name}): {e}")
+            util.send_to_slack(f"Error: predict {code} ({signal_name}): {e}")
+    for buy_or_sell, codes in result.items():
+        if codes:
+            query.set_signals(codes, **{signal_name: buy_or_sell})
+            util.send_to_slack(f"You should {buy_or_sell} by {signal_name}: {codes}")

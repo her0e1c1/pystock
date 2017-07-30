@@ -43,7 +43,8 @@ params2 = {
     "rsi": [[14, 30, 70]],
     "stochastic": [[14, 3, 3]],
     "macd_signal": [[26, 12, 9]],
-    "min_low": [[75, 10]],
+    "min_low": [[75, 1]],
+    "max_high": [[100, 1]],
 }
 
 

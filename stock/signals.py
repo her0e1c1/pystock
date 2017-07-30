@@ -41,6 +41,15 @@ def min_low(series, period, ratio):
     return "BUY" if util.increment(last, m) < ratio else None
 
 
+def max_high(series, period, ratio):
+    """min_lowの逆version"""
+    m = float(series.tail(period).max())
+    if pd.isnull(m):
+        return None
+    last = series[series.last_valid_index()]
+    return "SELL" if util.increment(m, last) < ratio else None
+
+
 def macd_signal(series, fast, slow, signal):
     """macd(短期)とsignal(長期)のクロス"""
     f = line.macd_line(series, fast, slow, signal)
