@@ -1,7 +1,7 @@
 # coding: utf-8
 import click
 import quandl
-from stock import util, models
+from stock import util, models, params
 
 
 def _multiple_decorator(funcs):
@@ -46,7 +46,10 @@ def init():
     models.create_all()
 
 
-@cli.command(name="config")
+@cli.command()
 def config(**kw):
-    m = ",".join(str(s) for s in signals.get_signals())
-    click.echo(m)
+    m = ", ".join(str(s) for (s, _) in params.get_signals().items())
+    click.echo("SIGNALS: " + m)
+
+    m = ", ".join(str(s) for (s, _) in params.get_lines().items())
+    click.echo("LINES: " + m)
