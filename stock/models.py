@@ -3,7 +3,6 @@ import datetime
 from contextlib import contextmanager
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
-from . import config as C
 
 
 class Signal(enum.Enum):
@@ -11,7 +10,14 @@ class Signal(enum.Enum):
     SELL = "SELL"
 
 
-engine = sql.create_engine(C.DATABASE_URL, **C.CREATE_ENGINE)
+engine = sql.create_engine(
+    os.environ.get("DATABASE_URL", "sqlite://"),
+    **{
+        "encoding": 'utf-8',
+        "pool_recycle": 3600,
+        "echo": os.environ.get("DEBUG", False),
+    }
+)
 Base = declarative_base(bind=engine)
 Session = sql.orm.sessionmaker(bind=engine)
 

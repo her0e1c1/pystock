@@ -1,3 +1,4 @@
+import os
 import io
 import enum
 import zipfile
@@ -103,7 +104,7 @@ def send_to_slack(text, channel="#pystock"):
         "channel": channel
     }
     resp = requests.post(
-        C.SLACK_URL,
+        os.environ.get("SLACK_URL"),
         json.dumps(payload),
         headers={'content-type': 'application/json'}
     )
