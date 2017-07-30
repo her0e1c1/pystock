@@ -32,7 +32,7 @@ def rsi(series, period, buy, sell):
     return "BUY" if f < buy else "SELL" if f > sell else None
 
 
-def min_low(series, period=200, ratio=10):  # period in [200, 75, 25]
+def min_low(series, period, ratio):
     """指定期間中の最安値に近いたら買い. (底値が支えになって反発する可能性があると考える)"""
     m = float(series.tail(period).min())
     if pd.isnull(m):

@@ -18,7 +18,7 @@ def predict(signal_name):
         click.echo("No signal: " + signal_name)
         return
     f = funcs[signal_name]
-    for qcode in query.get_quandl_codes()[:1]:
+    for qcode in query.get_quandl_codes():
         code = qcode.code
         query.store_prices_if_needed(code)
         try:
