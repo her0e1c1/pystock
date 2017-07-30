@@ -44,3 +44,9 @@ def cli(key):
 def init():
     models.drop_all()
     models.create_all()
+
+
+@cli.command(name="config")
+def config(**kw):
+    m = ",".join(str(s) for s in signals.get_signals())
+    click.echo(m)
