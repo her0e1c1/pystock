@@ -114,9 +114,12 @@ class Signal(Base):
 
     # cache
     price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
+    previous_price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
+    change = sql.Column(sql.Float, index=True)
 
     code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
-    price = sql.orm.relation("Price")
+    price = sql.orm.relation("Price", foreign_keys=[price_id])
+    previous_price = sql.orm.relation("Price", foreign_keys=[previous_price_id])
 
 
 @sql.event.listens_for(QuandlCode, 'before_insert')

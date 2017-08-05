@@ -1,3 +1,4 @@
+import itertools
 import sqlalchemy as sql
 import pandas as pd
 from stock import models, util, api, params, predict as pp
@@ -57,6 +58,24 @@ def latest_prices_by_codes(codes=[]):
     return df
 
 
+def query_prices_by_codes(codes=[]):
+    p1 = models.Price
+    p2 = sql.alias(models.Price)
+    with models.session_scope(expire_on_commit=False) as s:
+        query = s.query(p1).join(p2, sql.and_(
+            p1.quandl_code == p2.c.quandl_code,
+            p1.date <= p2.c.date,
+        )).filter(
+            p1.quandl_code.in_(codes) if codes else True,
+        ).group_by(
+            p1.quandl_code,
+            p1.date,
+        ).having(
+            sql.func.count("*") <= 2
+        )
+        return itertools.groupby(query.all(), key=lambda p: p.quandl_code)
+
+
 def non_imported_quandl_codes(database_code):
     database_code = database_code.upper()  # FIXME
     codes = imported_quandl_codes()
@@ -66,6 +85,22 @@ def non_imported_quandl_codes(database_code):
     ).all()
     session.close()
     return allcodes
+
+
+def update_price_index(session, quandl_code, prices):
+    if len(prices) == 2:
+        price, prev = prices
+        price_id, prev_id, change = price.id, prev.id, price.close - prev.close
+    elif len(prices) == 1:
+        price = prices[0]
+        price_id, prev_id, change = price.id, None, None
+    else:
+        price_id, prev_id, change = None, None, None
+    session.query(models.Signal).filter_by(quandl_code=quandl_code).update({
+        "price_id": price_id,
+        "previous_price_id": prev_id,
+        "change": change,
+    }, synchronize_session=False)
 
 
 def store_prices_if_needed(quandl_code, limit=None, force=False):
@@ -81,11 +116,8 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
 
     data.to_sql("price", models.engine, if_exists='append')  # auto commit
     with models.session_scope() as s:
-        price = s.query(models.Price).filter_by(quandl_code=quandl_code).order_by(models.Price.date.desc()).first()
-        s.query(models.Signal).filter_by(quandl_code=quandl_code).update({
-            "price_id": price.id
-        })
-
+        prices = s.query(models.Price).filter_by(quandl_code=quandl_code).order_by(models.Price.date.desc()).limit(2).all()
+        set_price_index(s, quandl_code, prices)
     return True
 
 

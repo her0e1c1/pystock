@@ -35,3 +35,10 @@ def drop(yes):
 @db.command(name="quandl_codes", help="Store and show quandl code")
 def quandl_codes():
     click.secho(", ".join(c for c in query.quandl_codes()))
+
+
+@db.command()
+def index():
+    with models.session_scope() as s:
+        for code, group in query.query_prices_by_codes():
+            query.update_price_index(s, code, list(group))
