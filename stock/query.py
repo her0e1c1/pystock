@@ -117,7 +117,7 @@ def store_prices_if_needed(quandl_code, limit=None, force=False):
     data.to_sql("price", models.engine, if_exists='append')  # auto commit
     with models.session_scope() as s:
         prices = s.query(models.Price).filter_by(quandl_code=quandl_code).order_by(models.Price.date.desc()).limit(2).all()
-        set_price_index(s, quandl_code, prices)
+        update_price_index(s, quandl_code, prices)
     return True
 
 
