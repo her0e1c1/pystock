@@ -1,5 +1,5 @@
 import tornado.websocket
-from stock import query, util, params
+from stock import query, util, params, models
 from stock.models import QuandlCode, Price, Signal
 
 s = util.schema
@@ -19,7 +19,9 @@ class MainHandler(tornado.websocket.WebSocketHandler):
     def event_list(self, data):
         page = data.pop("page", 0)
         per_page = data.pop("per_page", 20)
-        qcodes = query.get_quandl_codes(page, per_page)
+        order_by = data.pop("order_by", None)  # TODO: validate
+        asc = not data.pop("desc", False)
+        qcodes = query.get_quandl_codes(page, per_page, order_by, asc)
         codes = util.schema_to_json(event_list_schema, qcodes)
         self.__write(**dict(data, codes=codes))
 

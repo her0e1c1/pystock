@@ -24,11 +24,19 @@ def get_quandl_code(code):
         return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
-def get_quandl_codes(page=0, per_page=20):
+def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True):
+    if order_by:
+        order_by = models.key_to_column(order_by)
+    if order_by is None:
+        order_by = models.QuandlCode.code
+    if asc:
+        order_by = order_by.asc()
+    else:
+        order_by = order_by.desc()
     q = models.QuandlCode
     with models.session_scope() as s:
         q = s.query(q).options(sql.orm.joinedload(q.signal).joinedload(models.Signal.price))
-        codes = q.offset(page * per_page).limit(per_page)
+        codes = q.order_by(order_by).offset(page * per_page).limit(per_page)
         # need when you returns Model objects directly after closing a session
         # but this removes all from session (no commits anymore)
         s.expunge_all()
@@ -88,18 +96,22 @@ def non_imported_quandl_codes(database_code):
 
 
 def update_price_index(session, quandl_code, prices):
+    change, change_percent = None, None
     if len(prices) == 2:
         price, prev = prices
-        price_id, prev_id, change = price.id, prev.id, price.close - prev.close
+        price_id, prev_id = price.id, prev.id
+        change = price.close - prev.close
+        change_percent = change / prev.close
     elif len(prices) == 1:
         price = prices[0]
-        price_id, prev_id, change = price.id, None, None
+        price_id, prev_id = price.id, None
     else:
-        price_id, prev_id, change = None, None, None
+        price_id, prev_id = None, None
     session.query(models.Signal).filter_by(quandl_code=quandl_code).update({
         "price_id": price_id,
         "previous_price_id": prev_id,
         "change": change,
+        "change_percent": change_percent,
     }, synchronize_session=False)
 
 

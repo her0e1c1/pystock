@@ -1,4 +1,6 @@
 import os
+import sys
+import inspect
 import enum
 import datetime
 from contextlib import contextmanager
@@ -43,6 +45,24 @@ def session_scope(**kw):
         raise e
     finally:
         s.close()
+
+
+def key_to_column(key):
+    splited = key.split(".", 1)
+    table, col = "", ""
+    if len(splited) == 2:
+        table, col = splited
+    else:
+        col = splited[0]
+    models = inspect.getmembers(sys.modules[__name__], lambda x: inspect.isclass(x) and issubclass(x, Base))
+    for _, m in models:
+        if not hasattr(m, "__tablename__"):
+            continue
+        if table and not m.__tablename__.startswith(table):
+            continue
+        for name, column in m.__table__.columns.items():
+            if name.startswith(col):
+                return column
 
 
 # Database code should be stored in key-value store
@@ -116,6 +136,7 @@ class Signal(Base):
     price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
     previous_price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
     change = sql.Column(sql.Float, index=True)
+    change_percent = sql.Column(sql.Float, index=True)
 
     code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
     price = sql.orm.relation("Price", foreign_keys=[price_id])
