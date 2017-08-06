@@ -35,7 +35,9 @@ def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True):
         order_by = order_by.desc()
     q = models.QuandlCode
     with models.session_scope() as s:
-        q = s.query(q).options(sql.orm.joinedload(q.signal).joinedload(models.Signal.price))
+        q = s.query(q).join(q.signal).options(
+            sql.orm.joinedload(models.QuandlCode.signal).joinedload(models.Signal.price),
+        )
         codes = q.order_by(order_by).offset(page * per_page).limit(per_page)
         # need when you returns Model objects directly after closing a session
         # but this removes all from session (no commits anymore)
