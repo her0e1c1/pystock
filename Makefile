@@ -14,6 +14,7 @@ prod:
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
 
 deploy:
+	git push
 	cd ansible && ansible-playbook site.yml
 
 deploy-service:
