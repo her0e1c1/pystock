@@ -21,6 +21,13 @@
   - cron:
       cron_file: pystock
       user: root
+      hour: 0  # at 12 in jp 
+      name: predict-buying-prices
+      job: "docker exec pystock pystock predict2 2>&1 | logger -t pystock -p local0.info"
+
+  - cron:
+      cron_file: pystock
+      user: root
       hour: "18"
       name: predict
       job: "docker exec pystock pystock predict 2>&1 | logger -t pystock -p local0.info"
