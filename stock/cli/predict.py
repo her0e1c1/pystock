@@ -40,9 +40,9 @@ def predict2():  # TODO: rename
     size = 100  # batch size
     kw = {"from_date": datetime.date.today() - relativedelta(months=3)}
     with query.models.session_scope() as s:
-        all_codes = query.imported_quandl_codes()
-        for i in range(0, len(all_codes), size):
-            codes = all_codes[i: i + size]
+        for code in s.query(query.models.QuandlCode):
+            codes = [code.code]
+            print(codes)
             for code, group in query.get_prices_by_codes(s, codes=codes, **kw):
                 if not (code and code.signal):
                     continue
