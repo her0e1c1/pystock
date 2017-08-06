@@ -37,14 +37,18 @@ def predict(signal_name):
 @cli.command(help="Predict prices")
 def predict2():  # TODO: rename
     from stock import predict
-    kw = {"from_date": datetime.date.today() - relativedelta(months=3), "codes": []}
+    size = 100  # batch size
+    kw = {"from_date": datetime.date.today() - relativedelta(months=3)}
     with query.models.session_scope() as s:
-        for code, group in query.get_prices_by_codes(s, **kw):
-            if not (code and code.signal):
-                continue
-            df = util.models_to_dataframe(list(group), index="date")
-            p = predict.predict(df, sigma=1)
-            p2 = predict.predict(df, sigma=2)
-            code.signal.buying_price = p
-            code.signal.buying_price_2 = p2
-            s.add(code.signal)
+        all_codes = query.imported_quandl_codes()
+        for i in range(0, len(all_codes), size):
+            codes = all_codes[i: i + size]
+            for code, group in query.get_prices_by_codes(s, codes=codes, **kw):
+                if not (code and code.signal):
+                    continue
+                df = util.models_to_dataframe(list(group), index="date")
+                p = predict.predict(df, sigma=1)
+                p2 = predict.predict(df, sigma=2)
+                code.signal.buying_price = p
+                code.signal.buying_price_2 = p2
+                s.add(code.signal)
