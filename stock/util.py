@@ -18,6 +18,13 @@ from . import models
 logger = logging.getLogger(__name__)
 
 
+def models_to_dataframe(alist, index=None):
+    df = pd.DataFrame([a.__dict__ for a in alist])
+    if index:
+        return df.set_index(index)
+    return df
+
+
 # TODO: 呼び出し側でのNoneの考慮 + float()でwrapする?, invaid=Trueつける?
 def last(series, offset_from_last=0):
     return _last(series, offset_from_last)

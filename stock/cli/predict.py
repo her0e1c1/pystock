@@ -32,3 +32,19 @@ def predict(signal_name):
         if codes:
             query.set_signals(codes, **{signal_name: buy_or_sell})
             util.send_to_slack(f"You should {buy_or_sell} by {signal_name}: {codes}")
+
+
+@cli.command(help="Predict prices")
+def predict2():  # TODO: rename
+    from stock import predict
+    kw = {"from_date": datetime.date.today() - relativedelta(months=3), "codes": []}
+    with query.models.session_scope() as s:
+        for code, group in query.get_prices_by_codes(s, **kw):
+            if not (code and code.signal):
+                continue
+            df = util.models_to_dataframe(list(group), index="date")
+            p = predict.predict(df, sigma=1)
+            p2 = predict.predict(df, sigma=2)
+            code.signal.buying_price = p
+            code.signal.buying_price_2 = p2
+            s.add(code.signal)

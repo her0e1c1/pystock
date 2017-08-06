@@ -3,7 +3,12 @@ from stock import query, util, params, models
 from stock.models import QuandlCode, Price, Signal
 
 s = util.schema
-event_list_schema = [s(QuandlCode, signal=s(Signal, price=Price))]
+event_list_schema = [s(QuandlCode, signal=s(
+    Signal,
+    price=Price,
+    buying_price_percent=float,
+    buying_price_2_percent=float,
+))]
 
 
 class MainHandler(tornado.websocket.WebSocketHandler):

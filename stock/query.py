@@ -24,7 +24,7 @@ def get_quandl_code(code):
         return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
-def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True):
+def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, from_date=None):
     if order_by:
         order_by = models.key_to_column(order_by)
     if order_by is None:
@@ -43,6 +43,18 @@ def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True):
         # but this removes all from session (no commits anymore)
         s.expunge_all()
         return codes
+
+
+# can I merge with query_prices_by_codes?
+# use conditions for chilren without limit
+def get_prices_by_codes(session, codes=[], from_date=None):
+    q = session.query(models.Price).options(
+        sql.orm.joinedload(models.Price.code).joinedload(models.QuandlCode.signal),
+    ).filter(
+        models.Price.date >= from_date if from_date else True,
+        models.Price.quandl_code.in_(codes) if codes else True,
+    ).order_by(models.Price.quandl_code, models.Price.date)
+    return itertools.groupby(list(q.all()), key=lambda p: p.code)
 
 
 def imported_quandl_codes():
@@ -83,6 +95,7 @@ def query_prices_by_codes(codes=[]):
         ).having(
             sql.func.count("*") <= 2
         )
+        # .order_by(models.Price.quandl_code, models.Price.date)
         return itertools.groupby(query.all(), key=lambda p: p.quandl_code)
 
 

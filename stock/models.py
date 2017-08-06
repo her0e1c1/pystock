@@ -6,6 +6,7 @@ import datetime
 from contextlib import contextmanager
 import sqlalchemy as sql
 from sqlalchemy.ext.declarative import declarative_base
+from stock import util
 
 
 class Signal(enum.Enum):
@@ -138,9 +139,24 @@ class Signal(Base):
     change = sql.Column(sql.Float, index=True)
     change_percent = sql.Column(sql.Float, index=True)
 
+    # prediction
+    buying_price = sql.Column(sql.Float, index=True)
+    buying_price_2 = sql.Column(sql.Float, index=True)
+    # buying_price_3 = sql.Column(sql.Float, index=True)
+
     code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
     price = sql.orm.relation("Price", foreign_keys=[price_id])
     previous_price = sql.orm.relation("Price", foreign_keys=[previous_price_id])
+
+    @property
+    def buying_price_percent(self):
+        if self.price:
+            return util.increment(self.buying_price, self.price.close)
+
+    @property
+    def buying_price_2_percent(self):
+        if self.price:
+            return util.increment(self.buying_price_2, self.price.close)
 
 
 @sql.event.listens_for(QuandlCode, 'before_insert')
