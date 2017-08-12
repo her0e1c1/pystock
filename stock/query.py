@@ -24,7 +24,7 @@ def get_quandl_code(code):
         return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
-def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, from_date=None):
+def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True):
     if order_by:
         order_by = models.key_to_column(order_by)
     if order_by is None:
@@ -43,6 +43,23 @@ def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, 
         # but this removes all from session (no commits anymore)
         s.expunge_all()
         return codes
+
+
+def get_prices_group_by_code(from_date=None, **kw):
+    from_date = util.str2date(from_date)
+    q1 = get_quandl_codes(**kw)
+    q1 = q1.with_entities(models.QuandlCode.code)
+    with models.session_scope(expire_on_commit=False) as s:
+        q = s.query(models.Price).filter(
+            models.Price.quandl_code.in_(q1),
+            models.Price.date >= from_date if from_date else True,
+        )
+        q = q.join(models.QuandlCode)
+        q = q.add_entity(models.QuandlCode)
+        q = q.options(
+            sql.orm.joinedload(models.QuandlCode.signal).joinedload(models.Signal.price),
+        )
+        return itertools.groupby(list(q.all()), key=lambda p: p[1])
 
 
 # can I merge with query_prices_by_codes?

@@ -52,3 +52,10 @@ def predict2():  # TODO: rename
                 code.signal.buying_price = p
                 code.signal.buying_price_2 = p2
                 s.add(code.signal)
+
+
+@cli.command(name="sql")
+@click.argument('name')
+def _query(name):
+    r = getattr(query, name)()
+    print(list(r))

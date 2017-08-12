@@ -187,6 +187,15 @@ def json_dumps(o):
     return json.dumps(to_json(o))
 
 
+def to_date(s=None, **kw):
+    if not s:
+        s = datetime.date.today()
+    s = str2date(s)
+    if kw:
+        return s + relativedelta.relativedelta(**kw)
+    return s
+
+
 def str2date(s):
     # t = time.strptime(s, "%Y-%m-%d")
     # return datetime.date.fromtimestamp(time.mktime(t))

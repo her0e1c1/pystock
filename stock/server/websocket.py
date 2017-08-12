@@ -3,12 +3,13 @@ from stock import query, util, params, models
 from stock.models import QuandlCode, Price, Signal
 
 s = util.schema
-event_list_schema = [s(QuandlCode, signal=s(
+event_schema = s(QuandlCode, signal=s(
     Signal,
     price=Price,
     buying_price_percent=float,
     buying_price_2_percent=float,
-))]
+))
+price_schema = [s(Price)]
 
 
 class MainHandler(tornado.websocket.WebSocketHandler):
@@ -26,8 +27,21 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         per_page = data.pop("per_page", 20)
         order_by = data.pop("order_by", None)  # TODO: validate
         asc = not data.pop("desc", False)
-        qcodes = query.get_quandl_codes(page, per_page, order_by, asc)
-        codes = util.schema_to_json(event_list_schema, qcodes)
+        params = dict(
+            from_date=util.to_date(months=-3),
+            page=page,
+            per_page=per_page,
+            order_by=order_by,
+            asc=asc,
+        )
+        # qcodes = query.get_quandl_codes(page, per_page, order_by, asc)
+        codes = []
+        for qcode, groupby in query.get_prices_group_by_code(**params):
+            prices = [p[0] for p in groupby]
+            code = util.schema_to_json(event_schema, qcode)
+            code["prices"] = util.schema_to_json(price_schema, prices)
+            codes.append(code)
+
         self.__write(**dict(data, codes=codes))
 
     def event_code(self, data):
@@ -46,10 +60,6 @@ class MainHandler(tornado.websocket.WebSocketHandler):
             if "all" in line_names or any([c.startswith(n) for n in line_names]):
                 lines[c] = f(ohlc.close)
         self.__write(**dict(data, ohlc=ohlc, event=event, **lines))
-
-        # # PREDICT
-        # s = query.predict(**j)
-        # self.write_message(util.json_dumps(dict(name="predict", series=s, **j)))
 
     def on_message(self, message):
         try:
