@@ -24,7 +24,7 @@ def get_quandl_code(code):
         return s.query(q).filter_by(code=code).options(sql.orm.joinedload(q.signal)).first()
 
 
-def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, count=False):
+def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, count=False, codes=[]):
     if order_by:
         order_by = models.key_to_column(order_by)
     if order_by is None:
@@ -35,7 +35,9 @@ def get_quandl_codes(page=0, per_page=20, order_by=None, asc=True, prices=True, 
         order_by = order_by.desc()
     q = models.QuandlCode
     with models.session_scope() as s:
-        q = s.query(q).join(q.signal).options(
+        q = s.query(q).join(q.signal).filter(
+            models.QuandlCode.code.in_(codes) if codes else True,
+        ).options(
             sql.orm.joinedload(models.QuandlCode.signal).joinedload(models.Signal.price),
         )
         if count:  # TODO: Refactor

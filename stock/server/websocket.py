@@ -30,6 +30,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         asc = not data.pop("desc", False)
         params = dict(
             from_date=data.pop("from", util.to_date(months=-3)),
+            codes=data.pop("codes", []),
             page=page,
             per_page=per_page,
             order_by=order_by,
