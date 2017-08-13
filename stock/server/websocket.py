@@ -35,9 +35,10 @@ class MainHandler(tornado.websocket.WebSocketHandler):
             order_by=order_by,
             asc=asc,
         )
-        if not data.pop("chart", True):
+        if not data.pop("chart", False):
             params.pop("from_date")
             qcodes = query.get_quandl_codes(**params)
+            count = query.get_quandl_codes(count=True, **params)
             codes = util.schema_to_json([event_schema], qcodes)
         else:
             codes = []
@@ -46,7 +47,11 @@ class MainHandler(tornado.websocket.WebSocketHandler):
                 code = util.schema_to_json(event_schema, qcode)
                 code["prices"] = util.schema_to_json(price_schema, prices)
                 codes.append(code)
-        self.__write(**dict(data, codes=codes))
+            # REFACTOR
+            params.pop("from_date")
+            qcodes = query.get_quandl_codes(**params)
+            count = query.get_quandl_codes(count=True, **params)
+        self.__write(**dict(data, codes=codes, count=count))
         print("DONE")
 
     def event_code(self, data):
