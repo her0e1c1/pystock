@@ -23,6 +23,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         print("WebSocket open")
 
     def event_list(self, data):
+        print(data)
         page = data.pop("page", 0)
         per_page = data.pop("per_page", 20)
         order_by = data.pop("order_by", None)  # TODO: validate
@@ -34,15 +35,19 @@ class MainHandler(tornado.websocket.WebSocketHandler):
             order_by=order_by,
             asc=asc,
         )
-        # qcodes = query.get_quandl_codes(page, per_page, order_by, asc)
-        codes = []
-        for qcode, groupby in query.get_prices_group_by_code(**params):
-            prices = [p[0] for p in groupby]
-            code = util.schema_to_json(event_schema, qcode)
-            code["prices"] = util.schema_to_json(price_schema, prices)
-            codes.append(code)
-
+        if not data.pop("chart", True):
+            params.pop("from_date")
+            qcodes = query.get_quandl_codes(**params)
+            codes = util.schema_to_json([event_schema], qcodes)
+        else:
+            codes = []
+            for qcode, groupby in query.get_prices_group_by_code(**params):
+                prices = [p[1] for p in groupby]
+                code = util.schema_to_json(event_schema, qcode)
+                code["prices"] = util.schema_to_json(price_schema, prices)
+                codes.append(code)
         self.__write(**dict(data, codes=codes))
+        print("DONE")
 
     def event_code(self, data):
         event = data.pop("event")
