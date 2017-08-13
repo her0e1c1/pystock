@@ -49,7 +49,7 @@ def get_prices_group_by_code(from_date=None, **kw):
     from_date = util.str2date(from_date)
     q = get_quandl_codes(**kw)
     q = q.from_self().outerjoin(models.Price, sql.and_(
-        models.Price.date >= from_date,
+        models.Price.date >= from_date if from_date else True,
         models.Price.quandl_code == models.QuandlCode.code
     ))
     q = q.add_entity(models.Price)

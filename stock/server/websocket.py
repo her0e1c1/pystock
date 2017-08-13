@@ -29,7 +29,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         order_by = data.pop("order_by", None)  # TODO: validate
         asc = not data.pop("desc", False)
         params = dict(
-            from_date=util.to_date(months=-3),
+            from_date=data.pop("from", util.to_date(months=-3)),
             page=page,
             per_page=per_page,
             order_by=order_by,
