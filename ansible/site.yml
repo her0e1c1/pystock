@@ -14,6 +14,7 @@
   - cron:
       cron_file: pystock
       user: root
+      minute: 0
       hour: 16  # at 12 in jp 
       name: import-all-codes
       job: "docker exec pystock pystock quandl import-all-codes -f TSE 2>&1 | logger -t pystock -p local0.info"
@@ -21,6 +22,7 @@
   - cron:
       cron_file: pystock
       user: root
+      minute: 0
       hour: 0  # at 12 in jp 
       name: predict-buying-prices
       job: "docker exec pystock pystock predict2 2>&1 | logger -t pystock -p local0.info"
@@ -28,21 +30,24 @@
   - cron:
       cron_file: pystock
       user: root
-      hour: "18"
+      minute: 0
+      hour: 18
       name: predict
       job: "docker exec pystock pystock predict 2>&1 | logger -t pystock -p local0.info"
 
   - cron:
       cron_file: pystock
       user: root
-      hour: "19"
+      minute: 0
+      hour: 19
       name: predict-rsi
       job: "docker exec pystock pystock predict -s rsi 2>&1 | logger -t pystock -p local0.info"
 
   - cron:
       cron_file: pystock
       user: root
-      hour: "20"
+      minute: 0
+      hour: 20
       name: predict-macd
       job: "docker exec pystock pystock predict -s macd_signal 2>&1 | logger -t pystock -p local0.info"
 
