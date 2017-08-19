@@ -48,7 +48,7 @@ def get_by_code(**kw):
 @click.option("-s", "--sleep", type=int, default=60)
 @click.option("-f", "--force", type=bool, is_flag=True, default=False, help="Delete if exists")
 def import_codes(database_code, force, sleep):
-    util.send_to_slack(f"START TO STORE {database_code} evey {sleep} second")
+    util.send_to_slack(f"START TO STORE {database_code} every {sleep} second")
     codes = query.create_quandl_codes_if_needed(database_code)
     for c in codes:
         try:
@@ -56,3 +56,4 @@ def import_codes(database_code, force, sleep):
                 time.sleep(sleep)
         except Exception as e:
             util.send_to_slack(f"Error: Import {c}: {e}")
+    util.send_to_slack("DONE: IMPORT ALL CODES")
