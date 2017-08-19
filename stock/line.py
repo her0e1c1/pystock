@@ -55,3 +55,8 @@ def rsi(series, period):
     # fill 0 at the first day
     diff = (series - series.shift(1)).fillna(0)
     return diff.rolling(period).apply(func=f)
+
+
+def historical_volatility(series, period):
+    # 1日当たりの分散に対して252倍してるので、標準偏差にはsqrtが必要
+    return series.rolling(period).std() * (252 ** 0.5)
