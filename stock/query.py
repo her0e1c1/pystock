@@ -4,15 +4,15 @@ import pandas as pd
 from stock import models, util, api, params, predict as pp
 
 
-def set_signals(codes, **kw):
+def bulk_update_signals(codes, **kw):
     if not isinstance(codes, list):
         codes = [codes]
-    filtered = {k: v for k, v in kw.items() if hasattr(models.Price, k)}
+    filtered = {k: v for k, v in kw.items() if hasattr(models.Signal, k)}
     if not filtered:
         return
     with models.session_scope() as s:
         for c in codes:
-            s.query(models.Price).filter_by(quandl_code=c).update(
+            s.query(models.Signal).filter_by(quandl_code=c).update(
                 filtered,
                 synchronize_session=False,
             )

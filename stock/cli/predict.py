@@ -30,7 +30,7 @@ def predict(signal_name):
             util.send_to_slack(f"ERROR: predict {code} ({signal_name}): {e}")
     for buy_or_sell, codes in result.items():
         if codes:
-            query.set_signals(codes, **{signal_name: buy_or_sell})
+            query.bulk_update_signals(codes, **{signal_name: buy_or_sell})
             util.send_to_slack(f"You should {buy_or_sell} by {signal_name}: {codes}")
 
 
