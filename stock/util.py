@@ -13,8 +13,6 @@ import pandas as pd
 import requests
 from dateutil import relativedelta
 
-from . import models
-
 logger = logging.getLogger(__name__)
 
 
@@ -44,10 +42,16 @@ def _last(series, offset_from_last=0):
         return series[i - offset_from_last]
 
 
-def increment(a, b):
-    if a is None or b is None:
+def increment(x2, x1):
+    if x2 is None or x1 is None:
         return None
-    return float((a - b) / b) * 100
+    return float((x2 - x1) / x1) * 100
+
+
+def increment_by(x1, v=1):
+    if x1 is None:
+        return None
+    return x1 + (x1 * v) / 100
 
 
 def sigma(series, period):
@@ -151,6 +155,7 @@ def schema_to_json(schema, o):
 
 
 def to_json(o):
+    from . import models
     if isinstance(o, np.integer):
         return int(o)
     elif isinstance(o, np.floating):

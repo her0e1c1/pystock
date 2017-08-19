@@ -144,9 +144,22 @@ class Signal(Base):
     buying_price_2 = sql.Column(sql.Float, index=True)
     # buying_price_3 = sql.Column(sql.Float, index=True)
 
+    # last value of a line (for now 25 days)
+    historical_volatility = sql.Column(sql.Float, index=True)
+    std = sql.Column(sql.Float, index=True)
+    var = sql.Column(sql.Float, index=True)
+    mean = sql.Column(sql.Float, index=True)
+
     code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
     price = sql.orm.relation("Price", foreign_keys=[price_id])
     previous_price = sql.orm.relation("Price", foreign_keys=[previous_price_id])
+
+    @property
+    def close_increment_by_1(self):
+        return util.increment_by(self.close, 1)
+
+    def close_increment_by_1m(self):
+        return util.increment_by(self.close, -1)
 
     @property
     def buying_price_percent(self):

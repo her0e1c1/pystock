@@ -10,6 +10,8 @@ params = {
     "rsi": [[14]],
     "macd_line": [[26, 12, 9]],  # Chris Manning (fast, slow, signal) = (17, 9, 7)
     "macd_signal": [[26, 12, 9]],
+    "rolling_std": [[25]],
+    "historical_volatility": [[25]],
 }
 
 

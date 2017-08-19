@@ -3,6 +3,10 @@ def rolling_mean(series, period):
     return series.rolling(window=period, center=False).mean()
 
 
+def rolling_std(series, period):
+    return series.rolling(window=period, center=False).std()
+
+
 def stochastic_k(series, k):
     rolling = series.rolling(window=k, center=False)
     l = rolling.min()
