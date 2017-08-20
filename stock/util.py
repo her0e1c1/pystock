@@ -51,7 +51,7 @@ def increment(x2, x1):
 def increment_by(x1, v=1):
     if x1 is None:
         return None
-    return x1 + (x1 * v) / 100
+    return x1 + (x1 * v) / 100.0
 
 
 def sigma(series, period):

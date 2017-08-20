@@ -1,6 +1,8 @@
 import tornado.websocket
-from stock import query, util, params, models
+from stock import query, util, params
 from stock.models import QuandlCode, Price, Signal
+
+LINES = params.get_lines()
 
 s = util.schema
 event_schema = s(QuandlCode, signal=s(
@@ -28,6 +30,7 @@ class MainHandler(tornado.websocket.WebSocketHandler):
         per_page = data.pop("per_page", 20)
         order_by = data.pop("order_by", None)  # TODO: validate
         asc = not data.pop("desc", False)
+        detail = data.pop("detail", False)
         params = dict(
             from_date=data.pop("from", util.to_date(months=-1)),
             codes=data.pop("codes", []),
@@ -47,6 +50,12 @@ class MainHandler(tornado.websocket.WebSocketHandler):
                 prices = [p[1] for p in groupby]
                 code = util.schema_to_json(event_schema, qcode)
                 code["prices"] = util.schema_to_json(price_schema, prices)
+                if detail:
+                    lines = {"ohlc": code["prices"]}
+                    df = util.models_to_dataframe(prices, index="date")
+                    for (c, f) in LINES.items():
+                        lines[c] = util.to_json(f(df.close))
+                    code["chart"] = lines
                 codes.append(code)
             # REFACTOR
             params.pop("from_date")
