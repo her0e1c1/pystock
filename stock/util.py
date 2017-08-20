@@ -212,7 +212,7 @@ def str2date(s):
         ss = s.split("/")
     elif "-" in s:
         ss = s.split("-")
-    elif len(s) in [4, 6]:  # YYYYMM or YYYYMMDD
+    elif len(s) in [4, 6, 8]:  # YYYY, YYYYMM or YYYYMMDD
         ss = [s[: 4], s[4: 6], s[6: 8]]
         ss = [s for s in ss if s]
     else:
