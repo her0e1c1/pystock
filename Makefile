@@ -11,7 +11,7 @@ jp:
 	docker exec -it pystock ./start_jupyter --allow-root
 
 tor:
-	docker exec -it pystock pystock tornado
+	docker exec -it tornado pystock tornado
 
 prod:
 	docker-compose -f docker-compose.yml -f docker-compose.prod.yml up
