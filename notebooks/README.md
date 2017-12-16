@@ -23,4 +23,9 @@ j/k up/down
 
 EDIT MODE
 Ecs | C-m VIEW MODE
+
+# NORMAL MODE
+a cell挿入
+b 下にcell挿入
+dd 現在のcell削除
 ```

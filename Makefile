@@ -8,7 +8,7 @@ py:
 	docker exec -it pystock ipython
 
 jp:
-	docker exec -it pystock ./start_jupyter --allow-root
+	docker exec -it jupyter ./start_jupyter --allow-root
 
 tor:
 	docker exec -it tornado pystock tornado

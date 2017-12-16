@@ -20,3 +20,9 @@ services:
     ports:
       - 10002:8080
     entrypoint: sh -c "python setup.py develop && bash"
+
+  jupyter:
+    extends: pystock
+    container_name: jupyter
+    ports:
+      - 10003:80
