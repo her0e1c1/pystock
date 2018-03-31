@@ -10,6 +10,9 @@ py:
 jp:
 	docker exec -it jupyter ./start_jupyter --allow-root
 
+open:
+	open http://localhost:10003
+
 tor:
 	docker exec -it tornado pystock tornado
 
