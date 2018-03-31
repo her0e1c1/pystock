@@ -23,6 +23,7 @@ services:
 
   jupyter:
     extends: pystock
-    container_name: jupyter
+    container_name: pystock-jupyter
     ports:
       - 10003:80
+    entrypoint: ./start_jupyter --allow-root
