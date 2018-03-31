@@ -26,4 +26,4 @@ services:
     container_name: pystock-jupyter
     ports:
       - 10003:80
-    entrypoint: ./start_jupyter --allow-root
+    entrypoint: sh -c "python setup.py develop && ./start_jupyter --allow-root"
