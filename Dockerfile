@@ -1,8 +1,6 @@
 FROM python:3.6
 
-RUN apt-get update -y
-RUN apt-get install -y sqlite3
-RUN apt-get install -y grsync
+RUN apt-get update -y && apt-get install -y sqlite3
 
 ADD requirements.txt ./
 
