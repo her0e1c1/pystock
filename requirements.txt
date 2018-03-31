@@ -10,9 +10,13 @@ pika
 
 Quandl
 xlrd
-pandas
-bokeh
+
 jupyter
+pytest
+numpy
+pandas
+matplotlib
+seaborn
 
 apscheduler  # heroku
 scrapy
