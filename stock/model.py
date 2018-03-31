@@ -34,6 +34,10 @@ def drop_all():
     Base.metadata.drop_all()
 
 
+def is_sqlite():
+    return engine.url.drivername == "sqlite"
+
+
 # http://docs.sqlalchemy.org/en/rel_0_9/orm/session_basics.html#session-frequently-asked-questions
 @contextmanager
 def session_scope(**kw):
@@ -67,54 +71,68 @@ def key_to_column(key):
 
 
 # Database code should be stored in key-value store
-class QuandlCode(Base):
+class Code(Base):
 
-    __tablename__ = "quandl_code"
+    __tablename__ = "code"
 
-    code = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
-    database_code = sql.Column(sql.String(64))  # TSE
+    id = sql.Column(sql.String(64), primary_key=True)  # TSE/1234
+    database = sql.Column(sql.String(64))  # TSE
 
-    @sql.orm.validates('code', 'database_code')
+    @sql.orm.validates('code', 'database')
     def validate_code(self, _key, val):
         return val.upper()
 
     def __repr__(self):
-        return "QuandlCode({code})".format(**self.__dict__)
+        return "Code({id})".format(**self.__dict__)
 
 
-class Price(Base):  # Daily Price
+class DailyPrice(Base):
 
-    __tablename__ = "price"
-    __table_args__ = (sql.UniqueConstraint('quandl_code', "date"),)
+    __tablename__ = "daily_price"
+    __table_args__ = (sql.PrimaryKeyConstraint('code_id', "date"), )
 
-    id = sql.Column(sql.Integer, primary_key=True)
     high = sql.Column(sql.Float, nullable=True)
     low = sql.Column(sql.Float, nullable=True)
     open = sql.Column(sql.Float, nullable=True)
     close = sql.Column(sql.Float, nullable=True)
     date = sql.Column(sql.Date, nullable=False)
     volume = sql.Column(sql.Integer, nullable=True)
-    quandl_code = sql.Column(sql.String(64), sql.ForeignKey('quandl_code.code', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False)
+    code_id = sql.Column(
+        sql.String(64),
+        sql.ForeignKey(
+            'code.id',
+            ondelete='CASCADE',
+            onupdate='NO ACTION'
+        ),
+        nullable=False
+    )
 
-    code = sql.orm.relation("QuandlCode", backref="prices")
+    code = sql.orm.relation("Code", backref="prices")
 
-    @sql.orm.validates('quandl_code')
-    def validate_quandl_code(self, _key, val):
+    @sql.orm.validates('code')
+    def validate_code(self, _key, val):
         return val.upper()
 
     def __repr__(self):
-        return f"Price({self.quandl_code}, {self.date})"
+        return f"Price({self.code_id}, {self.date})"
 
 
 class CurrentPrice(Base):
 
     __tablename__ = "current_price"
-    __table_args__ = (sql.UniqueConstraint('datetime', 'quandl_code'), )
+    __table_args__ = (sql.PrimaryKeyConstraint('code_id', 'datetime'), )
 
-    id = sql.Column(sql.Integer, primary_key=True)
+    datetime = sql.Column(sql.DateTime, nullable=False)
     value = sql.Column(sql.Integer, nullable=False)
-    datetime = sql.Column(sql.DateTime, nullable=False, index=True)
-    quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
+    code_id = sql.Column(
+        sql.String(64),
+        sql.ForeignKey(
+            'code.id',
+            ondelete='CASCADE',
+            onupdate='NO ACTION'
+        ),
+        nullable=False
+    )
 
 
 class Signal(Base):
@@ -122,7 +140,7 @@ class Signal(Base):
     __tablename__ = "signal"
 
     # one to one
-    quandl_code = sql.Column(sql.String(64), sql.ForeignKey('quandl_code.code', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, primary_key=True)
+    code_id = sql.Column(sql.String(64), sql.ForeignKey('code.id', ondelete='CASCADE', onupdate='NO ACTION'), nullable=False, primary_key=True)
     updated_at = sql.Column(sql.DateTime, onupdate=datetime.datetime.utcnow, default=datetime.datetime.utcnow, nullable=False)
     created_at = sql.Column(sql.DateTime, default=datetime.datetime.utcnow, nullable=False)
 
@@ -134,15 +152,15 @@ class Signal(Base):
     rolling_mean = sql.Column(sql.Enum(Signal), index=True)
 
     # cache
-    price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
-    previous_price_id = sql.Column(sql.Integer, sql.ForeignKey('price.id', ondelete='CASCADE', onupdate='NO ACTION'))
+    daily_price_date = sql.Column(sql.Integer, sql.ForeignKey('daily_price.date', ondelete='CASCADE', onupdate='NO ACTION'))
+    prev_daily_price_date = sql.Column(sql.Integer, sql.ForeignKey('daily_price.date', ondelete='CASCADE', onupdate='NO ACTION'))
     change = sql.Column(sql.Float, index=True)
     change_percent = sql.Column(sql.Float, index=True)
 
     # prediction
     buying_price = sql.Column(sql.Float, index=True)
     buying_price_2 = sql.Column(sql.Float, index=True)
-    # buying_price_3 = sql.Column(sql.Float, index=True)
+    buying_price_3 = sql.Column(sql.Float, index=True)
 
     # last value of a line (for now 25 days)
     historical_volatility = sql.Column(sql.Float, index=True)
@@ -150,9 +168,9 @@ class Signal(Base):
     var = sql.Column(sql.Float, index=True)
     mean = sql.Column(sql.Float, index=True)
 
-    code = sql.orm.relation("QuandlCode", backref=(sql.orm.backref("signal", uselist=False)))
-    price = sql.orm.relation("Price", foreign_keys=[price_id])
-    previous_price = sql.orm.relation("Price", foreign_keys=[previous_price_id])
+    code = sql.orm.relation("Code", backref=(sql.orm.backref("signal", uselist=False)))
+    daily_price = sql.orm.relation("DailyPrice", foreign_keys=[code_id, daily_price_date])
+    prev_daily_price = sql.orm.relation("DailyPrice", foreign_keys=[code_id, prev_daily_price_date])
 
     @property
     def close_increment_by_1(self):
@@ -172,41 +190,34 @@ class Signal(Base):
             return util.increment(self.buying_price_2, self.price.close)
 
 
-@sql.event.listens_for(QuandlCode, 'before_insert')
-def code_before_insert(mapper, connection, qcode):
-    s = sql.inspect(qcode).session
-    splited = qcode.code.split("/", 2)
+class StockSplitDate(Base):
+
+    __tablename__ = "stock_split_date"
+    __table_args__ = (sql.PrimaryKeyConstraint("code_id", "date"), )
+
+    from_number = sql.Column(sql.Integer, nullable=False)
+    to_number = sql.Column(sql.Integer, nullable=False)
+    date = sql.Column(sql.Date, nullable=False)
+    code_id = sql.Column(
+        sql.String(64),
+        sql.ForeignKey(
+            'code.id',
+            ondelete='CASCADE',
+            onupdate='NO ACTION'
+        ),
+        nullable=False
+    )
+
+
+# Orm Event
+@sql.event.listens_for(Code, 'before_insert')
+def code_before_insert(mapper, connection, code):
+    s = sql.inspect(code).session
+    splited = code.id.split("/", 2)
     if len(splited) == 2:
         db, _ = splited
-        qcode.database_code = db
+        code.database = db
 
-        # before_insert is called after before_flush and before_commit :(
         @sql.event.listens_for(s, 'after_flush', once=True)
         def f(session, flush_context):
-            qcode.signal = Signal()
-
-
-# Not to fire ORM events but insert is very slow :(
-# data.to_sql("price", models.engine, if_exists='append')  # auto commit
-# @sql.event.listens_for(Price, 'before_insert')
-# def price_before_insert(mapper, connection, price):
-#     s = sql.inspect(price).session
-#     if not (price.code and price.code.signal):  # FXIME: N+1
-#         signal = s.query(Signal).filter_by(quandl_code=price.quandl_code).one()
-#     else:
-#         signal = price.code.signal
-#     latest = signal.price
-#     with s.begin_nested() as st:
-#         if not latest or latest.date < price.date:
-#             sql.orm.attributes.set_committed_value(signal, "price", price)
-
-
-# class SplitStockDate(Base):
-
-#     __tablename__ = "split_stock_date"
-#     __table_args__ = (sql.UniqueConstraint("date", "company_id"), )
-
-#     from_number = sql.Column(sql.Integer, nullable=False)
-#     to_number = sql.Column(sql.Integer, nullable=False)
-#     date = sql.Column(sql.Date, nullable=False)
-#     quandl_code = sql.Column(sql.String(64), nullable=False, index=True)
+            code.signal = Signal()
